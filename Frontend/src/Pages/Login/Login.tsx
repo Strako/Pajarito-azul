@@ -41,14 +41,14 @@ const checkPassword = () => {
                 <Input
                     type='email'
                     name='Usuario'
-                    placeholder='Email'
+                    placeholder='Usuario'
                     onChange={handleUser}
                     value={user} />
 
                 <Input
                     type='password'
                     name='Contraseña'
-                    placeholder='Password'
+                    placeholder='Contraseña'
                     onChange={handlePassword}
                     value={password} />
 

@@ -9,16 +9,20 @@ interface buttonProps {
 const Button = ({ disable }: buttonProps) => {
     const navigate = useNavigate();
     const handleLogin = async () => {
+        
+        sessionStorage.setItem('token', 'mi_token_temporal')
+        navigate('/profile');
+        window.scrollTo(0, 0);
 
-        guestSession().then((r) => {
-            //           console.log(r.data)
-            sessionStorage.setItem('guest_session_id', r.data.guest_session_id)
-            navigate('/movies');
-            window.scrollTo(0, 0);
+        //guestSession().then(async (r) => {
+            // console.log(r.data)
+            // sessionStorage.setItem('token', await r.data.token)
+            // navigate('/profile');
+            // window.scrollTo(0, 0);
 
-        }).catch((e) => {
-            console.log(e);
-        })
+        // }).catch((e) => {
+        //    console.log(e);
+        // })
 
     }
     return (

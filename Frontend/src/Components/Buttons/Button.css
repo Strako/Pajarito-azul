@@ -1,17 +1,18 @@
 .button-icon{
 border-radius: 50px;
-width: 300px;
+width: 305px;
 height: 40px;
 background: rgb(26, 150, 244);
 outline: none;
 border: inherit;
 color: #FFF;
-font-family: 'Poppins', sans-serif;
-font-size: 18px;
-font-style: normal;
-font-weight: 600;
 line-height: 120%;
 cursor: pointer;
+font-family: Verdana;
+font-weight: bold;
+color: rgb(255 255 255);
+letter-spacing: -1.2px;
+font-size: 18px;
 
 }
 .button-icon:hover:enabled{
@@ -28,7 +29,8 @@ cursor: pointer;
 }
 
 .button-container{
-    margin-top: 50px;
+    margin-top: 10px;
+    padding-left: 0px;
 }
 .button-icon:disabled{
     border: 1px solid #999999;

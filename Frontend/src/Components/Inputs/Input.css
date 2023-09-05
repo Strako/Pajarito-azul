@@ -5,30 +5,29 @@
     height: 35px;
     text-align: left;
     color: black;
-    padding-left: 0%;
     outline: none;
     border: none;
     margin-bottom: 10px;
-    text-indent: 4%;
+    text-indent: 5%;
 }
 
 .input::placeholder {
     color: rgb(0, 0, 0);
+    font-family: Verdana;
+
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    padding-left: 0;
 
 }
 
 .input-group label {
-    padding-left: 25px;
-    color: #FFF;
-    font-family: Poppins;
+    margin: 10px;
+    font-family: Verdana;
+    font-weight: bold;
+    color: rgb(255 255 255);
+    letter-spacing: -1.2px;
     font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 120%;
 }
