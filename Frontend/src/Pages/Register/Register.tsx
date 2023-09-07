@@ -1,10 +1,10 @@
 import Input from '../../Components/Inputs/Input'
 import  Button from '../../Components/Buttons/Button'
 import { useState } from "react";
-import './Login.css'
+import './Register.css'
 import Logo from '../../Images/logo.png'
 
-const Login = () => {
+const Register = () => {
 
 //Consts
 
@@ -28,16 +28,17 @@ const checkPassword = () => {
     return !passwordRegex.test(password);
 };
 
+//tsx
     return <>
-        <div className='login-container'>
+        <div className='register-container'>
             <div className='left'>
             <img className="logo" src={Logo} alt="Page Logo" />
             </div>
             <div className='right'>
             <div className = 'title-container'><span >Lo que está pasando ahora</span></div>
-            <div className = 'subtitle-container'><span >Únete Hoy</span></div>
+            <div className = 'subtitle-container'><span >Crea tu cuenta !</span></div>
             
-            <div className="login-input">
+            <div className="register-input">
                 <Input
                     type='email'
                     name='Usuario'
@@ -52,9 +53,7 @@ const checkPassword = () => {
                     onChange={handlePassword}
                     value={password} />
 
-                <Button disable={checkPassword()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1}/>
-
-                <Button disable={false} placeHolder={"Crear cuenta"} page={'/register'} type={2}/>
+                <Button disable={checkPassword()} placeHolder={"Crear cuenta"} page={'/'} type={3}/>
 
             </div>
             </div>
@@ -66,4 +65,4 @@ const checkPassword = () => {
 }
 
 
-export default Login;
+export default Register;

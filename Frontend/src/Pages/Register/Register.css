@@ -1,12 +1,12 @@
-.login-container{
+.register-container{
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 50px;
 }
 
-.login-container .left .logo{
-    padding-top:50px;
+.register-container .left .logo{
+    padding-top:100px;
     margin-right: 200px;
     margin-left: 200px;
     width: 300px;
@@ -15,11 +15,12 @@
 
 .right{
     max-width: 600px;
+    min-width: 600px;
     margin-right: 200px;
 
 }
 
-.login-container .right .title-container{    
+.register-container .right .title-container{    
     font-family: Verdana;
     font-weight: bolder;
     color: rgb(255 255 255);
@@ -30,7 +31,7 @@
     margin-bottom: 30px    ;
 }
 
-.login-container .right .subtitle-container{
+.register-container .right .subtitle-container{
     font-family: Verdana;
     font-weight: bold;
     color: rgb(255 255 255);

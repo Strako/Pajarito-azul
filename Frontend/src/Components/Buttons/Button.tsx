@@ -4,16 +4,29 @@ import { guestSession } from "../../API/guestSession";
 
 interface buttonProps {
     disable: boolean
+    placeHolder: string;
+    page: string;
+    type: number;
 }
+//type:
+//1 login (Call EP)
+//2 navigate create account
+//3 create account (Call EP)
 
-const Button = ({ disable }: buttonProps) => {
+const Button = ({ disable, placeHolder, page, type }: buttonProps) => {
     const navigate = useNavigate();
-    const handleLogin = async () => {
+    const handleButton = async () => {
         
+        if(type === 1){
         sessionStorage.setItem('token', 'mi_token_temporal')
-        navigate('/profile');
+        navigate(page);
         window.scrollTo(0, 0);
-
+        }if(type===2){
+            navigate(page);
+        }if(type === 3){
+            //Crear cuenta
+            navigate(page);
+        }
         //guestSession().then(async (r) => {
             // console.log(r.data)
             // sessionStorage.setItem('token', await r.data.token)
@@ -27,7 +40,7 @@ const Button = ({ disable }: buttonProps) => {
     }
     return (
         <div className="button-container">
-            <button className="button-icon" disabled={disable} onClick={handleLogin}>Iniciar sesión</button>
+            <button className="button-icon" disabled={disable} onClick={handleButton}>{placeHolder}</button>
         </div>
     );
 };
