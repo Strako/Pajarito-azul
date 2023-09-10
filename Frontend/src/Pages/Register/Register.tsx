@@ -7,26 +7,48 @@ import Logo from '../../Images/logo.png'
 const Register = () => {
 
 //Consts
-
+const [userName, setUserName] = useState("");
 const [user, setUser] = useState("");
 const [password, setPassword] = useState("");
 
 //Handlers
+const handlerUserName = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    setUserName(e.target.value);
+};
 
 const handleUser = (e: React.ChangeEvent<HTMLInputElement>)  =>{
     setUser(e.target.value);
-}
+};
 
 const handlePassword = (e: React.ChangeEvent<HTMLInputElement>)  =>{
     setPassword(e.target.value);
-}
+};
 
 //checks
+const checkUserName = () =>{
+    const userNameRegex = /(.)+/;
+    return !userNameRegex.test(userName);
+};
+
+const checkUser = () =>{
+    const userRegex = /(a)+/;
+    return !userRegex.test(user);
+};
 
 const checkPassword = () => {
     const passwordRegex = /(.){7}/;
     return !passwordRegex.test(password);
 };
+
+//functions
+const validateUserPass = () =>{
+    if(checkUser() === false && checkPassword() === false && checkUserName() === false){
+        return false;
+    }else{
+        return true
+    }
+};
+
 
 //tsx
     return <>
@@ -39,21 +61,27 @@ const checkPassword = () => {
             <div className = 'subtitle-container'><span >Crea tu cuenta !</span></div>
             
             <div className="register-input">
+            <Input
+                    type='text'
+                    name='Nombre *'
+                    placeholder='Nombre'
+                    onChange={handlerUserName}
+                    value={userName} />
                 <Input
-                    type='email'
-                    name='Usuario'
+                    type='text'
+                    name='Usuario *'
                     placeholder='Usuario'
                     onChange={handleUser}
                     value={user} />
 
                 <Input
                     type='password'
-                    name='Contraseña'
+                    name='Contraseña *'
                     placeholder='Contraseña'
                     onChange={handlePassword}
                     value={password} />
 
-                <Button disable={checkPassword()} placeHolder={"Crear cuenta"} page={'/'} type={3}/>
+                <Button disable={(validateUserPass())} placeHolder={"Crear cuenta"} page={'/'} type={3}/>
 
             </div>
             </div>

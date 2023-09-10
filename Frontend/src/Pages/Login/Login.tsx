@@ -28,6 +28,20 @@ const checkPassword = () => {
     return !passwordRegex.test(password);
 };
 
+const checkUser = () =>{
+    const userRegex = /(.)+/
+    return !userRegex.test(user);
+};
+
+//functions
+const validateUserPass = () =>{
+    if(checkUser() === false && checkPassword() === false){
+        return false;
+    }else{
+        return true
+    }
+};
+
     return <>
         <div className='login-container'>
             <div className='left'>
@@ -52,7 +66,7 @@ const checkPassword = () => {
                     onChange={handlePassword}
                     value={password} />
 
-                <Button disable={checkPassword()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1}/>
+                <Button disable={validateUserPass()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1}/>
 
                 <Button disable={false} placeHolder={"Crear cuenta"} page={'/register'} type={2}/>
 
