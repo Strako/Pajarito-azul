@@ -1,1 +1,1 @@
-open src folder, execute py 'index.py' on terminal
+Open src folder and open testDB.sql, run all queries. Finally, run py 'index.py' in terminal
