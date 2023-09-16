@@ -1,5 +1,5 @@
 -Open testDB.sql, run all queries.
--Create .env file and put next config:
+-Create .env file on "/venv/src" and put next config:
     SECRET_KEY= GPS2023
     DBHOST= [db host]
     DBUSER= [db user]
