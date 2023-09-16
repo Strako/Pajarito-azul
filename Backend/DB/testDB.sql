@@ -21,8 +21,8 @@ USE `gpsdb`;
     atributte: userid, user, name, email, password, userImage, desciption
 */
 
-DROP TABLE IF EXISTS `Users`;
-CREATE  TABLE IF NOT EXISTS `Users` (
+DROP TABLE IF EXISTS `users`;
+CREATE  TABLE IF NOT EXISTS `users` (
   `userid` INT NOT NULL AUTO_INCREMENT ,
   `user` VARCHAR(15) NOT NULL ,
   `name` VARCHAR(45) NOT NULL ,
@@ -37,8 +37,8 @@ CREATE  TABLE IF NOT EXISTS `Users` (
     atributte: tweetid, userid, tweet, tweetImage, date
 */
 
-DROP TABLE IF EXISTS `Tweets`;
-CREATE  TABLE IF NOT EXISTS `Tweets` (
+DROP TABLE IF EXISTS `tweets`;
+CREATE  TABLE IF NOT EXISTS `tweets` (
   `tweetid` INT NOT NULL AUTO_INCREMENT ,
   `userid` INT NOT NULL ,
   `description` VARCHAR(140) NOT NULL ,
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS `likes` (
   Table structure for table follows
   atributte: followid, followerid, followingid, date
 */
-DROP TABLE IF EXISTS `Follows`;
-CREATE TABLE IF NOT EXISTS `Follows`(
+DROP TABLE IF EXISTS `follows`;
+CREATE TABLE IF NOT EXISTS `follows`(
   `followid` INT NOT NULL AUTO_INCREMENT ,
   `followerid` INT NOT NULL ,
   `followingid` INT NOT NULL,
