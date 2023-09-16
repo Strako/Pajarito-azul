@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "06b7e77d-4fd4-4570-90ec-9fec174bd863",
+		"name": "PAJARITO-AZUL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20767009"
+	},
+	"item": [
+		{
+			"name": "CRUD users",
+			"item": [
+				{
+					"name": "sign-in",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"user\":\"pitirijaslocote\",\r\n\t\"password\":\"pitirijas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/users/sign-in",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign-up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"user\":\"pitirijaslocote\",\r\n\t\"name\":\"pitirijas sanchez\",\r\n\t\"password\":\"pitirijas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/users/sign-up",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

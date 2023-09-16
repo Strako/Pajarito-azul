@@ -1,1 +1,9 @@
-Open venv folder and open testDB.sql, run all queries. Finally, run py 'src/index.py' in terminal
+-Open testDB.sql, run all queries.
+-Create .env file and put next config:
+    SECRET_KEY= GPS2023
+    DBHOST= [db host]
+    DBUSER= [db user]
+    DBPASS= [db password]
+    DBNAME= [db name]
+Open terminal on "venv/src/" and run "pip install -r requirements.txt"
+run py 'src/index.py' in terminal
