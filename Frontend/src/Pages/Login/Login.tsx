@@ -66,7 +66,7 @@ const validateUserPass = () =>{
                     onChange={handlePassword}
                     value={password} />
 
-                <Button disable={validateUserPass()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1}/>
+                <Button disable={validateUserPass()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1} user={user} password={password}/>
 
                 <Button disable={false} placeHolder={"Crear cuenta"} page={'/register'} type={2}/>
 

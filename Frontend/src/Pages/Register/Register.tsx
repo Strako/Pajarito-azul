@@ -95,7 +95,7 @@ const Register = () => {
                         onChange={handleConfirmPassword}
                         value={confirmPassword} />
 
-                    <Button disable={(validateUserPass())} placeHolder={"Crear cuenta"} page={'/'} type={3} />
+                    <Button disable={(validateUserPass())} placeHolder={"Crear cuenta"} page={'/'} type={3} name={userName} user={user} password={password}/>
 
                 </div>
             </div>
