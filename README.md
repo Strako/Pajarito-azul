@@ -2,7 +2,8 @@
 <p align="center">
   <img src="https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png" />
 </p>
-***
+
+****
 
 
    This project has the purpose to create an open source twitter clone that can be deployed by anyone who requires an internal social tool or a community with no internet access.
