@@ -1,5 +1,7 @@
 # [Pajarito Azul] (Twitter Clone)
-![alt text](https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png "Logo")
+<p align="center">
+  <img src="https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png" />
+</p>
 ***
 
 
