@@ -1,5 +1,8 @@
 # [Pajarito Azul] (Twitter Clone)
-![alt text](https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png "Logo")
+<p align="center">
+  <img src="https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png" />
+</p>
+
 ***
 
 
@@ -7,19 +10,17 @@
 
    The first functionalities that will be added are the following:
 
-      ##Login / Create account	
+      Login / Create account	
          -User
          - Password
-
  
-      ##Users	
+      Users	
          - Follow / Unfollow
          - Profile image
          - Profile name
          - @User
          - Description
 
- 
       Profile	
          - View profile image
          - View profile name
@@ -28,37 +29,32 @@
          - Tweet buttton
          - Edit profile button
 
- 
-      ##Tweet	  
+      Tweet	  
          - List own tweets
          - Create tweet 
          - Delete tweet
          - Like / Dislike
 
- 
-      ##Edit profile	
+      Edit profile	
          - Edit name
          - Edit description
          - Change password
          - Change profile image
 
- 
-      ##Home	
+      Home	
          - Show tweets from following profiles
 
- 
-      ##Explore	
+      Explore	
          - User search by @User
          
- 
-      ##Notifications	
+      Notifications	
          - Follows
          - Likes
 ***
 
 
 # [Frontend] React + TypeScript + Vite
-   ##How to start Frontend server:
+   ## How to start Frontend server:
       
       -Inside projecto folder "Frontend/" run the following command:
          `npm run dev``
@@ -68,7 +64,7 @@
 
 
 # [Backend] Python + Flask + Jinja
-   ##How to start Backend server
+   ## How to start Backend server
       
       -Restore the DB backup located inside "Backend/DB" (MYSQL / MariaDB)
       
@@ -86,7 +82,7 @@
          `python index.py`
 ***
 
-
-   # [Endpoint testing] Postman
-      ##Postman collection
-         The postman collection its located at "Backend/Postman" containing all the endpoints and http methods used int he software
+# [Endpoint testing] Postman
+   ## Postman collection
+      
+    -The postman collection its located at "Backend/Postman" containing all the endpoints and http methods used int he software
