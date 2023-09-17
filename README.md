@@ -54,7 +54,7 @@
 
 
 # [Frontend] React + TypeScript + Vite
-   ##How to start Frontend server:
+   ## How to start Frontend server:
       
       -Inside projecto folder "Frontend/" run the following command:
          `npm run dev``
@@ -64,7 +64,7 @@
 
 
 # [Backend] Python + Flask + Jinja
-   ##How to start Backend server
+   ## How to start Backend server
       
       -Restore the DB backup located inside "Backend/DB" (MYSQL / MariaDB)
       
@@ -84,5 +84,6 @@
 
 
    # [Endpoint testing] Postman
-      ##Postman collection
+      ## Postman collection
+      
          The postman collection its located at "Backend/Postman" containing all the endpoints and http methods used int he software
