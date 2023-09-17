@@ -85,4 +85,4 @@
 # [Endpoint testing] Postman
    ## Postman collection
       
-  -The postman collection its located at "Backend/Postman" containing all the endpoints and http methods used int he software
+    -The postman collection its located at "Backend/Postman" containing all the endpoints and http methods used int he software
