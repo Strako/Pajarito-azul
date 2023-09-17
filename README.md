@@ -10,20 +10,18 @@
 
    The first functionalities that will be added are the following:
 
-      ## Login / Create account	
+      Login / Create account	
          -User
          - Password
-
  
-      ## Users	
+      Users	
          - Follow / Unfollow
          - Profile image
          - Profile name
          - @User
          - Description
 
- 
-      ## Profile	
+      Profile	
          - View profile image
          - View profile name
          - View @User
@@ -31,30 +29,25 @@
          - Tweet buttton
          - Edit profile button
 
- 
-      ## Tweet	  
+      Tweet	  
          - List own tweets
          - Create tweet 
          - Delete tweet
          - Like / Dislike
 
- 
-      ## Edit profile	
+      Edit profile	
          - Edit name
          - Edit description
          - Change password
          - Change profile image
 
- 
-      ## Home	
+      Home	
          - Show tweets from following profiles
 
- 
-      ## Explore	
+      Explore	
          - User search by @User
          
- 
-      ## Notifications	
+      Notifications	
          - Follows
          - Likes
 ***
