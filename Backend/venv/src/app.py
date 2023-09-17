@@ -15,7 +15,7 @@ from werkzeug.exceptions import BadRequest
 from routes.Users import User
 #---------------code and config------------------
 app = Flask(__name__)
-
+CORS(app)
 #example of how to register blueprints
 app.register_blueprint(User)
 
