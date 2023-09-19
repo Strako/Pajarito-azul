@@ -36,7 +36,7 @@ const Register = () => {
     };
 
     const checkUser = () => {
-        const userRegex = /(a)+/;
+        const userRegex = /[A-Za-z0-9]+/;
         return !userRegex.test(user);
     };
 
