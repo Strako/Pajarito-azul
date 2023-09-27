@@ -11,13 +11,13 @@ from utils.database import conn
 import os
 from dotenv import load_dotenv
 from utils.middleware import verify_token
-import json
 import re
-import time
+from utils.resfunctions import resfunc
 
 # load dotenv to get env vars
 load_dotenv()
 
+magicWord = os.getenv("SECRET_KEY")
 #register blueprint for users
 User = Blueprint('User', __name__, url_prefix='/users')
 
@@ -43,25 +43,34 @@ def signUp():
         try:
             usr = data['user']
             cur = conn.cursor()
-            query = f"SELECT * FROM users WHERE user = '{usr}';"
-            cur.execute(query)
+            query = "SELECT * FROM users WHERE user = %s;"
+            cur.execute(query, (usr,))
             dbres = cur.fetchall()
             cur.close()
-            print(dbres)
             if len(dbres) == 0:
-                name = data['name']
-                password = generate_password_hash(data['password'], method='sha256')
-                cur = conn.cursor()
-                query = f"INSERT INTO users (user, name, password) VALUES ('{usr}', '{name}', '{password}');"
-                cur.execute(query)
-                conn.commit()
-                cur.close()
-                return jsonify({"message": "Usuario creado exitosamente"}), 200
+                if re.match(r'^.{1,15}$', usr):
+                    if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
+                        name = data['name']
+                        password = generate_password_hash(data['password'], method='sha256')
+                        cur = conn.cursor()
+                        query = "INSERT INTO users (user, name, password) VALUES (%s,%s,%s);"
+                        cur.execute(query, (usr, name, password))
+                        conn.commit()
+                        cur.close()
+                        data = {"message": "Usuario creado exitosamente"}
+                        return resfunc(data), 200
+                    else:
+                        data = {"message": "la contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
+                        return resfunc(data), 400
+                else:
+                    data = {"message": "el usuario debe tener entre 1 y 15 caracteres"}
+                    return resfunc(data), 400
             else:
-                return jsonify({"message": "el usuario ya existe en la base de datos"}), 409
+                data = {"message": "el usuario ya existe en la base de datos"}
+                return resfunc(data), 409
         except Exception as e:
-            print(e)
-            return jsonify({"message": f"Error en la consulta a la base de datos"}), 500
+            data = {"message": "Error en la consulta a la base de datos"}
+            return resfunc(data), 500
 
 
 
@@ -80,18 +89,15 @@ def singIn():
     """
     data = request.get_json()
     if data['user'] == "" or data['password'] == "":
-        return jsonify({"message": "los datos enviados no son validos o existen campos vacios"}), 400
+        data = {"message": "los datos enviados no son validos o existen campos vacios"}
+        return resfunc(data), 400
     else:
-        if re.match(r"(.{7})", data['password']):
+        if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
             try:
                 usr = data['user']
                 cur = conn.cursor()
-                query = f"SELECT * FROM users WHERE user = '{usr}';"
-                """
-                    This Query returns a tuple with the user data.
-                    Format: (id, user, name, password, userImage, description)
-                """
-                cur.execute(query)
+                query = "SELECT * FROM users WHERE user = %s;"
+                cur.execute(query, (usr,))
                 dbres = cur.fetchall()
                 cur.close()
                 if len(dbres) == 0:
@@ -99,22 +105,44 @@ def singIn():
                 else:
                     for user in dbres:
                         if check_password_hash(user[3], data['password']):
-                            user = user[1]
-                            id = user[0]
-                            payload = {"user": user, "id": id}
+                            payload = {"userID": user[0], "user": user[1]}
                             authtoken = encode_data(
                              payload, os.getenv("SECRET_KEY"))
-                            return jsonify({"message": "logged in", "auth_token": f"{authtoken}", "userid": f"{user}"}), 200
+                            data = {"message": "logged in", "auth_token": f"{authtoken}", "userID": f"{user[0]}"}
+                            return resfunc(data), 200
                         else:
-                            return jsonify({"message": "la contraseña es incorrecta"}), 400
+                            data = {"message": "la contraseña es incorrecta"}
+                            return resfunc(data), 400
             except Exception as e:
-                return jsonify({"message": f"Error en la consulta a la base de datos"}), 500
+                data = {"message": "Error en la consulta a la base de datos"}
+                return resfunc(data), 500
         else:
-            return jsonify({"message": f"La longitud de la contraseña es menor al establecido"}), 400
+            data = {"message": "la contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
+            return resfunc(data), 400
 
 #TODO make a route to get user data and another user routes
-@User.route('/get-data-user', methods=['POST'])
+@User.route('/get-data-user', methods=['GET'])
 @verify_token
 def getDataUser():
-    return jsonify({"message": "ok"}), 200
-
+    try:
+        data = request.headers
+        userID = decode_token(data['Authorization'][7:], os.getenv("SECRET_KEY"))['userID']
+        cur = conn.cursor()
+        query = "SELECT userid, user, name, userImage, description FROM users WHERE userid = %s;"
+        cur.execute(query, (userID,))
+        user_data = cur.fetchone()
+        cur.close()
+        if not user_data:
+            data =  {"message": "El usuario no existe"}
+            return resfunc(data), 404
+        user_dict = {
+            "userid": user_data[0],
+            "user": user_data[1],
+            "name": user_data[2],
+            "userImage": user_data[3],
+            "description": user_data[4]
+        }
+        return resfunc(user_dict), 200
+    except Exception as e:
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500

@@ -2,13 +2,13 @@
     This file contains the middleware for the routes.
     This middleware is used to validate the JWT token that is sent in the header of the request.
 """
-import jwt
 from utils.jwt_functions import *
 from flask import request, jsonify
 from functools import wraps
 import os
 from dotenv import load_dotenv
 from utils.database import conn
+from utils.resfunctions import resfunc
 
 load_dotenv()
 magicWord = os.getenv("SECRET_KEY")
@@ -29,34 +29,35 @@ def verify_token(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
             token = auth_header.split(' ')[1]
-
         if not token:
-            return jsonify({"message": "auth token missing"}), 409
-
+            res = {"message": "auth token missing"}
+            return resfunc(res), 401
         # aqui se valida el token si es que existe
         try:
-            print(
-                "------------------llamada a verificación de Token------------------------")
-            print(f"el token es: {token}")
             data = decode_token(token, magicWord)
-            print(f"la data contenida en el token es: {data}")
-            print(
-                "-------------------------------------------------------------------------")
             if not data:
-                return jsonify({"message": "invalid token"}), 409
+                res = {"message": "invalid token"}
+                return resfunc(res), 401
             else:
                 cur = conn.cursor()
-                query = f"select* from users where user = '{data['user']}';"
-                cur.execute(query)
+                query = "SELECT * FROM users WHERE user = %s;"
+                cur.execute(query, (data['user'],))
                 resdb = cur.fetchall()
                 if resdb == []:
-                    return jsonify({"message": "invalid token"}), 409
+                    res == {"message": "invalid token"}
+                    return resfunc(res), 401
                 else:
                     return f(*args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            res = {"message": "token has expired"}
+            return resfunc(res), 401
+        except jwt.InvalidTokenError:
+            res = {"message": "invalid token"}
+            return resfunc(res), 401
         except Exception as e:
-            return jsonify({"message": f"BackEnd Error: {e}"}), 409
+            res = {"message": f"BackEnd Error: {e}"}
+            return resfunc(res), 401
     return decorated
