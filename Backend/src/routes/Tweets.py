@@ -96,9 +96,9 @@ def getAll():
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
-@Tweet.route('/get-tweets-of/<int:userID>', methods=['GET'])
+@Tweet.route('/get-tweets-of/<string:user>', methods=['GET'])
 @verify_token
-def getTweetsOf(userID):
+def getTweetsOf(user):
     #get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
@@ -106,8 +106,8 @@ def getTweetsOf(userID):
     offset = (page - 1) * per_page
     try:
         cur = conn.cursor()
-        query = "SELECT * FROM tweets WHERE userid = %s ORDER BY datetime DESC LIMIT %s OFFSET %s;"
-        cur.execute(query, (userID, per_page, offset))
+        query = "select * from tweets where userid = (select userid from users where user=%s) ORDER BY datetime DESC LIMIT %s OFFSET %s;"
+        cur.execute(query, (user, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
         data_json = {}

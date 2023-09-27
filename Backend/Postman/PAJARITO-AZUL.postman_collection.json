@@ -322,7 +322,7 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "get-tweets-of",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -349,14 +349,15 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/get-tweets-of/1?page=1&per_page=10\n",
+							"raw": "localhost:3000/tweets/get-tweets-of/pitirijaslocote?page=1&per_page=10",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
+								"tweets",
 								"get-tweets-of",
-								"1"
+								"pitirijaslocote"
 							],
 							"query": [
 								{
@@ -365,7 +366,7 @@
 								},
 								{
 									"key": "per_page",
-									"value": "10\n"
+									"value": "10"
 								}
 							]
 						}
