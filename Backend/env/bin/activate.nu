@@ -32,7 +32,7 @@ export-env {
       }
     }
 
-    let virtual_env = '/Users/a404/Documents/GitHub/Pajarito-azul/Backend/env'
+    let virtual_env = '/Users/s404/Documents/GitHub/Pajarito-azul/Backend/env'
     let bin = 'bin'
 
     let is_windows = ($nu.os-info.family) == 'windows'
