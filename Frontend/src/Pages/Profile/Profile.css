@@ -1,4 +1,60 @@
-.profile-container{
+.main{
+    display: grid;
+    justify-content: center;
+    margin-top: -8px;
+}
+
+.profile-container {
     text-align: center;
+    margin-top: -8px;
     color: white;
+    box-shadow: white 0px 0px 1px;
+    width: 500px;
+    height: 500px;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 20px;
+    padding-right: 50px;
+
+
+}
+
+.tweets_container {
+
+
+}
+
+.tweet {
+    text-align: left;
+    box-shadow: white 0px 0px 1px;
+    width: 500px;
+    height: auto;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 20px;
+    padding-right: 50px;
+
+}
+
+.tweet_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    margin-top: -10px;
+
+}
+
+.tweet_author {
+    color: white;
+    margin-top: -45px;
+    margin-left: 60px;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    font-weight: 900;
+
+}
+
+.tweet_content {
+    color: white;
+    margin-left: 60px;
 }

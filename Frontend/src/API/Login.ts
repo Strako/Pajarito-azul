@@ -1,4 +1,4 @@
-import {NewInstance} from './BaseAPI';
+import {NewInstance} from './NotLoggedBaseAPI';
 const loginEP= 'users/sign-in';
 
 

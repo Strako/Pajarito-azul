@@ -2,6 +2,7 @@ import './Button.css'
 import { useNavigate } from "react-router-dom";
 import signUp from "../../API/Register"
 import signIn from "../../API/Login"
+import { setAuthToken } from '../../API/BaseAPI';
 
 
 interface buttonProps {
@@ -21,16 +22,17 @@ interface buttonProps {
 const Button = ({ disable, placeHolder, page, type, user, name, password }: buttonProps) => {
     const navigate = useNavigate();
     const handleButton = async () => {
-
         if (type === 1) {
-            signIn(user!, password!).then(async(r) =>{
-                console.log(r.data);
-                sessionStorage.setItem('auth_token', await r.data.auth_token)
+            try {
+                const response = await signIn(user!, password!);
+                const authToken = response.data.auth_token;
+                await localStorage.setItem('auth_token', authToken);
+                setAuthToken(authToken);
                 navigate(page);
                 window.scrollTo(0, 0);
-            }).catch((e) =>{
-                console.log(e);
-            });
+            } catch (error) {
+                console.error(error);
+            }
 
         } if (type === 2) {
             navigate(page);
