@@ -13,13 +13,14 @@ from flask_cors import CORS
 from werkzeug.exceptions import BadRequest
 #---------------imports from blueprints------------------
 from routes.Users import User
+from routes.Tweets import Tweet
 #---------------code and config------------------
 app = Flask(__name__)
 CORS(app)
 
 #example of how to register blueprints
 app.register_blueprint(User)
-
+app.register_blueprint(Tweet)
 
 
 @app.errorhandler(BadRequest)

@@ -36,12 +36,12 @@ const Register = () => {
     };
 
     const checkUser = () => {
-        const userRegex = /[A-Za-z0-9]+/;
+        const userRegex = /^.{1,15}$/;
         return !userRegex.test(user);
     };
 
     const checkPassword = () => {
-        const passwordRegex = /(.){7}/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$/;
         return !passwordRegex.test(password);
     };
 

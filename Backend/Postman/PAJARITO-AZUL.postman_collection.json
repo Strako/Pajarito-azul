@@ -44,7 +44,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"user\":\"pitirijaslocote\",\r\n\t\"name\":\"pitirijas sanchez\",\r\n\t\"password\":\"pitirijas\"\r\n}",
+							"raw": "{\r\n\t\"user\":\"pitilocote23\",\r\n\t\"name\":\"pitirijas sanchez\",\r\n\t\"password\":\"Pitirijas$23\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -60,6 +60,314 @@
 							"path": [
 								"users",
 								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-data-user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/users/get-data-user",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"users",
+								"get-data-user"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "postman to users blueprint"
+		},
+		{
+			"name": "CRUD tweets",
+			"item": [
+				{
+					"name": "create-tweet",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tweetDesc\":\"This is the Tweet content\",\r\n    \"tweetImage\":\"tweetImage\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/create",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-tweets",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/get-all-tweets?page=1&per_page=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"get-all-tweets"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-tweet",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tweetID\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/get-tweet/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"get-tweet",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-tweet",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tweetDesc\":\"desc update\",\r\n    \"tweetImage\":\"image update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/update-tweet/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"update-tweet",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/delete-tweet/9",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"delete-tweet",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-tweets-of",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjEsInVzZXIiOiJwaXRpcmlqYXNsb2NvdGUifQ.yCGmA5WbPO6lJp5mO2cxv32ZubZRb9WkIAgrwU0_l5g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tweets/get-tweets-of/pitirijaslocote?page=1&per_page=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tweets",
+								"get-tweets-of",
+								"pitirijaslocote"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
 							]
 						}
 					},

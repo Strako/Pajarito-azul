@@ -43,11 +43,9 @@ CREATE  TABLE IF NOT EXISTS `tweets` (
   `userid` INT NOT NULL ,
   `description` VARCHAR(140) NOT NULL ,
   `tweetImage` VARCHAR(90) NULL ,
-  `date` VARCHAR(15) NOT NULL ,
-  `time` VARCHAR(15) NOT NULL ,
+  `datetime` VARCHAR(30) NOT NULL ,
   PRIMARY KEY (`tweetid`) ,
-  INDEX `fk_tweet_user` (`userid` ASC) ,
-  CONSTRAINT `fk_tweet_user` FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ));
+  FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ));
 
 /*
   Table structure for table likes
@@ -61,9 +59,7 @@ CREATE TABLE IF NOT EXISTS `likes` (
   `tweetid` INT NOT NULL ,
   `date` VARCHAR(15) NULL,
   PRIMARY KEY (`likeid`) ,
-  INDEX `fk_likes_user` (`userid` ASC) ,
-  INDEX `fk_likes_tweet` (`tweetid` ASC) ,
-  CONSTRAINT `fk_likes_user` FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ),
+  FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ),
   CONSTRAINT `fk_likes_tweet` FOREIGN KEY (`tweetid` ) REFERENCES `tweets` (`tweetid` ));
 
 /*
@@ -77,7 +73,5 @@ CREATE TABLE IF NOT EXISTS `follows`(
   `followingid` INT NOT NULL,
   `followdate` VARCHAR(15) NULL,
   PRIMARY KEY (`followid`) ,
-  INDEX `fk_follows_followers` (`followerid` ASC) ,
-  INDEX `fk_follows_followings` (`followingid` ASC) ,
-  CONSTRAINT `fk_follows_follower` FOREIGN KEY (`followerid` ) REFERENCES `users` (`userid` ),
-  CONSTRAINT `fk_follows_following` FOREIGN KEY (`followingid` ) REFERENCES `users` (`userid` ));
+  FOREIGN KEY (`followerid` ) REFERENCES `users` (`userid` ),
+  FOREIGN KEY (`followingid` ) REFERENCES `users` (`userid` ));

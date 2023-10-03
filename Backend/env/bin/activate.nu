@@ -32,7 +32,11 @@ export-env {
       }
     }
 
+<<<<<<< HEAD
     let virtual_env = '/Users/s404/Documents/GitHub/Pajarito-azul/Backend/env'
+=======
+    let virtual_env = '/home/s404/Pajarito-azul/Backend/env'
+>>>>>>> Strako
     let bin = 'bin'
 
     let is_windows = ($nu.os-info.family) == 'windows'

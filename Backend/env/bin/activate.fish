@@ -58,7 +58,11 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
+<<<<<<< HEAD
 set -gx VIRTUAL_ENV '/Users/s404/Documents/GitHub/Pajarito-azul/Backend/env'
+=======
+set -gx VIRTUAL_ENV '/home/s404/Pajarito-azul/Backend/env'
+>>>>>>> Strako
 
 # https://github.com/fish-shell/fish-shell/issues/436 altered PATH handling
 if test (echo $FISH_VERSION | head -c 1) -lt 3
