@@ -146,3 +146,30 @@ def getDataUser():
     except Exception as e:
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+
+
+@User.route('/get-data-user-byId', methods=['POST'])
+@verify_token
+def getDataUserById():
+    try:
+        data = request.get_json()
+        userId = data["userId"]
+        cur = conn.cursor()
+        query = "SELECT userid, user, name, userImage, description FROM users WHERE userid = %s;"
+        cur.execute(query, (userId,))
+        user_data = cur.fetchone()
+        cur.close()
+        if not user_data:
+            data = {"message": "El usuario no existe"}
+            return resfunc(data), 404
+        user_dict = {
+            "userid": user_data[0],
+            "user": user_data[1],
+            "name": user_data[2],
+            "userImage": user_data[3],
+            "description": user_data[4]
+        }
+        return resfunc(user_dict), 200
+    except Exception as e:
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
