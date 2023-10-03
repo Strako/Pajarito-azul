@@ -56,7 +56,8 @@ const Profile = () => {
         if(page === "1"){
           setPage("2");  
         }
-        
+        //tweet example
+        //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
         const tweets = tweetsArray.map((tweet:objectI) => (
             <>
                 <div key={tweet.id} className="tweet">
