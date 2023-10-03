@@ -2,7 +2,6 @@ import './Profile.css'
 import { useState, useEffect } from 'react';
 import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
-import { setAuthToken } from '../../API/BaseAPI';
 
 interface objectI {
     [key: string]: any
@@ -11,11 +10,11 @@ interface objectI {
 const Profile = () => {
 
     // useState Hooks   
-    const [response, setResponse] = useState<objectI>({});
-    const [user, setUser] = useState("");
-    const [page, setPage] = useState("1");
-    const [isLoading, setIsLoading] = useState(true);
-    const [userLoaded, setUserLoaded] = useState(false)
+    const [user, setUser] = useState<string>("");
+    const [page, setPage] = useState<string>("1");
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [userLoaded, setUserLoaded] = useState<boolean>(false)
+    const [tweetsArray, setTweetsArray] = useState<any[]>([]);
 
     // useEffect Hooks
     useEffect(() => {
@@ -32,98 +31,57 @@ const Profile = () => {
     useEffect(() => {
         if (userLoaded) {
             getTweets(user, page).then((r) => {
-                setResponse(r.data.tweets);
+                const tweetIds = Object.keys(r.data.tweets);
+                for (let i = tweetIds.length -1; i >= 0 ; i--) {
+                        setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
+                        
+                        console.log(i +tweetIds[i] );
+                    }
                 setTimeout(() => {
                     setIsLoading(false);
-                }, 0);
+                }, 100);
             }).catch((e) => {
                 console.log(e);
             });
         }
     }, [page, user])
 
-    console.log({ isLoading });
-
+     //Loader
     if (isLoading) {
         return <div className="App"></div>;
     }
 
-
     const listTweets = () => {
-        const tweets = (
+        //Delete (Replace for autoscroll)
+        if(page === "1"){
+          setPage("2");  
+        }
+        
+        const tweets = tweetsArray.map((tweet:objectI) => (
             <>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
+                <div key={tweet.id} className="tweet">
+                    <img className='tweet_img' src={tweet.tweetImage}></img>
                     <div className="tweet_author"> Tweet Author example</div>
                     <div className="tweet_content">
-                        <article>{response[9].description}</article>
+                        <article>{tweet.description}</article>
                     </div>
                 </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-                <div className="tweet">
-                    <img className='tweet_img' src={response[9].tweetImage}></img>
-                    <div className="tweet_author"> Tweet Author example</div>
-                    <div className="tweet_content">
-                        <article>{response[9].description}</article>
-                    </div>
-                </div>
-
-
             </>
+        )
         )
         return tweets;
     }
 
     return (
-        <>  
-        <div className='main'>
-            <div className='profile-container'>
-                <p>Profile Profile Profile Profile Profile</p>
-            </div>
-            <div className='tweets_container'>
-                {listTweets()}
-            </div>
-        </div >
+        <>
+            <div className='main'>
+                <div className='profile-container'>
+                    <p>Profile Profile Profile Profile Profile</p>
+                </div>
+                <div className='tweets_container'>
+                    {listTweets()}
+                </div>
+            </div >
         </>
     );
 }

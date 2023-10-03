@@ -27,7 +27,9 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
                 const response = await signIn(user!, password!);
                 const authToken = response.data.auth_token;
                 await localStorage.setItem('auth_token', authToken);
-                setAuthToken(authToken);
+                setTimeout(() => {
+                    setAuthToken(authToken);
+                }, 100);
                 navigate(page);
                 window.scrollTo(0, 0);
             } catch (error) {
