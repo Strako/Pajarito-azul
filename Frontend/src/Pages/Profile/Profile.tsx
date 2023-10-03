@@ -2,6 +2,8 @@ import './Profile.css'
 import { useState, useEffect } from 'react';
 import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
+import { Waypoint } from 'react-waypoint';
+
 
 interface objectI {
     [key: string]: any
@@ -11,10 +13,18 @@ const Profile = () => {
 
     // useState Hooks   
     const [user, setUser] = useState<string>("");
-    const [page, setPage] = useState<string>("1");
+    const [page, setPage] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
+    const [hasmore, setHasMore] = useState<boolean>(true);
+
+    //functions
+    const infiniteScroll = ()=>{
+        if(hasmore){
+            setPage(page + 1);
+        }
+    };
 
     // useEffect Hooks
     useEffect(() => {
@@ -30,7 +40,8 @@ const Profile = () => {
 
     useEffect(() => {
         if (userLoaded) {
-            getTweets(user, page).then((r) => {
+            getTweets(user, page.toString()).then((r) => {
+                if(r.data.message === undefined || r.data.message === ""){
                 const tweetIds = Object.keys(r.data.tweets);
                 for (let i = tweetIds.length -1; i >= 0 ; i--) {
                         setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
@@ -40,6 +51,9 @@ const Profile = () => {
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 100);
+            }else{
+                setHasMore(false);
+            }
             }).catch((e) => {
                 console.log(e);
             });
@@ -53,9 +67,7 @@ const Profile = () => {
 
     const listTweets = () => {
         //Delete (Replace for autoscroll)
-        if(page === "1"){
-          setPage("2");  
-        }
+
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
         const tweets = tweetsArray.map((tweet:objectI) => (
@@ -83,6 +95,11 @@ const Profile = () => {
                     {listTweets()}
                 </div>
             </div >
+            <Waypoint
+        onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
+        bottomOffset="0px"   // Adjust the offset if needed
+      />
+      
         </>
     );
 }

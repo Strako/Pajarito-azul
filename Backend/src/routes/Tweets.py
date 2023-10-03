@@ -50,6 +50,7 @@ def createTweet():
         data = {"message": "Tweet creado exitosamente"}
         return resfunc(data), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
