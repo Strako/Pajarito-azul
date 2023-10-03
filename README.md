@@ -74,6 +74,7 @@
          DBUSER= [db user]
          DBPASS= [db password]
          DBNAME= [db name]
+         
       (optional)   
           -Create a new venv inside de "Backend/" folder with the following commands:
              $ pip install virtualenv
