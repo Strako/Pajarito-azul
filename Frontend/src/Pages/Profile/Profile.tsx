@@ -21,7 +21,8 @@ const Profile = () => {
 
     //functions
     const infiniteScroll = () => {
-        //add if page < total else setHasMore(false), send total pages in json
+        //add if page < total else setHasMore(false), 
+        //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
         if (hasmore) {
             setPage(page + 1);
         }
