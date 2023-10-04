@@ -52,6 +52,7 @@ const Profile = () => {
                     setIsLoading(false);
                 }, 100);
             }).catch((e) => {
+                console.log(page);
                 console.log("error: " + e);
 
 
