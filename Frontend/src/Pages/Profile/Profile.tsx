@@ -20,8 +20,9 @@ const Profile = () => {
     const [hasmore, setHasMore] = useState<boolean>(true);
 
     //functions
-    const infiniteScroll = ()=>{
-        if(hasmore){
+    const infiniteScroll = () => {
+        //add if page < total else setHasMore(false), send total pages in json
+        if (hasmore) {
             setPage(page + 1);
         }
     };
@@ -39,38 +40,33 @@ const Profile = () => {
     }, [])
 
     useEffect(() => {
-        if (userLoaded) {
+        if (userLoaded && hasmore) {
             getTweets(user, page.toString()).then((r) => {
-                if(r.data.message === undefined || r.data.message === ""){
                 const tweetIds = Object.keys(r.data.tweets);
-                for (let i = tweetIds.length -1; i >= 0 ; i--) {
-                        setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-                        
-                        console.log(i +tweetIds[i] );
-                    }
+                for (let i = tweetIds.length - 1; i >= 0; i--) {
+                    setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
+                    //        console.log(i +tweetIds[i] );
+                }
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 100);
-            }else{
-                setHasMore(false);
-            }
             }).catch((e) => {
-                console.log(e);
+                console.log("error: " + e);
+
+
             });
         }
     }, [page, user])
 
-     //Loader
+    //Loader
     if (isLoading) {
         return <div className="App"></div>;
     }
 
     const listTweets = () => {
-        //Delete (Replace for autoscroll)
-
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
-        const tweets = tweetsArray.map((tweet:objectI) => (
+        const tweets = tweetsArray.map((tweet: objectI) => (
             <>
                 <div key={tweet.id} className="tweet">
                     <img className='tweet_img' src={tweet.tweetImage}></img>
@@ -96,10 +92,10 @@ const Profile = () => {
                 </div>
             </div >
             <Waypoint
-        onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-        bottomOffset="0px"   // Adjust the offset if needed
-      />
-      
+                onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
+                bottomOffset="0px"   // Adjust the offset if needed
+            />
+
         </>
     );
 }
