@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
+import SidebarTemplate from '../../Templates/SidebarTemplate';
 
 
 interface objectI {
@@ -85,19 +86,20 @@ const Profile = () => {
 
     return (
         <>
-            <div className='main'>
-                <div className='profile-container'>
-                    <p>Profile Profile Profile Profile Profile</p>
-                </div>
-                <div className='tweets_container'>
-                    {listTweets()}
-                </div>
-            </div >
-            <Waypoint
-                onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                bottomOffset="0px"   // Adjust the offset if needed
-            />
-
+            <SidebarTemplate>
+                <div className='main'>
+                    <div className='profile-container'>
+                        <p>Profile Profile Profile Profile Profile</p>
+                    </div>
+                    <div className='tweets_container'>
+                        {listTweets()}
+                    </div>
+                </div >
+                <Waypoint
+                    onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
+                    bottomOffset="0px"   // Adjust the offset if needed
+                />
+            </SidebarTemplate>
         </>
     );
 }

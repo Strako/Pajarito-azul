@@ -15,7 +15,7 @@ export function setAuthToken(token: string | null) {
 
 NewInstance.interceptors.request.use(
 	(config) => {
-		const authToken = localStorage.getItem("auth_token");
+		const authToken = sessionStorage.getItem("auth_token");
 		if (authToken) {
 			config.headers.Authorization = `Bearer ${authToken}`;
 		}

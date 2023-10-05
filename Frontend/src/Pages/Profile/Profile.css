@@ -1,7 +1,9 @@
+
+
 .main{
     display: grid;
     justify-content: center;
-    margin-top: -8px;
+    margin-top: -10px;
 }
 
 .profile-container {
@@ -57,4 +59,8 @@
 .tweet_content {
     color: white;
     margin-left: 60px;
+}
+
+.invalid_login{
+    color: red;
 }
