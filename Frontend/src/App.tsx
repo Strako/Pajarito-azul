@@ -1,16 +1,15 @@
-import { BrowserRouter,Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import PublicRoute from './Routes/PublicRoute'
 import ProtectedRoute from './Routes/ProtectedRoute'
 import NotFound from './Pages/NotFound/NotFound'
-import  Login from './Pages/Login/Login'
+import Login from './Pages/Login/Login'
 import Profile from './Pages/Profile/Profile'
 import Register from './Pages/Register/Register'
 import './App.css'
 
 function App() {
 
-  return(
-
+  return (
     <BrowserRouter>
       <Routes>
         <Route element={<PublicRoute />} >
@@ -18,8 +17,10 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-        <Route element={<ProtectedRoute/>} >
-          <Route path="/profile" element={<Profile/>} />
+        <Route element={<ProtectedRoute />} >
+
+          <Route path="/profile" element={<Profile />} />
+
         </Route>
 
         <Route path="*" element={<NotFound />} />
@@ -27,6 +28,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+
 
   )
 

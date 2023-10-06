@@ -2,6 +2,9 @@ import './Profile.css'
 import { useState, useEffect } from 'react';
 import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
+import { Waypoint } from 'react-waypoint';
+import SidebarTemplate from '../../Templates/SidebarTemplate';
+
 
 interface objectI {
     [key: string]: any
@@ -11,10 +14,20 @@ const Profile = () => {
 
     // useState Hooks   
     const [user, setUser] = useState<string>("");
-    const [page, setPage] = useState<string>("1");
+    const [page, setPage] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
+    const [hasmore, setHasMore] = useState<boolean>(true);
+
+    //functions
+    const infiniteScroll = () => {
+        //add if page < total else setHasMore(false), 
+        //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
+        if (hasmore) {
+            setPage(page + 1);
+        }
+    };
 
     // useEffect Hooks
     useEffect(() => {
@@ -29,35 +42,34 @@ const Profile = () => {
     }, [])
 
     useEffect(() => {
-        if (userLoaded) {
-            getTweets(user, page).then((r) => {
+        if (userLoaded && hasmore) {
+            getTweets(user, page.toString()).then((r) => {
                 const tweetIds = Object.keys(r.data.tweets);
-                for (let i = tweetIds.length -1; i >= 0 ; i--) {
-                        setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-                        
-                        console.log(i +tweetIds[i] );
-                    }
+                for (let i = tweetIds.length - 1; i >= 0; i--) {
+                    setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
+                    //        console.log(i +tweetIds[i] );
+                }
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 100);
             }).catch((e) => {
-                console.log(e);
+                console.log(page);
+                console.log("error: " + e);
+
+
             });
         }
     }, [page, user])
 
-     //Loader
+    //Loader
     if (isLoading) {
         return <div className="App"></div>;
     }
 
     const listTweets = () => {
-        //Delete (Replace for autoscroll)
-        if(page === "1"){
-          setPage("2");  
-        }
-        
-        const tweets = tweetsArray.map((tweet:objectI) => (
+        //tweet example
+        //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
+        const tweets = tweetsArray.map((tweet: objectI) => (
             <>
                 <div key={tweet.id} className="tweet">
                     <img className='tweet_img' src={tweet.tweetImage}></img>
@@ -74,14 +86,20 @@ const Profile = () => {
 
     return (
         <>
-            <div className='main'>
-                <div className='profile-container'>
-                    <p>Profile Profile Profile Profile Profile</p>
-                </div>
-                <div className='tweets_container'>
-                    {listTweets()}
-                </div>
-            </div >
+            <SidebarTemplate>
+                <div className='main'>
+                    <div className='profile-container'>
+                        <p>Profile Profile Profile Profile Profile</p>
+                    </div>
+                    <div className='tweets_container'>
+                        {listTweets()}
+                    </div>
+                </div >
+                <Waypoint
+                    onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
+                    bottomOffset="0px"   // Adjust the offset if needed
+                />
+            </SidebarTemplate>
         </>
     );
 }
