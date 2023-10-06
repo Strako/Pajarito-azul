@@ -63,7 +63,7 @@ const Register = () => {
             <div className='left'>
                 <img className="logo" src={Logo} alt="Page Logo" />
             </div>
-            <div className='right'>
+            <div className='right_register'>
                 <div className='title-container'><span >Lo que está pasando ahora</span></div>
                 <div className='subtitle-container'><span >Crea tu cuenta !</span></div>
 

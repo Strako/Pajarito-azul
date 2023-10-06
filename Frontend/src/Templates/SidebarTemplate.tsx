@@ -22,12 +22,14 @@ const SidebarTemplate = ({ children }: SidebarTemplateI) => {
                         <div className="sidebar_item">
                             Profle
                         </div>
-                        
+
                     </div>
                 </div>
 
                 <div className="body_container">
                     <div className="body">{children}</div>
+                </div>
+                <div className="left_container">
                 </div>
             </div>
         </>

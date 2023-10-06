@@ -10,7 +10,9 @@
     text-align: center;
     margin-top: -8px;
     color: white;
-    box-shadow: white 0px 0px 1px;
+    box-shadow: 0 -3px 1px -3px #ffffff;
+    box-shadow: 0 3px 1px -3px #ffffff;
+
     width: 566px;
     height: 500px;
     padding-top: 20px;
@@ -23,12 +25,11 @@
 
 .tweets_container {
 
-
 }
 
 .tweet {
     text-align: left;
-    box-shadow: white 0px 0px 1px;
+    box-shadow: 0 -3px 1px -3px #ffffff;
     width: 566px;
     height: auto;
     padding-top: 20px;

@@ -44,14 +44,21 @@ const Profile = () => {
     useEffect(() => {
         if (userLoaded && hasmore) {
             getTweets(user, page.toString()).then((r) => {
-                const tweetIds = Object.keys(r.data.tweets);
-                for (let i = tweetIds.length - 1; i >= 0; i--) {
-                    setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-                    //        console.log(i +tweetIds[i] );
-                }
-                setTimeout(() => {
+                console.log(r.data.message)
+                if (r.data.message === "Success") {
+                    const tweetIds = Object.keys(r.data.tweets);
+
+                    for (let i = tweetIds.length - 1; i >= 0; i--) {
+                        setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
+                        //        console.log(i +tweetIds[i] );
+                    }
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 100);
+                }else{
                     setIsLoading(false);
-                }, 100);
+                }
+
             }).catch((e) => {
                 console.log(page);
                 console.log("error: " + e);
