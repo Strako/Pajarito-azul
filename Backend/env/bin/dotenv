@@ -1,4 +1,4 @@
-#!/Users/s404/Documents/GitHub/Pajarito-azul/Backend/env/bin/python
+#!/home/s404/Pajarito-azul/Backend/env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

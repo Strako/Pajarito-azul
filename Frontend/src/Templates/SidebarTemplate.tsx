@@ -9,7 +9,21 @@ const SidebarTemplate = ({ children }: SidebarTemplateI) => {
         <>
             <div className="sidebar_container">
                 <div className="sidebar">
-                LOLLOLLOLLOLLOLLOLLOLLOLLOLOLLOLLOLLOLLOLLOLLOLLOLLOLLOLLOLLOLLOL
+                    <div className="sidebar_content">
+                        <div className="sidebar_item">
+                            Home
+                        </div>
+                        <div className="sidebar_item">
+                            Explore
+                        </div>
+                        <div className="sidebar_item">
+                            Notifications
+                        </div>
+                        <div className="sidebar_item">
+                            Profle
+                        </div>
+                        
+                    </div>
                 </div>
 
                 <div className="body_container">

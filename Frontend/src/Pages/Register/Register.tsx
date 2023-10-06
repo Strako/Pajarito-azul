@@ -1,5 +1,5 @@
 import Input from '../../Components/Inputs/Input'
-import Button from '../../Components/Buttons/Button'
+import Button from '../../Components/Buttons/SignIn_SignUp/Button'
 import { useState } from "react";
 import './Register.css'
 import Logo from '../../Images/logo.png'
