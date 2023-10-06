@@ -114,7 +114,7 @@ def getTweetsOf(user):
         data_json = {}
         if len(dbres) == 0:
             msg = {"message":"No se encontraron tweets"}
-            return resfunc(msg), 401
+            return resfunc(msg), 200
         else:
             for tweet in dbres:
                 data_json[
@@ -125,7 +125,7 @@ def getTweetsOf(user):
                     "tweetImage": tweet[3],
                     "datetime": tweet[4]
                 }
-            data = {"tweets": data_json}
+            data = {"tweets": data_json, "message" : "Success"}
             return resfunc(data), 200
     except Exception as e:
         print (e)

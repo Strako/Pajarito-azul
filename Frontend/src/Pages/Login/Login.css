@@ -30,7 +30,7 @@
     letter-spacing: -1.2px;
     font-size: 64px;
     margin-top: 30px;
-    margin-bottom: 30px    ;
+    margin-bottom: 30px;
 }
 
 .login-container .right .subtitle-container{
@@ -42,12 +42,3 @@
     font-size: 31px;
 }  
 
-.invalid_login{
-    font-family: Verdana;
-    font-weight: bold;
-    color: rgb(255, 74, 74);
-    line-height: 20px;
-    letter-spacing: -1.2px;
-    font-size: 12px;
-    padding-left: 16px
-}

@@ -2,7 +2,7 @@ import './Button.css'
 import { useNavigate } from "react-router-dom";
 import signUp from "../../../API/Register"
 import signIn from "../../../API/Login"
-import {  notification } from 'antd'
+import { notification } from 'antd'
 
 
 
@@ -15,6 +15,10 @@ interface buttonProps {
     name?: string;
     password?: string;
 }
+
+interface objectI {
+    [key: string]: any
+}
 //type:
 //1 login (Call EP)
 //2 navigate create account
@@ -25,42 +29,50 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
     const navigate = useNavigate();
     const [api, contextHolder] = notification.useNotification();
 
-    const openNotification = (title: string, message: string, type: string) => {
+    const openNotification = (title: string, message: string, type: string, time?: number) => {
         api.open({
             message: title,
-            description:message,
-            duration: 2.0,
+            description: message,
+            duration: time == null ? 2 : time,
             className: type == "error" ? "notification-error" : "notification",
-            style: {backgroundColor: type == "error" ? "#d39999" : "rgb(26, 150, 244)"}
+            style: { backgroundColor: type == "error" ? "#d39999" : "rgb(26, 150, 244)" }
 
         });
     };
 
     const handleButton = async () => {
         if (type === 1) {
-            try {
-                const response = await signIn(user!, password!);
-                const authToken = response.data.auth_token;
-                await sessionStorage.setItem('auth_token', authToken);
-                openNotification("Successful login: ", response.data.message, "success")
+            signIn(user!, password!).then((r) => {
+                const authToken = r.data.auth_token;
+                sessionStorage.setItem('auth_token', authToken);
+                openNotification("Successful login: ", r.data.message, "success")
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);
                 }, 2000);
-
-            } catch (error) {
-                openNotification("Invalid login: ", String(error), "error")
-                console.error(error);
-            }
+            }).catch((error) => {
+                openNotification("Invalid login: ", String(error.response.data.message), "error", 3)
+                console.error(error.response.data.message);
+            })
 
         } if (type === 2) {
             navigate(page);
 
         } if (type === 3) {
             //Crear cuenta
-            signUp(name!, user!, password!)
-            console.log(name, user, password)
-            navigate(page);
+            signUp(name!, user!, password!).then((r) => {
+                openNotification("Account created succesfully: ", r.data.message, "success")
+                setTimeout(() => {
+                    navigate(page);
+                    window.scrollTo(0, 0);
+                }, 2000);
+            }).catch((error) => {
+                openNotification("Invalid data: ", String(error.response.data.message), "error", 3)
+                console.error(error.response.data.message);
+            })
+
+
+
         }
 
     }
