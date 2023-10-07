@@ -45,13 +45,13 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
             signIn(user!, password!).then((r) => {
                 const authToken = r.data.auth_token;
                 sessionStorage.setItem('auth_token', authToken);
-                openNotification("Successful login: ", r.data.message, "success")
+                openNotification("Inicio de sesión exitoso: ", r.data.message, "success")
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);
                 }, 2000);
             }).catch((error) => {
-                openNotification("Invalid login: ", String(error.response.data.message), "error", 3)
+                openNotification("Datos inválidos: ", String(error.response.data.message), "error", 3)
                 console.error(error.response.data.message);
             })
 
@@ -61,13 +61,13 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
         } if (type === 3) {
             //Crear cuenta
             signUp(name!, user!, password!).then((r) => {
-                openNotification("Account created succesfully: ", r.data.message, "success")
+                openNotification("Cuenta creada exitosamente: ", r.data.message, "success")
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);
                 }, 2000);
             }).catch((error) => {
-                openNotification("Invalid data: ", String(error.response.data.message), "error", 3)
+                openNotification("Datos inválidos: ", String(error.response.data.message), "error", 3)
                 console.error(error.response.data.message);
             })
 
