@@ -15,10 +15,6 @@ interface buttonProps {
     name?: string;
     password?: string;
 }
-
-interface objectI {
-    [key: string]: any
-}
 //type:
 //1 login (Call EP)
 //2 navigate create account
@@ -33,7 +29,7 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
         api.open({
             message: title,
             description: message,
-            duration: time == null ? 2 : time,
+            duration: time == null ? 1.5 : time,
             className: type == "error" ? "notification-error" : "notification",
             style: { backgroundColor: type == "error" ? "#d39999" : "rgb(26, 150, 244)" }
 
@@ -45,13 +41,13 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
             signIn(user!, password!).then((r) => {
                 const authToken = r.data.auth_token;
                 sessionStorage.setItem('auth_token', authToken);
-                openNotification("Successful login: ", r.data.message, "success")
+                openNotification("Inicio de sesión exitoso: ", r.data.message, "success")
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);
                 }, 2000);
             }).catch((error) => {
-                openNotification("Invalid login: ", String(error.response.data.message), "error", 3)
+                openNotification("Datos inválidos: ", String(error.response.data.message), "error", 3)
                 console.error(error.response.data.message);
             })
 
@@ -61,13 +57,13 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
         } if (type === 3) {
             //Crear cuenta
             signUp(name!, user!, password!).then((r) => {
-                openNotification("Account created succesfully: ", r.data.message, "success")
+                openNotification("Cuenta creada exitosamente: ", r.data.message, "success")
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);
                 }, 2000);
             }).catch((error) => {
-                openNotification("Invalid data: ", String(error.response.data.message), "error", 3)
+                openNotification("Datos inválidos: ", String(error.response.data.message), "error", 3)
                 console.error(error.response.data.message);
             })
 
