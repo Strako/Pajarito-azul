@@ -1,8 +1,8 @@
 import Input from '../../Components/Inputs/Input'
 import  Button from '../../Components/Buttons/SignIn_SignUp/Button'
 import { useState } from "react";
-import './Login.css'
 import Logo from '../../Images/logo.png'
+import './Login.css'
 
 const Login = () => {
 

@@ -15,10 +15,6 @@ interface buttonProps {
     name?: string;
     password?: string;
 }
-
-interface objectI {
-    [key: string]: any
-}
 //type:
 //1 login (Call EP)
 //2 navigate create account
@@ -33,7 +29,7 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
         api.open({
             message: title,
             description: message,
-            duration: time == null ? 2 : time,
+            duration: time == null ? 1.5 : time,
             className: type == "error" ? "notification-error" : "notification",
             style: { backgroundColor: type == "error" ? "#d39999" : "rgb(26, 150, 244)" }
 
