@@ -119,7 +119,7 @@ def getTweetsOf(user):
         data_json = {}
         if len(dbres) == 0:
             msg = {"message":"No se encontraron tweets"}
-            return resfunc(msg), 401
+            return resfunc(msg), 200
         else:
             for tweet in dbres:
                 data_json[
@@ -149,7 +149,7 @@ def getOne(tweet_id):
 
         if len(dbres) == 0:
             data = {"message": "Tweet no encontrado"}
-            return resfunc(data), 404
+            return resfunc(data), 200
 
         data = {
             "tweetID": dbres[0][0],
@@ -197,7 +197,7 @@ def updateTweet(tweet_id):
         else:
             data = {
                 "message": "No se encontró el tweet o no tienes permiso para actualizarlo"}
-            return resfunc(data), 404
+            return resfunc(data), 200
     except Exception as e:
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
@@ -230,7 +230,7 @@ def deleteTweet(tweet_id):
         else:
             data = {
                 "message": "No se encontró el tweet o no tienes permiso para eliminarlo"}
-            return resfunc(data), 404
+            return resfunc(data), 200
 
     except Exception as e:
         data = {"message": "Error al conectarse a la base de datos"}
