@@ -59,5 +59,5 @@ def verify_token(f):
             return resfunc(res), 401
         except Exception as e:
             res = {"message": f"BackEnd Error: {e}"}
-            return resfunc(res), 401
+            return resfunc(res), 500
     return decorated
