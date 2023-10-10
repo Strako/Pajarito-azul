@@ -1,15 +1,18 @@
-*{
-    margin:0;
+* {
+    margin: 0;
     padding-top: 0;
 }
+
 .sidebar_container {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    margin-left: px;
+    justify-content: center;
+    margin-top: -4px;
+
 }
 
-.left_container{
+.left_container {
     box-shadow: -3px 0 1px -3px rgb(255, 255, 255);
     flex: 0 0 300px;
 
@@ -20,7 +23,7 @@
     /* Set the sidebar's width to 300px */
     overflow-wrap: break-word;
     /* Allow text to break into multiple lines */
-    margin-left: 420px;
+    margin-left: 10%;
     box-shadow: 3px 0 1px -3px #ffffff;
     max-width: 300px;
 
@@ -36,108 +39,110 @@
 
 
 }
+
 .logo_sidebar {
     margin: 0 0 30px 0;
     padding-left: 30px;
     padding-right: 30px;
     padding-top: 10px;
     padding-bottom: 10px;
-    
+
 }
 
 .sidebar_item {
     text-align: left;
     font-size: 20px;
 
-    font-family:sans-serif;    
+    font-family: sans-serif;
     color: white;
     margin: 0 0 30px 0;
     padding-left: 30px;
     padding-right: 30px;
     padding-top: 10px;
     padding-bottom: 10px;
-    
+
 }
 
 .tweet_button {
     text-align: center;
     font-size: 20px;
     font-weight: bold;
-    font-family:sans-serif;    
+    font-family: sans-serif;
     color: white;
     margin: 0 0 30px 0;
     padding-left: 30px;
     padding-right: 30px;
     padding-top: 10px;
     padding-bottom: 10px;
-    background-color: rgb(26, 150, 244); 
-    border-radius: 30px; 
+    background-color: rgb(26, 150, 244);
+    border-radius: 30px;
 
 
-    
+
 }
 
 .sidebar_logout {
     text-align: left;
     font-size: 20px;
 
-    font-family:sans-serif;    
+    font-family: sans-serif;
     color: white;
     margin: 0 0 30px 0;
     padding-left: 30px;
     padding-right: 30px;
     padding-top: 10px;
     padding-bottom: 10px;
-    margin-top: 350px;
+    margin-top: 200px;
 }
 
 .sidebar_logout:hover {
-    background-color: rgb(17, 17, 17); 
-    border-radius: 30px; 
-    cursor:pointer;
+    background-color: rgb(17, 17, 17);
+    border-radius: 30px;
+    cursor: pointer;
 }
 
 .tweet_button:hover {
-    background-color: rgba(26, 150, 244, 0.911); 
+    background-color: rgba(26, 150, 244, 0.911);
     transition-duration: 0.5s;
     transition-property: background-color;
-    border-radius: 30px; 
-    cursor:pointer;
-    
+    border-radius: 30px;
+    cursor: pointer;
+
 }
 
-.sidebar_item:hover{
-    background-color: rgb(17, 17, 17); 
-    border-radius: 30px; 
-    cursor:pointer;
+.sidebar_item:hover {
+    background-color: rgb(17, 17, 17);
+    border-radius: 30px;
+    cursor: pointer;
 }
 
 .body_container {
     flex: 1 1 auto;
     margin-right: 0;
     max-width: 620px;
-    
+
 
 }
 
 @media screen and (max-height: 1000px) {
     .sidebar_content {
-        height: calc(100vh - 0px); /* Set the height to 100% viewport height minus 100px for other elements */
+        height: calc(100vh - 0px);
+        /* Set the height to 100% viewport height minus 100px for other elements */
         overflow-y: auto;
-        
+
     }
 }
 
 @media screen and (max-width: 1400px) {
     .sidebar {
-        margin-left: 200px;
-        
+        margin-left: 20%;
+
     }
 }
 
 @media screen and (max-width: 1100px) {
     .sidebar {
-        margin-left: 50px;
-        
+        margin-left: 20%;
+
     }
 }

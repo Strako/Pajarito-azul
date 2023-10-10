@@ -38,7 +38,7 @@ def signUp():
     """
     data = request.get_json()
     if data['user'] == "" or data['password'] == "" or data['name'] == "":
-        return jsonify({"message": "los datos enviados no son validos o existen campos vacios"}), 400
+        return jsonify({"message": "los datos enviados no son validos o existen campos vacios"}), 401
     else:
         try:
             usr = data['user']
@@ -61,13 +61,13 @@ def signUp():
                         return resfunc(data), 200
                     else:
                         data = {"message": "la contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
-                        return resfunc(data), 400
+                        return resfunc(data), 200
                 else:
                     data = {"message": "el usuario debe tener entre 1 y 15 caracteres"}
-                    return resfunc(data), 400
+                    return resfunc(data), 200
             else:
                 data = {"message": "el usuario ya existe en la base de datos"}
-                return resfunc(data), 409
+                return resfunc(data), 200
         except Exception as e:
             data = {"message": "Error en la consulta a la base de datos"}
             return resfunc(data), 500
@@ -90,7 +90,7 @@ def singIn():
     data = request.get_json()
     if data['user'] == "" or data['password'] == "":
         data = {"message": "los datos enviados no son validos o existen campos vacios"}
-        return resfunc(data), 400
+        return resfunc(data), 401
     else:
         if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
             try:
@@ -101,7 +101,7 @@ def singIn():
                 dbres = cur.fetchall()
                 cur.close()
                 if len(dbres) == 0:
-                    return jsonify({"message": "el usuario no existe"}), 409
+                    return jsonify({"message": "el usuario no existe"}), 200
                 else:
                     for user in dbres:
                         if check_password_hash(user[3], data['password']):
@@ -112,13 +112,13 @@ def singIn():
                             return resfunc(data), 200
                         else:
                             data = {"message": "la contraseña es incorrecta"}
-                            return resfunc(data), 400
+                            return resfunc(data), 200
             except Exception as e:
                 data = {"message": "Error en la consulta a la base de datos"}
                 return resfunc(data), 500
         else:
             data = {"message": "la contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
-            return resfunc(data), 400
+            return resfunc(data), 200
 
 #TODO make a route to get user data and another user routes
 @User.route('/get-data-user', methods=['GET'])
@@ -134,7 +134,34 @@ def getDataUser():
         cur.close()
         if not user_data:
             data =  {"message": "El usuario no existe"}
-            return resfunc(data), 404
+            return resfunc(data), 200
+        user_dict = {
+            "userid": user_data[0],
+            "user": user_data[1],
+            "name": user_data[2],
+            "userImage": user_data[3],
+            "description": user_data[4]
+        }
+        return resfunc(user_dict), 200
+    except Exception as e:
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+
+@User.route('/get-data-user-byId', methods=['POST'])
+@verify_token
+def getDataUserById():
+    try:
+        data = request.get_json()
+        userId = data["userId"]
+        cur = conn.cursor()
+        query = "SELECT userid, user, name, userImage, description FROM users WHERE userid = %s;"
+        cur.execute(query, (userId,))
+        user_data = cur.fetchone()
+        cur.close()
+        if not user_data:
+            data = {"message": "El usuario no existe"}
+            return resfunc(data), 200
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],

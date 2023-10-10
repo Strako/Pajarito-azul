@@ -50,7 +50,6 @@ def createTweet():
         data = {"message": "Tweet creado exitosamente"}
         return resfunc(data), 200
     except Exception as e:
-        print(e)
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
@@ -71,6 +70,9 @@ def getAll():
         # Calcular el desplazamiento para la paginación
         offset = (page - 1) * per_page
 
+        queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM tweets where userid=%s;"
+        cur.execute(queryNoPages, (per_page, userID))
+        totalPages = cur.fetchall()[0][0]
         # Modificar la consulta SQL para incluir paginación
         query = """
             SELECT * FROM tweets
@@ -91,7 +93,7 @@ def getAll():
                 "tweetImage": tweet[3],
                 "datetime": tweet[4]
             }
-        data = {"tweets":data_json}
+        data = {"totalPages":f'{totalPages}', "tweets":data_json}
         return resfunc(data), 200
     except Exception as e:
         data = {"message": "Error al conectarse a la base de datos"}
@@ -107,6 +109,9 @@ def getTweetsOf(user):
     offset = (page - 1) * per_page
     try:
         cur = conn.cursor()
+        queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM tweets where userid=(select userid from users where user=%s);"
+        cur.execute(queryNoPages, (per_page, user))
+        totalPages = cur.fetchall()[0][0]
         query = "select * from tweets where userid = (select userid from users where user=%s) ORDER BY datetime DESC LIMIT %s OFFSET %s;"
         cur.execute(query, (user, per_page, offset))
         dbres = cur.fetchall()
@@ -125,7 +130,7 @@ def getTweetsOf(user):
                     "tweetImage": tweet[3],
                     "datetime": tweet[4]
                 }
-            data = {"tweets": data_json, "message" : "Success"}
+            data = {"totalPages":f'{totalPages}', "tweets": data_json}
             return resfunc(data), 200
     except Exception as e:
         print (e)
