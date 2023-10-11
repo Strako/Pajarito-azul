@@ -101,7 +101,7 @@ def singIn():
                 dbres = cur.fetchall()
                 cur.close()
                 if len(dbres) == 0:
-                    return jsonify({"message": "el usuario no existe"}), 200
+                    return jsonify({"message": "el usuario no existe"}), 401
                 else:
                     for user in dbres:
                         if check_password_hash(user[3], data['password']):
@@ -134,7 +134,7 @@ def getDataUser():
         cur.close()
         if not user_data:
             data =  {"message": "El usuario no existe"}
-            return resfunc(data), 200
+            return resfunc(data), 401
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],
