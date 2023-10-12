@@ -4,7 +4,8 @@ import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 interface objectI {
     [key: string]: any
@@ -12,7 +13,7 @@ interface objectI {
 
 const Profile = () => {
 
-    // useState Hooks   
+    //useState Hooks   
     const [user, setUser] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
@@ -21,6 +22,10 @@ const Profile = () => {
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
     const [hasmore, setHasMore] = useState<boolean>(true);
 
+    //constants
+    const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
+
+
     //functions
     const infiniteScroll = () => {
         //add if page < total else setHasMore(false), 
@@ -28,12 +33,12 @@ const Profile = () => {
         if (page < totalPages) {
             setPage(page + 1);
 
-        }else{
+        } else {
             setHasMore(false)
         }
     };
 
-    // useEffect Hooks
+    //useEffect Hooks
     useEffect(() => {
         //      setAuthToken(localStorage.getItem('auth_token'));
         getUserData().then((r) => {
@@ -48,18 +53,20 @@ const Profile = () => {
     useEffect(() => {
         if (userLoaded && hasmore) {
             getTweets(user, page.toString()).then((r) => {
-                    setTotalPages(r.data.totalPages);
-                    const tweetIds = Object.keys(r.data.tweets);
-                    for (let i = tweetIds.length - 1; i >= 0; i--) {
-                        setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-                        //        console.log(i +tweetIds[i] );
-                    }
-                    setTimeout(() => {
-                        setIsLoading(false);
-                    }, 100);
+                setTotalPages(r.data.totalPages);
+                const tweetIds = Object.keys(r.data.tweets);
+                for (let i = tweetIds.length - 1; i >= 0; i--) {
+                    setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
+                    //        console.log(i +tweetIds[i] );
+                }
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 250);
             }).catch((e) => {
                 console.log(page);
-                console.log("error: " + e);
+                console.log("error " + e);
+                setHasMore(false);
+                setIsLoading(false);
 
 
             });
@@ -68,7 +75,7 @@ const Profile = () => {
 
     //Loader
     if (isLoading) {
-        return <div className="App"></div>;
+        return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
     }
 
     const listTweets = () => {

@@ -119,7 +119,7 @@ def getTweetsOf(user):
         data_json = {}
         if len(dbres) == 0:
             msg = {"message":"No se encontraron tweets"}
-            return resfunc(msg), 200
+            return resfunc(msg), 401
         else:
             for tweet in dbres:
                 data_json[
