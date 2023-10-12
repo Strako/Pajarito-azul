@@ -63,7 +63,7 @@
 ***
 
 
-# [Backend] Python + Flask + Jinja
+# [Backend] Python + Flask
    ## How to start Backend server
       
       -Restore the DB backup located inside "Backend/DB" (MYSQL / MariaDB)
@@ -74,7 +74,14 @@
          DBUSER= [db user]
          DBPASS= [db password]
          DBNAME= [db name]
-
+         
+      (optional)   
+          -Create a new venv inside de "Backend/" folder with the following commands:
+             $ pip install virtualenv
+             $ virtualenv env
+          -Activate the viertual env you have created:
+             $ source env/bin/activate
+         
       -Install all the dependencies inside requeriments.txt file located at "Backend/src/requeriments.txt"
          $ pip install -r requirements.txt
       
