@@ -23,10 +23,6 @@
 
 }
 
-.tweets_container {
-
-}
-
 .tweet {
     text-align: left;
     box-shadow: 0 -3px 1px -3px #ffffff;
@@ -34,9 +30,12 @@
     height: auto;
     padding-top: 20px;
     padding-left: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     padding-right: 50px;
+}
 
+.tweet:hover{
+    cursor:pointer;
 }
 
 .tweet_img {
@@ -78,4 +77,48 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+}
+
+
+
+.like_icon{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom:8px;
+    display: inline-block;
+}
+
+.like_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgba(250, 72, 141, 0.2);
+    border-radius: 30px;
+}
+
+.likes_number{
+    padding-right: 100px;
+    padding-left: 10px;
+    display: inline-block;
+}
+
+.comment_icon{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.comment_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgb(26, 150, 244, 0.2);
+    border-radius: 30px;
+}
+
+.comments_number{
+    padding-right: 100px;
+    padding-left: 10px;
+    display: inline-block;
 }

@@ -108,7 +108,7 @@ def singIn():
                             payload = {"userID": user[0], "user": user[1]}
                             authtoken = encode_data(
                              payload, os.getenv("SECRET_KEY"))
-                            data = {"message": "logged in", "auth_token": f"{authtoken}", "userID": f"{user[0]}"}
+                            data = {"message": "Logged in", "auth_token": f"{authtoken}", "userID": f"{user[0]}"}
                             return resfunc(data), 200
                         else:
                             data = {"message": "la contraseña es incorrecta"}

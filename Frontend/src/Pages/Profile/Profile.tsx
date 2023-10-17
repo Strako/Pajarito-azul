@@ -4,7 +4,7 @@ import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined, HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
 interface objectI {
@@ -21,6 +21,8 @@ const Profile = () => {
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
     const [hasmore, setHasMore] = useState<boolean>(true);
+    const [likesNumber, setLikesNumber] = useState<number>(0)
+    const [commentsNumber, setCommentNumber] = useState<number>(0)
 
     //constants
     const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
@@ -40,7 +42,6 @@ const Profile = () => {
 
     //useEffect Hooks
     useEffect(() => {
-        //      setAuthToken(localStorage.getItem('auth_token'));
         getUserData().then((r) => {
             setUser(r.data.user);
             setUserLoaded(true);
@@ -57,18 +58,17 @@ const Profile = () => {
                 const tweetIds = Object.keys(r.data.tweets);
                 for (let i = tweetIds.length - 1; i >= 0; i--) {
                     setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-                    //        console.log(i +tweetIds[i] );
                 }
                 setTimeout(() => {
                     setIsLoading(false);
-                }, 250);
+                }, 1000);
             }).catch((e) => {
                 console.log(page);
                 console.log("error " + e);
                 setHasMore(false);
-                setIsLoading(false);
-
-
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 500);
             });
         }
     }, [page, user])
@@ -88,6 +88,10 @@ const Profile = () => {
                     <div className="tweet_author"> Tweet Author example</div>
                     <div className="tweet_content">
                         <article>{tweet.description}</article>
+                        <div className="like_icon"><HeartOutlined />  </div>
+                        <div className="likes_number">{likesNumber}</div>
+                        <div className="comment_icon"><CommentOutlined /> </div>
+                        <div className="comments_number">{commentsNumber}</div>
                     </div>
                 </div>
             </>
