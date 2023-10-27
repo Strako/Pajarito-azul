@@ -4,8 +4,10 @@ import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
+import {printDebugg} from '../../Components/LikeTweet/LikeTweet';
 import { LoadingOutlined, HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+
 
 interface objectI {
     [key: string]: any
@@ -39,6 +41,10 @@ const Profile = () => {
             setHasMore(false)
         }
     };
+
+  //  const printDebugg = (event: any) => {
+  //     console.log("cliked" + event.currentTarget.parentElement.parentElement.id)
+  // }
 
     //useEffect Hooks
     useEffect(() => {
@@ -83,13 +89,13 @@ const Profile = () => {
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
-                <div key={tweet.id} className="tweet">
+                <div key={tweet.tweetID} id={tweet.tweetID}  className="tweet">
                     <img className='tweet_img' src={tweet.tweetImage}></img>
                     <div className="tweet_author"> Tweet Author example</div>
                     <div className="tweet_content">
-                        <article>{tweet.description}</article>
-                        <div className="like_icon"><HeartOutlined />  </div>
-                        <div className="likes_number">{likesNumber}</div>
+                        <article >{tweet.description} </article>
+                        <div className="like_icon" onClick={printDebugg}><HeartOutlined />  </div>
+                        <div className="likes_number" >{likesNumber}</div>
                         <div className="comment_icon"><CommentOutlined /> </div>
                         <div className="comments_number">{commentsNumber}</div>
                     </div>
