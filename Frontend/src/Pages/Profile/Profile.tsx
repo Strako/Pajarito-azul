@@ -4,7 +4,7 @@ import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import {printDebugg} from '../../Components/LikeTweet/LikeTweet';
+import { printDebugg } from '../../Components/LikeTweet/LikeTweet';
 import { LoadingOutlined, HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 
@@ -42,9 +42,9 @@ const Profile = () => {
         }
     };
 
-  //  const printDebugg = (event: any) => {
-  //     console.log("cliked" + event.currentTarget.parentElement.parentElement.id)
-  // }
+    //  const printDebugg = (event: any) => {
+    //     console.log("cliked" + event.currentTarget.parentElement.parentElement.id)
+    // }
 
     //useEffect Hooks
     useEffect(() => {
@@ -89,7 +89,7 @@ const Profile = () => {
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
-                <div key={tweet.tweetID} id={tweet.tweetID}  className="tweet">
+                <div key={tweet.tweetID} id={tweet.tweetID} className="tweet">
                     <img className='tweet_img' src={tweet.tweetImage}></img>
                     <div className="tweet_author"> Tweet Author example</div>
                     <div className="tweet_content">
