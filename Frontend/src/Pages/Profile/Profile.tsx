@@ -119,7 +119,7 @@ const Profile = () => {
                 </div >
                 <Waypoint
                     onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                    bottomOffset="0px"   // Adjust the offset if needed
+                    bottomOffset="-10px"   // Adjust the offset if needed
                 />
             </SidebarTemplate>
         </>
