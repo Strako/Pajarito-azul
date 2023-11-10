@@ -43,6 +43,7 @@
     height: 50px;
     border-radius: 100px;
     margin-top: -10px;
+    
 
 }
 
@@ -59,6 +60,8 @@
 .tweet_content {
     color: white;
     margin-left: 60px;
+    font-family: sans-serif;
+
 }
 
 .invalid_login{
