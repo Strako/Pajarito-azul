@@ -1,2 +1,4 @@
-.env
-_pycache_
+src/.env
+src/_pycache_
+src/utils/__pycache__
+src/routes/__pycache__
