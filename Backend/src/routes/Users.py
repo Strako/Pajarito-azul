@@ -120,7 +120,6 @@ def singIn():
             data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
             return resfunc(data), 401
 
-#TODO make a route to get user data and another user routes
 @User.route('/get-data-user', methods=['GET'])
 @verify_token
 def getDataUser():
@@ -173,3 +172,47 @@ def getDataUserById():
     except Exception as e:
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+
+@User.route("/search-user/<string:user>", methods=["GET"])
+@verify_token
+def search_user(user):
+    #get params for pagination
+    page = request.args.get('page', default=1, type=int)
+    per_page = request.args.get('per_page', default=10, type=int)
+    #calculate offset for pagination
+    offset = (page - 1) * per_page
+    try:
+        usr = user + "%"
+        cur = conn.cursor()
+        query_num_pages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM users WHERE user LIKE %s;"
+        cur.execute(query_num_pages, (per_page, usr))
+        num_pages = (cur.fetchone())[0]
+        query = "SELECT userid, user, name, userImage, description FROM users WHERE user LIKE %s LIMIT %s OFFSET %s;"
+        cur.execute(query, (usr, per_page, offset))
+        users = cur.fetchall()
+        data_json = {}
+        if len(users) == 0:
+            data = {"message": "Usuario no encontrado"}
+            return resfunc(data), 200
+        for user in users:
+            data_json [
+                user[0]] = {
+                    "user": user[1],
+                    "name": user[2],
+                    "userImage": user[3],
+                    "description": user[4]
+                }
+        data = {
+            "total_paginas": f"{num_pages}",
+            "usuarios": data_json
+        }
+        return resfunc(data), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+@User.route("/update-user", methods=["PUT"])
+def update_user():
+    #TODO crear ruta para actualizar usuario
+    pass
