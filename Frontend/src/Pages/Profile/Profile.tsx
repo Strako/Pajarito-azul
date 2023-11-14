@@ -10,7 +10,8 @@ import { Spin, Modal, Input } from 'antd';
 import deleteTweetById from '../../API/DeleteTweetByID';
 import editTweet from '../../API/EditTweet';
 import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
-import getTweetsByID from '../../API/GetTweetsByID';
+import getTweetByID from '../../API/GetTweetByID';
+import { useNavigate, useNavigation } from "react-router-dom";
 
 
 
@@ -37,17 +38,17 @@ const Profile = () => {
     const [contentEditTweet, setContentEditTweet] = useState("");
 
     //constants
+    const navigate = useNavigate();
     const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
 
     //functions
     const showModal = () => {
-        getTweetsByID(editTweetID).then((r) => {
+        getTweetByID(editTweetID).then((r) => {
             setTimeout(() => {
                 setContentEditTweet(r.data.description)
                 console.log(r.data.description)
             }, 0);
             setOpen(true);
-
         })
     };
 
@@ -136,7 +137,12 @@ const Profile = () => {
         if (userLoaded && hasmore) {
             saveTweets();
         }
-    }, [page, user])
+    }, [page, user]);
+
+    useEffect(() => {
+        showModal();
+    }, [editTweetID]);
+
 
     //Loader
     if (isLoading) {
@@ -148,14 +154,17 @@ const Profile = () => {
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
-                <div key={tweet.tweetID} id={tweet.tweetID} className="tweet">
+                <div key={tweet.tweetID} id={tweet.tweetID} className="tweet" >
                     <img className='tweet_img' src={tweet.tweetImage}></img>
                     <div className="tweet_author"> {user.user}</div>
                     <div className="tweet_content">
                         <article >{tweet.description} </article>
                         <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
                         <div className="likes_number" >{likesNumber}</div>
-                        <div className="comment_icon"><CommentOutlined /> </div>
+                        <div className="comment_icon" onClick={(event) => {
+                    navigate("/single-tweet/" + getTweetId(event));
+                    console.log(getTweetId(event))
+                }}><CommentOutlined /> </div>
                         <div className="comments_number">{commentsNumber}</div>
                         <div className="delete_icon" onClick={(e) => {
                             deleteTweetById(e);
@@ -164,11 +173,9 @@ const Profile = () => {
                         }}><DeleteOutlined /></div>
                         <div className="edit_icon"
                             onClick={(event) => {
-                                setEditTweetID(getTweetId(event))
-                                showModal();
-                            }
-                            }
-                        ><EditOutlined /></div>
+                                setEditTweetID(getTweetId(event));
+                            }}>
+                            <EditOutlined /></div>
                     </div>
                 </div>
             </>

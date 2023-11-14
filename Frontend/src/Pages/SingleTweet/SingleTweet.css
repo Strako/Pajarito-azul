@@ -1,0 +1,140 @@
+
+
+.main{
+    display: grid;
+    justify-content: center;
+    margin-top: 0px;
+}
+
+.tweet {
+    text-align: left;
+    box-shadow: 0 -3px 1px -3px #ffffff;
+    width: 566px;
+    height: auto;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 50px;
+}
+
+.tweet:hover{
+    cursor:pointer;
+}
+
+.tweet_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    margin-top: -10px;
+    
+
+}
+
+.tweet_author {
+    color: white;
+    margin-top: -45px;
+    margin-left: 60px;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    font-weight: 900;
+
+}
+
+.tweet_content {
+    color: white;
+    margin-left: 60px;
+    font-family: sans-serif;
+
+}
+
+.invalid_login{
+    color: red;
+}
+
+.spin_loader{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.spin_loader_tweet{
+    position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+
+.like_icon{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom:8px;
+    display: inline-block;
+}
+
+.like_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgba(250, 72, 141, 0.2);
+    border-radius: 30px;
+}
+
+.likes_number{
+    padding-right: 100px;
+    padding-left: 10px;
+    display: inline-block;
+}
+
+.comment_icon{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.comment_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgb(26, 150, 244, 0.2);
+    border-radius: 30px;
+}
+.delete_icon{
+    margin-left: 100px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.delete_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgba(244, 26, 26, 0.2);
+    border-radius: 30px;
+}
+
+.edit_icon{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.edit_icon:hover{
+    cursor:pointer;
+    align-items: center;
+    background-color: rgba(164, 244, 26, 0.2);
+    border-radius: 30px;
+}
+
+.comments_number{
+    padding-right: 100px;
+    padding-left: 10px;
+    display: inline-block;
+}

@@ -17,6 +17,9 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [tweet, setTweet] = useState("")
 
+    const navigate = useNavigate();
+
+
     const handleTweet = (e: React.ChangeEvent<HTMLInputElement>)  =>{
         setTweet(e.target.value);
         console.log(tweet);
@@ -52,7 +55,6 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
 
         });
     }
-    const navigate = useNavigate();
 
     const logout = () => {
         console.log("logout")
@@ -82,7 +84,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                         <div className="sidebar_item">
                             <BellOutlined /> Notifications
                         </div>
-                        <div className="sidebar_item">
+                        <div className="sidebar_item" onClick={() => navigate("/profile")}>
                             <UserOutlined /> Profle
                         </div>
                         <div className="tweet_button" onClick={() => {

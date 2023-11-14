@@ -5,6 +5,7 @@ import NotFound from './Pages/NotFound/NotFound'
 import Login from './Pages/Login/Login'
 import Profile from './Pages/Profile/Profile'
 import Register from './Pages/Register/Register'
+import SingleTweet from './Pages/SingleTweet/SingleTweet'
 import './App.css'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route element={<ProtectedRoute />} >
 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/single-tweet/:tweetid" element={<SingleTweet/>}/>
 
         </Route>
 
