@@ -1,6 +1,6 @@
 import './Button.css'
 import { useNavigate } from "react-router-dom";
-import { setAuthToken } from '../../../../API/BaseAPI';
+import { setAuthToken } from '../../../API/BaseAPI';
 import { useState } from 'react';
 import { message, notification } from 'antd'
 import { CloseOutlined } from '@ant-design/icons';
