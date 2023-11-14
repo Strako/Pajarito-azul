@@ -7,14 +7,15 @@
 }
 
 .profile-container {
-    text-align: center;
+    text-align: left;
     margin-top: -8px;
     color: white;
     box-shadow: 0 -3px 1px -3px #ffffff;
     box-shadow: 0 3px 1px -3px #ffffff;
 
+
     width: 566px;
-    height: 300px;
+    height: 250px;
     padding-top: 20px;
     padding-left: 10px;
     padding-bottom: 20px;
@@ -25,18 +26,33 @@
 
 .profile_img{
     border-radius: 100%;
+    width: 150px;
+    height: 150px;
 }
 
 .profile_user{
+    text-align: left;
+    padding-top: 20px;
+    padding-left: 20px;
+    font-family: sans-serif;
+    font-weight:bolder;
+    text-align: left;
 
 }
 
 .profile_name{
-
+    text-align: left;
+    padding-left: 20px;
+    font-family: sans-serif;
+    font-weight:lighter;
+    text-align: left;
+    color:gray;
 }
 
 .profile_description{
-    
+    padding-left: 20px;
+    font-family: sans-serif;
+    font-weight:lighter;
 }
 
 
@@ -46,9 +62,6 @@
     width: 566px;
     height: auto;
     padding-top: 20px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 50px;
 }
 
 .tweet:hover{
@@ -60,6 +73,7 @@
     height: 50px;
     border-radius: 100px;
     margin-top: -10px;
+    padding-left: 10px;
     
 
 }
@@ -71,18 +85,15 @@
     margin-bottom: 5px;
     font-family: sans-serif;
     font-weight: 900;
+    padding-left: 10px;
 
 }
 
 .tweet_content {
     color: white;
-    margin-left: 60px;
+    padding-left: 10px;
     font-family: sans-serif;
 
-}
-
-.invalid_login{
-    color: red;
 }
 
 .spin_loader{
@@ -92,17 +103,10 @@
     transform: translate(-50%, -50%);
 }
 
-.spin_loader_tweet{
-    position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 
 
 .like_icon{
-    padding-top: 10px;
+    margin-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom:8px;
@@ -123,7 +127,6 @@
 }
 
 .comment_icon{
-    padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 8px;
@@ -138,7 +141,6 @@
 }
 .delete_icon{
     margin-left: 100px;
-    padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 8px;
@@ -153,7 +155,6 @@
 }
 
 .edit_icon{
-    padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 8px;
