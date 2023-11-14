@@ -187,24 +187,26 @@ def search_user(user):
         query_num_pages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM users WHERE user LIKE %s;"
         cur.execute(query_num_pages, (per_page, usr))
         num_pages = (cur.fetchone())[0]
-        query = "SELECT userid, user, name, userImage, description FROM users WHERE user LIKE %s LIMIT %s OFFSET %s;"
+        query = "SELECT * FROM users WHERE user LIKE %s LIMIT %s OFFSET %s;"
         cur.execute(query, (usr, per_page, offset))
         users = cur.fetchall()
-        data_json = {}
+        users_res = {}
         if len(users) == 0:
             data = {"message": "Usuario no encontrado"}
             return resfunc(data), 200
+
         for user in users:
-            data_json [
-                user[0]] = {
-                    "user": user[1],
-                    "name": user[2],
-                    "userImage": user[3],
-                    "description": user[4]
-                }
+            user_id = user[0]
+            users_res[user_id] = {
+                "user_id": user[0],
+                "user": user[1],
+                "name": user[2],
+                "userImage": user[3],
+                "description": user[4]
+            }
         data = {
             "total_paginas": f"{num_pages}",
-            "usuarios": data_json
+            "usuarios": users_res
         }
         return resfunc(data), 200
     except Exception as e:
@@ -212,7 +214,41 @@ def search_user(user):
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
-@User.route("/update-user", methods=["PUT"])
+@User.route("/update-user", methods=["POST"])
+@verify_token
 def update_user():
-    #TODO crear ruta para actualizar usuario
-    pass
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.get_json()
+    user_id = decode_token(request.headers.get("Authorization")[7:],
+                           os.getenv("SECRET_KEY"))['userID']
+    try:
+        update_user = data["user"]
+        update_name = data["name"]
+        update_user_image = data["userImage"]
+        update_description = data["description"]
+        cur = conn.cursor()
+        query_user = "SELECT * FROM users WHERE userid = %s;"
+        cur.execute(query_user, (user_id,))
+        user = cur.fetchone()
+
+        if update_user == "":
+            update_user = user[1]
+        if update_name == "":
+            update_name = user[2]
+        if update_user_image == "":
+            update_user_image = user[4]
+        if update_description == "":
+            update_description = user[5]
+        query_update = "UPDATE users SET user = %s, name = %s, userImage = %s, description = %s WHERE userid = %s;"
+        cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
+        conn.commit()
+        cur.close()
+        return jsonify({"message":"Usuario actualizado"}), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
