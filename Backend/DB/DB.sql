@@ -24,7 +24,7 @@ USE `gpsdb`;
 DROP TABLE IF EXISTS `users`;
 CREATE  TABLE IF NOT EXISTS `users` (
   `userid` INT NOT NULL AUTO_INCREMENT ,
-  `user` VARCHAR(15) NOT NULL ,
+  `user` VARCHAR(15) NOT NULL UNIQUE,
   `name` VARCHAR(45) NOT NULL ,
   `password` VARCHAR(250) NOT NULL ,
   `userImage` VARCHAR(100) NULL ,

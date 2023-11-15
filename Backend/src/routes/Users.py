@@ -233,20 +233,21 @@ def update_user():
         query_user = "SELECT * FROM users WHERE userid = %s;"
         cur.execute(query_user, (user_id,))
         user = cur.fetchone()
-
-        if update_user == "":
-            update_user = user[1]
-        if update_name == "":
-            update_name = user[2]
-        if update_user_image == "":
-            update_user_image = user[4]
-        if update_description == "":
-            update_description = user[5]
-        query_update = "UPDATE users SET user = %s, name = %s, userImage = %s, description = %s WHERE userid = %s;"
-        cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
-        conn.commit()
-        cur.close()
-        return jsonify({"message":"Usuario actualizado"}), 200
+        if update_user != user[1]:
+            if update_user == "":
+                update_user = user[1]
+            if update_name == "":
+                update_name = user[2]
+            if update_user_image == "":
+                update_user_image = user[4]
+            if update_description == "":
+                update_description = user[5]
+            query_update = "UPDATE users SET user = %s, name = %s, userImage = %s, description = %s WHERE userid = %s;"
+            cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Usuario actualizado"}), 200
+        return jsonify({"message":"El usuario ya existe"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
