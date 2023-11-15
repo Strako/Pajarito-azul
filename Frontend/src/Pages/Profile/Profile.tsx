@@ -1,4 +1,3 @@
-import './Profile.css'
 import { useState, useEffect } from 'react';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
@@ -12,6 +11,8 @@ import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 import getTweetByID from '../../API/GetTweetByID';
 import { useNavigate, useNavigation } from "react-router-dom";
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
+import './Profile.css'
+import listTweets from '../../Components/ListTweets/ListTweets';
 
 
 
@@ -32,10 +33,9 @@ const Profile = () => {
     const [hasmore, setHasMore] = useState<boolean>(true);
     const [likesNumber, setLikesNumber] = useState<number>(0);
     const [commentsNumber, setCommentNumber] = useState<number>(0);
-    const [offset, setOffset] = useState<string>("0");
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [editTweetID, setEditTweetID] = useState("");
+    const [editTweetID, setEditTweetID] = useState<string>("");
     const [contentEditTweet, setContentEditTweet] = useState("");
 
     //constants
@@ -53,7 +53,6 @@ const Profile = () => {
         })
     };
 
-
     const infiniteScroll = () => {
         //add if page < total else setHasMore(false), 
         //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
@@ -67,30 +66,7 @@ const Profile = () => {
         }
     };
 
-/*     const saveTweets = () => {
-        getTweets(user.user, page.toString()).then((r) => {
-            setTotalPages(r.data.totalPages);
-            const tweetIds = Object.keys(r.data.tweets);
-            if (page === 1) { setTweetsArray([]) };
-            for (let i = tweetIds.length - 1; i >= 0; i--) {
-                setTweetsArray(oldArray => [...oldArray, r.data.tweets[tweetIds[i]]]);
-            }
-            setTimeout(() => {
-                setIsLoading(false);
-                setOffset("-10px")
-            }, 0);
-        }).catch((e) => {
-            console.log(page);
-            console.log("error " + e);
-            setHasMore(false);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 0);
-        });
-    }
-*/
     //Handlers
-
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
@@ -102,7 +78,7 @@ const Profile = () => {
         setContentEditTweet(e.target.value);
     }
 
-    //handlers modal
+    //Handlers modal
     const handleOk = () => {
         setConfirmLoading(true);
         setTimeout(() => {
@@ -118,7 +94,6 @@ const Profile = () => {
         setOpen(false);
     };
 
-
     //useEffect Hooks
     useEffect(() => {
         getUserData().then((r) => {
@@ -132,7 +107,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (userLoaded && hasmore) {
-            saveTweets({user , page, setTotalPages, setTweetsArray, setIsLoading });
+            saveTweets({user , page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
     }, [page, user]);
 
@@ -140,47 +115,12 @@ const Profile = () => {
         showModal();
     }, [editTweetID]);
 
-
     //Loader
     if (isLoading) {
         return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
     }
 
-    const listTweets = () => {
-        //tweet example
-        //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png
-        const tweets = tweetsArray.map((tweet: objectI) => (
-            <>
-                <div key={tweet.tweetID} id={tweet.tweetID} className="tweet" >
-                    <img className='tweet_img' src={user.userImage}></img>
-                    <div className="tweet_author"> {user.user}</div>
-                    <div className="tweet_content">
-                        <article >{tweet.description} </article>
-                        <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
-                        <div className="likes_number" >{likesNumber}</div>
-                        <div className="comment_icon" onClick={(event) => {
-                    navigate("/single-tweet/" + getTweetId(event));
-                    console.log(getTweetId(event))
-                }}><CommentOutlined /> </div>
-                        <div className="comments_number">{commentsNumber}</div>
-                        <div className="delete_icon" onClick={(e) => {
-                            deleteTweetById(e);
-                            window.location.reload();
-
-                        }}><DeleteOutlined /></div>
-                        <div className="edit_icon"
-                            onClick={(event) => {
-                                setEditTweetID(getTweetId(event));
-                            }}>
-                            <EditOutlined /></div>
-                    </div>
-                </div>
-            </>
-        )
-        )
-        return tweets;
-    }
-
+    //Main JSX
     return (
         <>
             <SidebarTemplate handleRefresh={handleRefresh}>
@@ -192,12 +132,12 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets()}
+                        {listTweets({tweetsArray, setEditTweetID, user, navigate})}
                     </div>
                 </div >
                 <Waypoint
                     onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                    bottomOffset={offset}   // Adjust the offset if needed
+                    bottomOffset={"-150px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
 
@@ -210,7 +150,6 @@ const Profile = () => {
             >
                 <Input placeholder="Write Tweet" onChange={handleEditTweet} value={contentEditTweet} />
             </Modal>
-
         </>
     );
 }
