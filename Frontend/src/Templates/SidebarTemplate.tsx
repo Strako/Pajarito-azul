@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { HomeOutlined, SearchOutlined, BellOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons'
 import { useNavigate } from "react-router-dom";
-import { notification, Button, Modal, Input } from 'antd'
+import { notification, Modal, Input } from 'antd'
 import createTweet from '../API/CreateTweet';
 import './SidebarTemplate.css'
-
 
 interface SidebarTemplateI {
     children: React.ReactNode,
@@ -19,12 +18,10 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
 
     const navigate = useNavigate();
 
-
-    const handleTweet = (e: React.ChangeEvent<HTMLInputElement>)  =>{
+    const handleTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTweet(e.target.value);
         console.log(tweet);
     }
-
 
     const showModal = () => {
         setOpen(true);
@@ -106,14 +103,14 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                 <div className="left_container">
                 </div>
             </div>
-            
+
             <Modal
                 title="Create Tweet"
                 open={open}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
-                >
+            >
                 <Input placeholder="Write Tweet" onChange={handleTweet} />
             </Modal>
         </>

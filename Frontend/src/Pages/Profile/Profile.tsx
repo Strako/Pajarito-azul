@@ -2,20 +2,14 @@ import { useState, useEffect } from 'react';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
-import { LoadingOutlined, HeartOutlined, CommentOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Modal, Input } from 'antd';
-import deleteTweetById from '../../API/DeleteTweetByID';
 import editTweet from '../../API/EditTweet';
-import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 import getTweetByID from '../../API/GetTweetByID';
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import './Profile.css'
 import listTweets from '../../Components/ListTweets/ListTweets';
-
-
-
 
 interface objectI {
     [key: string]: any
@@ -107,7 +101,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (userLoaded && hasmore) {
-            saveTweets({user , page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
+            saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
     }, [page, user]);
 
@@ -132,7 +126,7 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({tweetsArray, setEditTweetID, user, navigate})}
+                        {listTweets({ tweetsArray, setEditTweetID, user, navigate })}
                     </div>
                 </div >
                 <Waypoint
