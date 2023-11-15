@@ -1,6 +1,5 @@
 import './Profile.css'
 import { useState, useEffect } from 'react';
-import getTweets from '../../API/GetTweets';
 import getUserData from '../../API/GetUserData';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
@@ -12,6 +11,8 @@ import editTweet from '../../API/EditTweet';
 import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 import getTweetByID from '../../API/GetTweetByID';
 import { useNavigate, useNavigation } from "react-router-dom";
+import saveTweets from '../../Components/SaveTweets/SaveTweets';
+
 
 
 
@@ -66,7 +67,7 @@ const Profile = () => {
         }
     };
 
-    const saveTweets = () => {
+/*     const saveTweets = () => {
         getTweets(user.user, page.toString()).then((r) => {
             setTotalPages(r.data.totalPages);
             const tweetIds = Object.keys(r.data.tweets);
@@ -87,17 +88,13 @@ const Profile = () => {
             }, 0);
         });
     }
-
+*/
     //Handlers
 
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
-        // setPage(1);
         setTimeout(() => {
             window.location.reload();
-            //     setTweetsArray([]);
-            //     saveTweets();
-            //     console.log(page);
         }, 0);
     }
 
@@ -135,7 +132,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (userLoaded && hasmore) {
-            saveTweets();
+            saveTweets({user , page, setTotalPages, setTweetsArray, setIsLoading });
         }
     }, [page, user]);
 
@@ -155,7 +152,7 @@ const Profile = () => {
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
                 <div key={tweet.tweetID} id={tweet.tweetID} className="tweet" >
-                    <img className='tweet_img' src={tweet.tweetImage}></img>
+                    <img className='tweet_img' src={user.userImage}></img>
                     <div className="tweet_author"> {user.user}</div>
                     <div className="tweet_content">
                         <article >{tweet.description} </article>

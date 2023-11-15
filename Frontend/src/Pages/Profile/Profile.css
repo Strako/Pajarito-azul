@@ -28,12 +28,14 @@
     border-radius: 100%;
     width: 150px;
     height: 150px;
+    margin-top: 20px;
+    padding-left: 10px;
 }
 
 .profile_user{
     text-align: left;
     padding-top: 20px;
-    padding-left: 20px;
+    padding-left: 10px;
     font-family: sans-serif;
     font-weight:bolder;
     text-align: left;
@@ -42,7 +44,7 @@
 
 .profile_name{
     text-align: left;
-    padding-left: 20px;
+    padding-left: 10px;
     font-family: sans-serif;
     font-weight:lighter;
     text-align: left;
@@ -50,7 +52,7 @@
 }
 
 .profile_description{
-    padding-left: 20px;
+    padding-left: 10px;
     font-family: sans-serif;
     font-weight:lighter;
 }
@@ -72,9 +74,7 @@
     width: 50px;
     height: 50px;
     border-radius: 100px;
-    margin-top: -10px;
-    padding-left: 10px;
-    
+    margin-left: 10px;
 
 }
 
@@ -85,13 +85,13 @@
     margin-bottom: 5px;
     font-family: sans-serif;
     font-weight: 900;
-    padding-left: 10px;
+    padding-left: 20px;
 
 }
 
 .tweet_content {
     color: white;
-    padding-left: 10px;
+    padding-left: 20px;
     font-family: sans-serif;
 
 }
