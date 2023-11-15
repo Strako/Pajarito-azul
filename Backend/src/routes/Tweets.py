@@ -134,7 +134,7 @@ def getTweetsOf(user):
             return resfunc(data), 200
     except Exception as e:
         print (e)
-        data = {"message": "Error al conectarse a la base de datos"}
+        data = {"message": "Error al conectarse a la base de datos", "err": f"{e}"}
         return resfunc(data), 500
 
 @Tweet.route('/get-tweet/<int:tweet_id>', methods=['GET'])
