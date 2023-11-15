@@ -40,13 +40,15 @@ const Profile = () => {
 
     //functions
     const showModal = () => {
-        getTweetByID(editTweetID).then((r) => {
-            setTimeout(() => {
-                setContentEditTweet(r.data.description)
-                console.log(r.data.description)
-            }, 0);
-            setOpen(true);
-        })
+        if (editTweetID != "") {
+            getTweetByID(editTweetID).then((r) => {
+                setTimeout(() => {
+                    setContentEditTweet(r.data.description)
+                    console.log(r.data.description)
+                }, 0);
+                setOpen(true);
+            })
+        }
     };
 
     const infiniteScroll = () => {
@@ -66,16 +68,16 @@ const Profile = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
-        //    window.location.reload();
-        getTweets(user.user, "1").then((r) =>{
-            const tweetIds = Object.keys(r.data.tweets);
-            let auxiliarArray = tweetsArray;
-            auxiliarArray.unshift(r.data.tweets[tweetIds[tweetIds.length-1]]);
-            console.log(auxiliarArray.toString)
-            setTweetsArray(auxiliarArray);
-            setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
-        }); 
-        
+            //    window.location.reload();
+            getTweets(user.user, "1").then((r) => {
+                const tweetIds = Object.keys(r.data.tweets);
+                let auxiliarArray = tweetsArray;
+                auxiliarArray.unshift(r.data.tweets[tweetIds[tweetIds.length - 1]]);
+                console.log(auxiliarArray.toString)
+                setTweetsArray(auxiliarArray);
+                setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+            });
+
         }, 500);
     }
 
@@ -104,7 +106,6 @@ const Profile = () => {
         getUserData().then((r) => {
             setUser(r.data);
             setUserLoaded(true);
-            console.log(user.user);
         }).catch((e) => {
             console.log(e);
         });
@@ -137,7 +138,7 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate })}
                     </div>
                 </div >
                 <Waypoint

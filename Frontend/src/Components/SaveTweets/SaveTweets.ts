@@ -6,14 +6,13 @@ export interface propsI{
     setTotalPages: React.Dispatch<React.SetStateAction<number>>,
     setTweetsArray:React.Dispatch<React.SetStateAction<any[]>>,
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    hasmore: boolean
+    hasmore: boolean,
 }
 
 
 const saveTweets = ({user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore} :propsI) => {
-
+    if(hasmore){
     getTweets(user.user, page.toString()).then((r) => {
-        if(hasmore){
         setTotalPages(r.data.totalPages);
         const tweetIds = Object.keys(r.data.tweets);
         if (page === 1) { setTweetsArray([]) };
@@ -23,13 +22,14 @@ const saveTweets = ({user, page, setTotalPages, setTweetsArray, setIsLoading, ha
         setTimeout(() => {
             setIsLoading(false);
         }, 0);
-    }}).catch((e) => {
+    }).catch((e) => {
         console.log(page);
         console.log("error " + e);
         setTimeout(() => {
             setIsLoading(false);
         }, 0);
     });
+}
 }
 
 export default saveTweets;
