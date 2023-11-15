@@ -182,7 +182,7 @@ def search_user(user):
     #calculate offset for pagination
     offset = (page - 1) * per_page
     try:
-        usr = user + "%"
+        usr = "%"+ user + "%"
         cur = conn.cursor()
         query_num_pages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM users WHERE user LIKE %s;"
         cur.execute(query_num_pages, (per_page, usr))
