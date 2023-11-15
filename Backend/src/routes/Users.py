@@ -190,20 +190,19 @@ def search_user(user):
         query = "SELECT * FROM users WHERE user LIKE %s LIMIT %s OFFSET %s;"
         cur.execute(query, (usr, per_page, offset))
         users = cur.fetchall()
-        users_res = {}
+        users_res = []
         if len(users) == 0:
             data = {"message": "Usuario no encontrado"}
             return resfunc(data), 200
 
         for user in users:
-            user_id = user[0]
-            users_res[user_id] = {
+            users_res.append({
                 "user_id": user[0],
                 "user": user[1],
                 "name": user[2],
-                "userImage": user[3],
-                "description": user[4]
-            }
+                "userImage": user[4],
+                "description": user[5]
+            })
         data = {
             "total_paginas": f"{num_pages}",
             "usuarios": users_res
