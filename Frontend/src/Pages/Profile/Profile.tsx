@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
-import getUserData from '../../API/GetUserData';
+import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, Modal, Input } from 'antd';
-import editTweet from '../../API/EditTweet';
+import getUserData from '../../API/GetUserData';
 import getTweetByID from '../../API/GetTweetByID';
-import { useNavigate } from "react-router-dom";
+import editTweet from '../../API/EditTweet';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
-import './Profile.css'
 import listTweets from '../../Components/ListTweets/ListTweets';
+import './Profile.css'
 
 interface objectI {
     [key: string]: any
