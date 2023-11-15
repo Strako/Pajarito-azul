@@ -5,6 +5,7 @@ import deleteTweetById from '../../API/DeleteTweetByID';
 import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 
 interface propsI{
+    keyToUpdate: string,
     tweetsArray: {}[],
     setEditTweetID: React.Dispatch<React.SetStateAction<string>>,
     user: objectI,
@@ -15,7 +16,7 @@ interface objectI {
     [key: string]: any
 }
 
-const listTweets = ({tweetsArray, setEditTweetID, user, navigate}: propsI) => {
+const listTweets = ({keyToUpdate, tweetsArray, setEditTweetID, user, navigate}: propsI) => {
 //    const navigate = useNavigate();
 
 

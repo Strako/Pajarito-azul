@@ -9,6 +9,7 @@ import getTweetByID from '../../API/GetTweetByID';
 import editTweet from '../../API/EditTweet';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
+import getTweets from '../../API/GetTweets';
 import './Profile.css'
 
 interface objectI {
@@ -31,6 +32,7 @@ const Profile = () => {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [editTweetID, setEditTweetID] = useState<string>("");
     const [contentEditTweet, setContentEditTweet] = useState("");
+    const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
 
     //constants
     const navigate = useNavigate();
@@ -64,8 +66,17 @@ const Profile = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
-            window.location.reload();
-        }, 0);
+        //    window.location.reload();
+        getTweets(user.user, "1").then((r) =>{
+            const tweetIds = Object.keys(r.data.tweets);
+            let auxiliarArray = tweetsArray;
+            auxiliarArray.unshift(r.data.tweets[tweetIds[tweetIds.length-1]]);
+            console.log(auxiliarArray.toString)
+            setTweetsArray(auxiliarArray);
+            setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+        }); 
+        
+        }, 500);
     }
 
     const handleEditTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,9 +88,9 @@ const Profile = () => {
         setConfirmLoading(true);
         setTimeout(() => {
             editTweet(contentEditTweet, editTweetID);
-            handleRefresh();
             setOpen(false);
             setConfirmLoading(false);
+            window.location.reload();
         }, 100);
     };
 
@@ -126,7 +137,7 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ tweetsArray, setEditTweetID, user, navigate })}
+                        {listTweets({keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate })}
                     </div>
                 </div >
                 <Waypoint
