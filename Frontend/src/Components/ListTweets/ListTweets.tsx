@@ -26,8 +26,8 @@ const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate }
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
                 <div key={tweet.tweetID} id={tweet.tweetID} className="tweet" >
-                    <img className='tweet_img' src={user.userImage}></img>
-                    <div className="tweet_author"> {user.user}</div>
+                    <img className='tweet_img' src={user.userImage} onClick={() => navigate('/user/'+user.user)}></img>
+                    <div className="tweet_author" onClick={() => navigate('/user/'+user.user)}> {user.user}</div>
                     <div className="tweet_content">
                         <article >{tweet.description} </article>
                         <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
@@ -57,8 +57,8 @@ const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate }
         const tweets = tweetsArray.map((tweet: objectI) => (
             <>
                 <div key={tweet.tweetID} id={tweet.tweetID} className="tweet" >
-                    <img className='tweet_img' src={user.userImage}></img>
-                    <div className="tweet_author"> {user.user}</div>
+                    <img className='tweet_img' src={user.userImage} onClick={() => navigate('/user/'+user.user)}></img>
+                    <div className="tweet_author" onClick={() => navigate('/user/'+user.user)}> {user.user}</div>
                     <div className="tweet_content">
                         <article >{tweet.description} </article>
                         <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>

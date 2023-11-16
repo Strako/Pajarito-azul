@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Waypoint } from 'react-waypoint';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import getTweetByID from '../../API/GetTweetByID';
 import getUserByID from '../../API/GetUserByID';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
-import { LoadingOutlined, HeartOutlined, CommentOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Spin, Modal, Input } from 'antd';
+import { HeartOutlined, CommentOutlined } from '@ant-design/icons';
+import { Modal, Input } from 'antd';
 import './SingleTweet.css'
-
+import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 
 
 
@@ -38,9 +38,8 @@ const SingleTweet = () => {
 
 
     //constants
-    const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
     const { tweetid } = useParams();
-
+    const navigate = useNavigate();
 
 
 
@@ -144,15 +143,15 @@ const SingleTweet = () => {
 
     //Loader
     if (isLoading) {
-        return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
+        return loaderPlaceholder();
     }
 
     const listTweet = () => {
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png            <>
         const tweet = <> <div key={tweetContent.tweetID} id={tweetContent.tweetID} className="single_tweet">
-            <img className='single_tweet_img' src={user.userImage}></img>
-            <div className="single_tweet_author"> {user.user}</div>
+            <img className='single_tweet_img' src={user.userImage} onClick={() => navigate('/user/'+user.user)}></img>
+            <div className="single_tweet_author" onClick={() => navigate('/user/'+user.user)}> {user.user}</div>
             <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
                 <div className="single_like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
@@ -167,7 +166,7 @@ const SingleTweet = () => {
 
     return (
         <>
-            <SidebarTemplate handleRefresh={handleRefresh}>
+            <SidebarTemplate>
                 <div className='main'>
                     <div className='single_tweets_container'>
                         {listTweet()}

@@ -7,6 +7,7 @@ import Profile from './Pages/Profile/Profile'
 import Register from './Pages/Register/Register'
 import SingleTweet from './Pages/SingleTweet/SingleTweet'
 import SingleUser from './Pages/SingleUser/SingleUser'
+import Search from './Pages/Search/Search'
 import './App.css'
 
 function App() {
@@ -24,6 +25,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/single-tweet/:tweetid" element={<SingleTweet/>}/>
           <Route path="/user/:username" element={<SingleUser/>}/>
+          <Route path="/search" element={<Search/>}/>
+          
 
 
         </Route>

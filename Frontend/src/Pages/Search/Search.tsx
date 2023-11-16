@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
-import getUserData from '../../API/GetUserData';
-import getTweetByID from '../../API/GetTweetByID';
-import editTweet from '../../API/EditTweet';
-import saveTweets from '../../Components/SaveTweets/SaveTweets';
-import getTweets from '../../API/GetTweets';
+import Input from '../../Components/Inputs/Input';
+import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
+import searchUser from '../../API/SearchUser';
+import listUsers from '../../Components/ListUsers/ListUsers';
 import './Search.css'
+import { Empty } from 'antd';
 
 interface objectI {
     [key: string]: any
@@ -18,15 +16,33 @@ interface objectI {
 const Search = () => {
 
     //useState Hooks   
-    const [user, setUser] = useState<objectI>({});
     const [page, setPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasmore, setHasMore] = useState<boolean>(true);
+    const [searchValue, setSerchValue] = useState<string>("");
+    const [usersArray, setUsersArray] = useState<{}[]>([{}]);
+    const [listUsersKey, setListUsersKey] = useState<string>('initialKey');
 
-    //constants
+
+    //Constants
     const navigate = useNavigate();
-    const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
+    const forbiddenKeys = [
+        'Backspace',
+        'Shift',
+        'Control',
+        'Alt',
+        'CapsLock',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+      ];
+
+    //Handlers
+    const handlerSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSerchValue(e.target.value);
+    }
 
     const infiniteScroll = () => {
         //add if page < total else setHasMore(false), 
@@ -41,24 +57,46 @@ const Search = () => {
         }
     };
 
-
+    useEffect(() =>{
+        if (searchValue != "") {
+            setIsLoading(false);
+            setTimeout(() => {
+                searchUser(searchValue).then((r) => {
+                    setUsersArray(r.data.users);
+                    setIsLoading(false);
+                    setListUsersKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+                });
+            }, 500);
+        }
+    }, [searchValue])
 
     //Loader
     if (isLoading) {
-        return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
+        return loaderPlaceholder();
     }
 
     //Main JSX
     return (
         <>
-            <SidebarTemplate handleRefresh={handleRefresh}>
+            <SidebarTemplate>
                 <div className='main'>
-                    <div className='profile-container'>
-
+                    <div className='searchbar-container'>
+                        <Input
+                            type={"text"}
+                            placeholder={"Search user"}
+                            value={searchValue}
+                            onChange={handlerSearch}
+                        />
                     </div>
+                    <div className="results_container">
+                        {searchValue === "" ? (
+                            <div className="user_container">
+                                <Empty   image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" description={<span style={{ color: 'white' }}>Search for a user ! </span>} />
+                            </div>
+                        ) :
+                            listUsers({ keyToUpdate: listUsersKey, usersArray, navigate })
 
-                    <div className='tweets_container'>
-
+                        }
                     </div>
                 </div >
                 <Waypoint

@@ -7,7 +7,7 @@ import './SidebarTemplate.css'
 
 interface SidebarTemplateI {
     children: React.ReactNode,
-    handleRefresh: () => void;
+    handleRefresh?: () => void;
 }
 
 const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
@@ -28,6 +28,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     };
 
     const handleOk = () => {
+        if(handleRefresh){
         setConfirmLoading(true);
         setTimeout(() => {
             createTweet(tweet).then(() => {
@@ -35,7 +36,18 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                 setConfirmLoading(false);
                 handleRefresh();
             })
+        
         },500);
+    }else{
+        setConfirmLoading(true);
+        setTimeout(() => {
+            createTweet(tweet).then(() => {
+                setOpen(false);
+                setConfirmLoading(false);
+            })        
+        },500);
+
+    }
     };
 
     const handleCancel = () => {
@@ -76,7 +88,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                         <div className="sidebar_item">
                             <HomeOutlined /> Home
                         </div>
-                        <div className="sidebar_item">
+                        <div className="sidebar_item" onClick={() => navigate("/search")}>
                             <SearchOutlined /> Explore
                         </div>
                         <div className="sidebar_item">

@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin} from 'antd';
+import { Spin } from 'antd';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import getTweets from '../../API/GetTweets';
 import searchUser from '../../API/SearchUser';
+import getUserData from '../../API/GetUserData';
+
 import '../Profile/Profile.css'
 
 interface objectI {
@@ -36,6 +38,7 @@ const SingleUser = () => {
 
 
     //functions
+
     const infiniteScroll = () => {
         //add if page < total else setHasMore(false), 
         //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
@@ -68,14 +71,20 @@ const SingleUser = () => {
 
     //useEffect Hooks
     useEffect(() => {
-        if(username){
-        searchUser(username).then((r) => {
-            setUser(r.data.usuarios[0]);
-            setUserLoaded(true);
-        }).catch((e) => {
-            console.log(e);
-        });
-    }
+            getUserData().then((r) => {
+                if (r.data.user != username && username) {
+                    searchUser(username).then((r) => {
+                        setUser(r.data.users[0]);
+                        setUserLoaded(true);
+                    }).catch((e) => {
+                        console.log(e);
+                    });
+
+                } else {
+                    navigate("/profile");
+                }
+            })
+        
     }, [])
 
     useEffect(() => {
@@ -83,6 +92,7 @@ const SingleUser = () => {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
     }, [page, user]);
+
 
     //Loader
     if (isLoading) {

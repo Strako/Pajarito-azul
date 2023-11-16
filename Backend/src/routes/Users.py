@@ -192,20 +192,20 @@ def search_user(user):
         users = cur.fetchall()
         users_res = []
         if len(users) == 0:
-            data = {"message": "Usuario no encontrado"}
+            data = {"message": "User not founf"}
             return resfunc(data), 200
 
         for user in users:
             users_res.append({
-                "user_id": user[0],
+                "userId": user[0],
                 "user": user[1],
                 "name": user[2],
                 "userImage": user[4],
                 "description": user[5]
             })
         data = {
-            "total_paginas": f"{num_pages}",
-            "usuarios": users_res
+            "totalPages": f"{num_pages}",
+            "users": users_res
         }
         return resfunc(data), 200
     except Exception as e:

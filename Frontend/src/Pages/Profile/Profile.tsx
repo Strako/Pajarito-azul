@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin, Modal, Input } from 'antd';
+import { Modal, Input } from 'antd';
 import getUserData from '../../API/GetUserData';
 import getTweetByID from '../../API/GetTweetByID';
 import editTweet from '../../API/EditTweet';
@@ -11,6 +10,7 @@ import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import getTweets from '../../API/GetTweets';
 import './Profile.css'
+import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 
 interface objectI {
     [key: string]: any
@@ -36,7 +36,6 @@ const Profile = () => {
 
     //constants
     const navigate = useNavigate();
-    const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
 
     //functions
     const showModal = () => {
@@ -104,12 +103,14 @@ const Profile = () => {
 
     //useEffect Hooks
     useEffect(() => {
-        getUserData().then((r) => {
-            setUser(r.data);
-            setUserLoaded(true);
-        }).catch((e) => {
-            console.log(e);
-        });
+        if (!userLoaded) {
+            getUserData().then((r) => {
+                setUser(r.data);
+                setUserLoaded(true);
+            }).catch((e) => {
+                console.log(e);
+            });
+        }
     }, [])
 
     useEffect(() => {
@@ -124,7 +125,7 @@ const Profile = () => {
 
     //Loader
     if (isLoading) {
-        return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
+        return loaderPlaceholder();
     }
 
     //Main JSX
