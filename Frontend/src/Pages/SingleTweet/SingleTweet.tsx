@@ -1,13 +1,13 @@
-import './SingleTweet.css'
 import { useState, useEffect } from 'react';
 import { Waypoint } from 'react-waypoint';
+import { useParams } from 'react-router-dom';
+import getTweetByID from '../../API/GetTweetByID';
+import getUserByID from '../../API/GetUserByID';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
 import { LoadingOutlined, HeartOutlined, CommentOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Spin, Modal, Input } from 'antd';
-import getTweetByID from '../../API/GetTweetByID';
-import getUserByID from '../../API/GetUserByID';
-import { useParams } from 'react-router-dom';
+import './SingleTweet.css'
 
 
 
@@ -35,7 +35,6 @@ const SingleTweet = () => {
     const [tweetID, setTweetID] = useState<string>("");
     const [tweetContent, setTweetContent] = useState<objectI>({});
     const [comment, setComment] = useState<string>("");
-    const [tweetAuthor, setTweetAuthor] = useState<string>("");
 
 
     //constants
@@ -138,7 +137,7 @@ const SingleTweet = () => {
     useEffect(() => {
         if (tweetLoaded) {
             getUserByID(tweetContent.userID).then((r) => {
-                setTweetAuthor(r.data.user);
+                setUser(r.data);
             });
         }
     }, [tweetLoaded]);
@@ -151,15 +150,15 @@ const SingleTweet = () => {
     const listTweet = () => {
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png            <>
-        const tweet = <> <div key={tweetContent.tweetID} id={tweetContent.tweetID} className="tweet">
-            <img className='tweet_img' src={tweetContent.tweetImage}></img>
-            <div className="tweet_author"> {tweetAuthor}</div>
-            <div className="tweet_content">
+        const tweet = <> <div key={tweetContent.tweetID} id={tweetContent.tweetID} className="single_tweet">
+            <img className='single_tweet_img' src={user.userImage}></img>
+            <div className="single_tweet_author"> {user.user}</div>
+            <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
-                <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
-                <div className="likes_number" >{likesNumber}</div>
-                <div className="comment_icon" onClick={showModal}><CommentOutlined /> </div>
-                <div className="comments_number">{commentsNumber}</div>
+                <div className="single_like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
+                <div className="single_likes_number" >{likesNumber}</div>
+                <div className="single_comment_icon" onClick={showModal}><CommentOutlined /> </div>
+                <div className="single_comments_number">{commentsNumber}</div>
             </div>
         </div>
         </>;
@@ -170,10 +169,10 @@ const SingleTweet = () => {
         <>
             <SidebarTemplate handleRefresh={handleRefresh}>
                 <div className='main'>
-                    <div className='tweets_container'>
+                    <div className='single_tweets_container'>
                         {listTweet()}
                     </div>
-                    <div className="comments_container">
+                    <div className="single_comments_container">
 
                     </div>
                 </div >

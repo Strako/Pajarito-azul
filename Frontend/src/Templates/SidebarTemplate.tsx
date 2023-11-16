@@ -30,11 +30,12 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     const handleOk = () => {
         setConfirmLoading(true);
         setTimeout(() => {
-            createTweet(tweet);
-            handleRefresh();
-            setOpen(false);
-            setConfirmLoading(false);
-        }, 1000);
+            createTweet(tweet).then(() => {
+                setOpen(false);
+                setConfirmLoading(false);
+                handleRefresh();
+            })
+        },500);
     };
 
     const handleCancel = () => {
@@ -110,6 +111,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
+                
             >
                 <Input placeholder="Write Tweet" onChange={handleTweet} />
             </Modal>

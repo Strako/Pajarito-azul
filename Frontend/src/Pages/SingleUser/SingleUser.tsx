@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin, Modal, Input } from 'antd';
-import getUserData from '../../API/GetUserData';
-import getTweetByID from '../../API/GetTweetByID';
-import editTweet from '../../API/EditTweet';
+import { Spin} from 'antd';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import getTweets from '../../API/GetTweets';
-import './Profile.css'
+import searchUser from '../../API/SearchUser';
+import '../Profile/Profile.css'
 
 interface objectI {
     [key: string]: any
 }
 
-const Profile = () => {
+const SingleUser = () => {
 
     //useState Hooks   
     const [user, setUser] = useState<objectI>({});
@@ -28,29 +27,15 @@ const Profile = () => {
     const [hasmore, setHasMore] = useState<boolean>(true);
     const [likesNumber, setLikesNumber] = useState<number>(0);
     const [commentsNumber, setCommentNumber] = useState<number>(0);
-    const [open, setOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
-    const [editTweetID, setEditTweetID] = useState<string>("");
-    const [contentEditTweet, setContentEditTweet] = useState("");
     const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
 
     //constants
     const navigate = useNavigate();
     const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
+    const { username } = useParams();
+
 
     //functions
-    const showModal = () => {
-        if (editTweetID != "") {
-            getTweetByID(editTweetID).then((r) => {
-                setTimeout(() => {
-                    setContentEditTweet(r.data.description)
-                    console.log(r.data.description)
-                }, 0);
-                setOpen(true);
-            })
-        }
-    };
-
     const infiniteScroll = () => {
         //add if page < total else setHasMore(false), 
         //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
@@ -81,35 +66,16 @@ const Profile = () => {
         }, 500);
     }
 
-    const handleEditTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setContentEditTweet(e.target.value);
-    }
-
-    //Handlers modal
-    const handleOk = () => {
-        setConfirmLoading(true);
-        setTimeout(() => {
-            editTweet(contentEditTweet, editTweetID).then(() => {
-                setOpen(false);
-                setConfirmLoading(false);
-                window.location.reload();
-            })
-        }, 500);
-    };
-
-    const handleCancel = () => {
-        console.log('Clicked cancel button');
-        setOpen(false);
-    };
-
     //useEffect Hooks
     useEffect(() => {
-        getUserData().then((r) => {
-            setUser(r.data);
+        if(username){
+        searchUser(username).then((r) => {
+            setUser(r.data.usuarios[0]);
             setUserLoaded(true);
         }).catch((e) => {
             console.log(e);
         });
+    }
     }, [])
 
     useEffect(() => {
@@ -117,10 +83,6 @@ const Profile = () => {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
     }, [page, user]);
-
-    useEffect(() => {
-        showModal();
-    }, [editTweetID]);
 
     //Loader
     if (isLoading) {
@@ -139,7 +101,7 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate })}
                     </div>
                 </div >
                 <Waypoint
@@ -147,18 +109,8 @@ const Profile = () => {
                     bottomOffset={"-150px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
-
-            <Modal
-                title="Edit Tweet"
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-            >
-                <Input placeholder="Write Tweet" onChange={handleEditTweet} value={contentEditTweet} />
-            </Modal>
         </>
     );
 }
 
-export default Profile;
+export default SingleUser;

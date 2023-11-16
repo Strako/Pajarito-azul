@@ -1,54 +1,42 @@
-
-
-.main{
-    display: grid;
-    justify-content: center;
-    margin-top: 0px;
-}
-
-.tweet {
+.single_tweet {
+    margin-top: 20px;
+    margin-left: 3px;
     text-align: left;
-    box-shadow: 0 -3px 1px -3px #ffffff;
-    width: 566px;
+    box-shadow: 0px 0.1px 0px 0px #ffffff;
+    width: 600px;
     height: auto;
     padding-top: 20px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 50px;
+    padding-left: 20px;
+    
 }
 
-.tweet:hover{
+
+.single_tweet:hover{
     cursor:pointer;
 }
 
-.tweet_img {
+.single_tweet_img {
     width: 50px;
     height: 50px;
     border-radius: 100px;
-    margin-top: -10px;
-    
-
+    margin-left: 0px;
 }
 
-.tweet_author {
+.single_tweet_author {
     color: white;
     margin-top: -45px;
-    margin-left: 60px;
     margin-bottom: 5px;
     font-family: sans-serif;
     font-weight: 900;
-
+    padding-left: 70px;
 }
 
-.tweet_content {
-    color: white;
+.single_tweet_content {
     margin-left: 60px;
+    color: white;
     font-family: sans-serif;
+    padding-left: 10px;
 
-}
-
-.invalid_login{
-    color: red;
 }
 
 .spin_loader{
@@ -58,82 +46,51 @@
     transform: translate(-50%, -50%);
 }
 
-.spin_loader_tweet{
-    position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
 
 
-
-.like_icon{
-    padding-top: 10px;
+.single_like_icon{
+    margin-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
-    padding-bottom:8px;
+    padding-top: 8px;
+    padding-bottom:6px;
     display: inline-block;
+    margin-bottom: 20px;
+
 }
 
-.like_icon:hover{
+.single_like_icon:hover{
+    transform: translateY(-3px);
     cursor:pointer;
     align-items: center;
     background-color: rgba(250, 72, 141, 0.2);
     border-radius: 30px;
+
 }
 
-.likes_number{
+.single_likes_number{
     padding-right: 100px;
     padding-left: 10px;
     display: inline-block;
 }
 
-.comment_icon{
-    padding-top: 10px;
+.single_comment_icon{
     padding-left: 10px;
     padding-right: 10px;
-    padding-bottom: 8px;
+    padding-top: 8px;
+    padding-bottom:6px;
     display: inline-block;
 }
 
-.comment_icon:hover{
+.single_comment_icon:hover{
+    transform: translateY(-3px);
     cursor:pointer;
     align-items: center;
     background-color: rgb(26, 150, 244, 0.2);
     border-radius: 30px;
 }
-.delete_icon{
-    margin-left: 100px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 8px;
-    display: inline-block;
-}
 
-.delete_icon:hover{
-    cursor:pointer;
-    align-items: center;
-    background-color: rgba(244, 26, 26, 0.2);
-    border-radius: 30px;
-}
-
-.edit_icon{
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 8px;
-    display: inline-block;
-}
-
-.edit_icon:hover{
-    cursor:pointer;
-    align-items: center;
-    background-color: rgba(164, 244, 26, 0.2);
-    border-radius: 30px;
-}
-
-.comments_number{
+.single_comments_number{
     padding-right: 100px;
     padding-left: 10px;
     display: inline-block;
