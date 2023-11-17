@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from utils.middleware import verify_token
 import re
 from utils.resfunctions import resfunc
-
+from datetime import datetime
 # load dotenv to get env vars
 load_dotenv()
 
@@ -223,7 +223,7 @@ def update_user():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                            os.getenv("SECRET_KEY"))['userID']
     try:
         update_user = data["user"]
         update_name = data["name"]
@@ -248,6 +248,68 @@ def update_user():
             cur.close()
             return jsonify({"message":"Usuario actualizado"}), 200
         return jsonify({"message":"El usuario ya existe"}), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+#ep para dar like a un tweet
+@User.route("/like-tweet", methods=["POST"])
+@verify_token
+def like_tweet():
+    #TODO agregar documentacion al endpoint
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.get_json()
+    user_id = decode_token(request.headers.get("Authorization")[7:],
+                        os.getenv("SECRET_KEY"))['userID']
+    tweet_id = data["tweetId"]
+    try:
+        cur = conn.cursor()
+        query = "SELECT * FROM likes WHERE userid = %s AND tweetid = %s;"
+        cur.execute(query, (user_id, tweet_id))
+        like = cur.fetchone()
+        print(like)
+        if like:
+            query = "DELETE FROM likes WHERE userid = %s AND tweetid = %s;"
+            cur.execute(query, (user_id, tweet_id))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Like eliminado"}), 200
+        else:
+            query = "INSERT INTO likes (userid, tweetid, datetime) VALUES (%s, %s, %s);"
+            cur.execute(query, (user_id, tweet_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Like agregado"}), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+@User.route("/add-comment-to", methods=["POST"])
+@verify_token
+def add_comment_to():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.get_json()
+    user_id = decode_token(request.headers.get("Authorization")[7:],
+                        os.getenv("SECRET_KEY"))['userID']
+    tweet_id = data["tweetId"]
+    comment = data["comment"]
+    try:
+        cur = conn.cursor()
+        query = "INSERT INTO comments (userid, tweetid, comment, datetime) VALUES (%s, %s, %s, %s);"
+        cur.execute(query, (user_id, tweet_id, comment, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        conn.commit()
+        cur.close()
+        return jsonify({"message":"Comentario agregado"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}

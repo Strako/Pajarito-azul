@@ -31,7 +31,6 @@ Tweet = Blueprint('Tweet', __name__, url_prefix='/tweets')
 def createTweet():
     data = request.headers
     userID = decode_token(data['Authorization'][7:], os.getenv("SECRET_KEY"))['userID']
-    date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Obtener datos del tweet del cuerpo JSON de la solicitud
     tweet_data = request.get_json()
     tweet_desc = tweet_data.get('tweetDesc', '')
