@@ -29,6 +29,8 @@
     font-family: sans-serif;
     font-weight: 900;
     padding-left: 70px;
+    padding-right: 10px;
+
 }
 
 .single_tweet_content {
@@ -36,6 +38,8 @@
     color: white;
     font-family: sans-serif;
     padding-left: 10px;
+    padding-right: 10px;
+
 
 }
 
