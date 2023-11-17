@@ -6,17 +6,18 @@ import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 
 interface propsI {
     keyToUpdate: string,
-    tweetsArray: {}[],
+    tweetsArray: any,
     setEditTweetID?: React.Dispatch<React.SetStateAction<string>>,
     user: objectI,
-    navigate: any
+    navigate: any,
+    setTweetsArray:  React.Dispatch<React.SetStateAction<any[]>>
 }
 
 interface objectI {
     [key: string]: any
 }
 
-const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate }: propsI) => {
+const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate,setTweetsArray }: propsI) => {
     //    const navigate = useNavigate();
 
 
@@ -38,8 +39,8 @@ const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate }
                         }}><CommentOutlined /> </div>
                         <div className="comments_number">{2}</div>
                         <div className="delete_icon" onClick={(e) => {
-                            deleteTweetById(e);
-                            window.location.reload();
+                            deleteTweetById({e, tweetsArray, setTweetsArray});
+                           // window.location.reload();
 
                         }}><DeleteOutlined /></div>
                         <div className="edit_icon"

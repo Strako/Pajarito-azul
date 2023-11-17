@@ -117,6 +117,8 @@ const Profile = () => {
         if (userLoaded && hasmore) {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
+        console.log({"tweets ":tweetsArray});
+
     }, [page, user]);
 
     useEffect(() => {
@@ -140,7 +142,7 @@ const Profile = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate, setTweetsArray })}
                     </div>
                 </div >
                 <Waypoint
