@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#Python
+../Backend/src/.env
+../Backend/src/_pycache_
+../Backend/src/utils/__pycache__
+../Backend/src/routes/__pycache__
