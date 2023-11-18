@@ -6,7 +6,7 @@
 }
 
 .login-container .left .logo{
-    padding-top:160px;
+    padding-top:100px;
     margin-right: 260px;
     margin-left: -500px;
     width: 400px;
@@ -18,7 +18,7 @@
 .login-container .left .logo_transition{
     transform: rotate3d(1, 0, 0, 90deg);
     transition: transform 1.5s ease-in-out;
-    padding-top:160px;
+    padding-top:100px;
     margin-right: 260px;
     margin-left: -500px;
     width: 400px;
@@ -28,7 +28,7 @@
 
 .right{
     position: absolute;
-    margin-top: 100px;
+    margin-top: 0px;
     max-width: 600px;
     margin-right:0px;
     margin-left: 720px;

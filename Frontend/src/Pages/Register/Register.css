@@ -6,19 +6,20 @@
 }
 
 .register-container .left .logo {
-    padding-top: 175px;
+    padding-top: 100px;
     margin-right: 260px;
     margin-left: -500px;
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 480px;
 }
 
 .right_register {
     position: absolute;
-    margin-top: 226px;
+    margin-top: 225px;
     max-width: 600px;
     margin-right: 0px;
     margin-left: 720px;
+    padding-bottom: 100px;
 }
 
 .register-container .right_register .title-container {
