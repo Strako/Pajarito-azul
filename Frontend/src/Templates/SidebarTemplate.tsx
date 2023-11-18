@@ -15,7 +15,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [tweet, setTweet] = useState("")
-
+    
     const navigate = useNavigate();
 
     const handleTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
