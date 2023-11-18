@@ -28,6 +28,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     };
 
     const handleOk = () => {
+        if(tweet != ""){
         if(handleRefresh){
         setConfirmLoading(true);
         setTimeout(() => {
@@ -48,6 +49,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
         },500);
 
     }
+}
     };
 
     const handleCancel = () => {

@@ -51,25 +51,20 @@ const SingleUser = () => {
         }
     };
 
-    //Handlers
-    //Handler refresh on crate - edit tweet
-
     //useEffect Hooks
     useEffect(() => {
         getUserData().then((r) => {
             if (r.data.user != username && username) {
-                searchUser(username).then((r) => {
+                searchUser(username, 1).then((r) => {
                     setUser(r.data.users[0]);
                     setUserLoaded(true);
-                }).catch((e) => {
-                    console.log(e);
-                });
-
+                })
             } else {
                 navigate("/profile");
             }
-        })
-
+        }).catch((e) => {
+            console.log(e);
+        });
     }, [])
 
     useEffect(() => {
@@ -77,7 +72,6 @@ const SingleUser = () => {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
     }, [page, user]);
-
 
     //Loader
     if (isLoading) {
@@ -91,9 +85,14 @@ const SingleUser = () => {
                 <div className='main'>
                     <div className='profile-container'>
                         <img className='profile_img' src={user.userImage}></img>
+                        <div className='profile_button'>Follow</div>
                         <div className='profile_user'> {user.user}</div>
                         <div className='profile_name'>{user.name}</div>
                         <div className='profile_description'>{user.description}</div>
+                        <span className='profile_following'> 20 </span>
+                        <span className='profile_following_text'>Following</span>
+                        <span className='profile_followers'> 40 </span>
+                        <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
                         {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray })}

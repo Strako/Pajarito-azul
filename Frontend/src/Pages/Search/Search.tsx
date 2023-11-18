@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
 import Input from '../../Components/Inputs/Input';
-import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
-import searchUser from '../../API/SearchUser';
+import searchUsers from '../../API/SearchUser';
 import listUsers from '../../Components/ListUsers/ListUsers';
 import './Search.css'
 import { Empty } from 'antd';
@@ -18,7 +17,6 @@ const Search = () => {
     //useState Hooks   
     const [page, setPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasmore, setHasMore] = useState<boolean>(true);
     const [searchValue, setSerchValue] = useState<string>("");
     const [usersArray, setUsersArray] = useState<{}[]>([{}]);
@@ -47,23 +45,35 @@ const Search = () => {
         }
     };
 
-    useEffect(() =>{
+    useEffect(() => {
+        setPage(1);
+        setTotalPages(1);
         if (searchValue != "") {
-            setIsLoading(false);
             setTimeout(() => {
-                searchUser(searchValue).then((r) => {
+                searchUsers(searchValue, page).then((r) => {
+                    if (r.data.totalPages > page) { setHasMore(true) }
+                    setTotalPages(r.data.totalPages);
                     setUsersArray(r.data.users);
-                    setIsLoading(false);
                     setListUsersKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
                 });
             }, 500);
         }
     }, [searchValue])
 
-    //Loader
-    if (isLoading) {
-        return loaderPlaceholder();
-    }
+    useEffect(() => {
+        if (hasmore && searchValue != "") {
+            console.log({ "tota paginas": totalPages })
+            searchUsers(searchValue, page).then((r) => {
+                console.log({"old array": usersArray});
+                r.data.users.map((user:{}) =>{
+                    setUsersArray(oldArray=> [...oldArray, user]);
+                })
+
+                console.log({"new array": r.data.users});
+                setListUsersKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+            });
+        }
+    }, [page]);
 
     //Main JSX
     return (
@@ -81,7 +91,7 @@ const Search = () => {
                     <div className="results_container">
                         {searchValue === "" ? (
                             <div className="user_container">
-                                <Empty   image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" description={<span style={{ color: 'white' }}>Search for a user ! </span>} />
+                                <Empty image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg" description={<span style={{ color: 'white' }}>Search for a user ! </span>} />
                             </div>
                         ) :
                             listUsers({ keyToUpdate: listUsersKey, usersArray, navigate })
@@ -91,7 +101,7 @@ const Search = () => {
                 </div >
                 <Waypoint
                     onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                    bottomOffset={"-150px"}   // Adjust the offset if needed
+                    bottomOffset={"-50px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
         </>
