@@ -27,17 +27,7 @@ const Search = () => {
 
     //Constants
     const navigate = useNavigate();
-    const forbiddenKeys = [
-        'Backspace',
-        'Shift',
-        'Control',
-        'Alt',
-        'CapsLock',
-        'ArrowUp',
-        'ArrowDown',
-        'ArrowLeft',
-        'ArrowRight',
-      ];
+
 
     //Handlers
     const handlerSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

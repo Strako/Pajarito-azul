@@ -7,7 +7,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
-import getTweets from '../../API/GetTweets';
 import searchUser from '../../API/SearchUser';
 import getUserData from '../../API/GetUserData';
 
@@ -54,37 +53,23 @@ const SingleUser = () => {
 
     //Handlers
     //Handler refresh on crate - edit tweet
-    const handleRefresh = () => {
-        setTimeout(() => {
-            //    window.location.reload();
-            getTweets(user.user, "1").then((r) => {
-                const tweetIds = Object.keys(r.data.tweets);
-                let auxiliarArray = tweetsArray;
-                auxiliarArray.unshift(r.data.tweets[tweetIds[tweetIds.length - 1]]);
-                console.log(auxiliarArray.toString)
-                setTweetsArray(auxiliarArray);
-                setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
-            });
-
-        }, 500);
-    }
 
     //useEffect Hooks
     useEffect(() => {
-            getUserData().then((r) => {
-                if (r.data.user != username && username) {
-                    searchUser(username).then((r) => {
-                        setUser(r.data.users[0]);
-                        setUserLoaded(true);
-                    }).catch((e) => {
-                        console.log(e);
-                    });
+        getUserData().then((r) => {
+            if (r.data.user != username && username) {
+                searchUser(username).then((r) => {
+                    setUser(r.data.users[0]);
+                    setUserLoaded(true);
+                }).catch((e) => {
+                    console.log(e);
+                });
 
-                } else {
-                    navigate("/profile");
-                }
-            })
-        
+            } else {
+                navigate("/profile");
+            }
+        })
+
     }, [])
 
     useEffect(() => {
@@ -102,7 +87,7 @@ const SingleUser = () => {
     //Main JSX
     return (
         <>
-            <SidebarTemplate handleRefresh={handleRefresh}>
+            <SidebarTemplate >
                 <div className='main'>
                     <div className='profile-container'>
                         <img className='profile_img' src={user.userImage}></img>
@@ -111,7 +96,7 @@ const SingleUser = () => {
                         <div className='profile_description'>{user.description}</div>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray })}
                     </div>
                 </div >
                 <Waypoint

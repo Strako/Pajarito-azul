@@ -11,6 +11,7 @@ interface propsI {
     user: objectI,
     navigate: any,
     setTweetsArray:  React.Dispatch<React.SetStateAction<any[]>>
+
 }
 
 interface objectI {
