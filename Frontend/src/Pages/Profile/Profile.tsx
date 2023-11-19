@@ -2,15 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { Modal, Input } from 'antd';
+import { Modal, Input, Typography } from 'antd';
 import getUserData from '../../API/GetUserData';
 import getTweetByID from '../../API/GetTweetByID';
 import editTweet from '../../API/EditTweet';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import getTweets from '../../API/GetTweets';
-import './Profile.css'
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
+import './Profile.css'
+import inputWithSize from '../../Components/TextArea/TextArea';
+import modal from 'antd/es/modal';
+import { rowsLength } from '../../Constants/Constants';
+import editUserProfile from '../../API/UpdateUserProfile';
 
 interface objectI {
     [key: string]: any
@@ -36,9 +40,15 @@ const Profile = () => {
     const [contentEditTweet, setContentEditTweet] = useState("");
     const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
     const [editProfile, setEditProfile] = useState<boolean>(false);
+    const [profleUser, setProfileUser] = useState<string>("");
+    const [profileName, setProfileName] = useState<string>("");
+    const [profileImage, setProfileImage] = useState<string>("");
+    const [profileDescription, setProfileDescription] = useState<string>("");
 
     //constants
     const navigate = useNavigate();
+    const { TextArea } = Input;
+
 
     //functions
     const showEditTweetModal = () => {
@@ -77,8 +87,21 @@ const Profile = () => {
     //Handlers
     //Handler refresh on crate - edit tweet
 
-    const handleEditTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleEditTweet: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setContentEditTweet(e.target.value);
+    }
+
+    const handleProfileUser: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileUser(e.target.value);
+    }
+    const handleProfileName: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileName(e.target.value);
+    }
+    const handleProfileImage: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileImage(e.target.value);
+    }
+    const handleProfileDescription: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileDescription(e.target.value);
     }
 
     const handleRefresh = () => {
@@ -129,21 +152,22 @@ const Profile = () => {
     //Handlers edit profile modal
     const handleEditProfileOK = () => {
         setConfirmLoadingProfile(true);
+        setIsLoading(true);
         setTimeout(() => {
-            editTweet(contentEditTweet, editTweetID).then(() => {
-                const updatedTweets = tweetsArray.map((tweet) => {
-                    if (tweet.tweetID === +editTweetID) {
-                        return { ...tweet, description: contentEditTweet };
-                    } else {
-                        return tweet;
-                    }
-                });
-                setTweetsArray(updatedTweets);
-                setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
-                setEditTweetID('');
+            editUserProfile(profleUser, profileName, profileImage, profileDescription).then(() => {
+                profleUser !== ""?
+                setUser({user: profleUser, name: profileName, userImage: profileImage, description: profileDescription})
+                :
+                setUser({name: profileName, userImage: profileImage, description: profileDescription})
+
+                
                 setOpenProfile(false);
-                setConfirmLoadingProfile(false);
+                setIsLoading(false);
+                setConfirmLoadingProfile(false);                
             })
+            setOpenProfile(false);
+            setConfirmLoadingProfile(false);
+
         }, 500);
     };
 
@@ -159,6 +183,9 @@ const Profile = () => {
             getUserData().then((r) => {
                 setUser(r.data);
                 setUserLoaded(true);
+                setProfileName(r.data.name);
+                setProfileImage(r.data.userImage);
+                setProfileDescription(r.data.description);
             }).catch((e) => {
                 console.log(e);
             });
@@ -221,9 +248,8 @@ const Profile = () => {
                 confirmLoading={confirmLoading}
                 onCancel={handleEditTweetCancel}
             >
-                <Input placeholder="Write Tweet" onChange={handleEditTweet} value={contentEditTweet} />
+                {inputWithSize(handleEditTweet, rowsLength)}
             </Modal>
-
 
             <Modal
                 title="Edit profile"
@@ -232,7 +258,17 @@ const Profile = () => {
                 confirmLoading={confirmLoadingProfile}
                 onCancel={handleEditProfileCancel}
             >
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Username</Typography.Title>
+                <Input style={{ marginBottom: "20px" }} showCount maxLength={15} onChange={handleProfileUser} defaultValue={profleUser}/>
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Name</Typography.Title>
+                <Input style={{ marginBottom: "20px" }} showCount maxLength={45} onChange={handleProfileName} defaultValue={profileName}/>
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Image link </Typography.Title>
+                <Input style={{ marginBottom: "20px" }} showCount maxLength={100} onChange={handleProfileImage} defaultValue={profileImage}/>
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Description</Typography.Title>
+                <Input style={{ marginBottom: "20px" }} showCount maxLength={200} onChange={handleProfileDescription} defaultValue={profileDescription} />
+
             </Modal>
+
         </>
     );
 }
