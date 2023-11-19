@@ -91,7 +91,19 @@ const Profile = () => {
             editTweet(contentEditTweet, editTweetID).then(() => {
                 setOpen(false);
                 setConfirmLoading(false);
-                window.location.reload();
+
+                const updatedTweets = tweetsArray.map((tweet) => {
+                    if (tweet.tweetID === +editTweetID) {
+                        return { ...tweet, description: contentEditTweet };
+                    } else {
+                        return tweet;
+                    }
+                });
+                setTweetsArray(updatedTweets);
+                console.log({"updated":updatedTweets});
+                console.log({"new":tweetsArray});
+                setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+                setEditTweetID('');
             })
         }, 500);
     };
@@ -99,6 +111,8 @@ const Profile = () => {
     const handleCancel = () => {
         console.log('Clicked cancel button');
         setOpen(false);
+        setEditTweetID('');
+
     };
 
     //useEffect Hooks
@@ -117,7 +131,7 @@ const Profile = () => {
         if (userLoaded && hasmore) {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
-        console.log({"tweets ":tweetsArray});
+        console.log({ "tweets ": tweetsArray });
 
     }, [page, user]);
 

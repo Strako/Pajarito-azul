@@ -14,13 +14,14 @@ interface buttonProps {
     user?: string;
     name?: string;
     password?: string;
+    setLogoClassName?: React.Dispatch<React.SetStateAction<string>>
 }
 //type:
 //1 login (Call EP)
 //2 navigate create account
 //3 create account (Call EP)
 
-const Button = ({ disable, placeHolder, page, type, user, name, password }: buttonProps) => {
+const Button = ({ disable, placeHolder, page, type, user, name, password, setLogoClassName }: buttonProps) => {
     //cosntants
     const navigate = useNavigate();
     const [api, contextHolder] = notification.useNotification();
@@ -37,11 +38,12 @@ const Button = ({ disable, placeHolder, page, type, user, name, password }: butt
     };
 
     const handleButton = async () => {
-        if (type === 1) {
+        if (type === 1 && setLogoClassName) {
             signIn(user!, password!).then((r) => {
                 const authToken = r.data.auth_token;
                 sessionStorage.setItem('auth_token', authToken);
                 openNotification("Inicio de sesión exitoso: ", r.data.message, "success")
+                setLogoClassName("logo_transition");
                 setTimeout(() => {
                     navigate(page);
                     window.scrollTo(0, 0);

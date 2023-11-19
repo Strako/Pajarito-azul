@@ -10,6 +10,7 @@ const Login = () => {
 
 const [user, setUser] = useState("");
 const [password, setPassword] = useState("");
+const [logoClassName, setLogoClassName] = useState("logo")
 
 //Handlers
 
@@ -45,7 +46,7 @@ const validateUserPass = () =>{
     return <>
         <div className='login-container'>
             <div className='left'>
-            <img className="logo" src={Logo} alt="Page Logo" />
+            <img className={logoClassName} src={Logo} alt="Page Logo" />
             </div>
             <div className='right'>
             <div className = 'title-container'><span >Lo que está pasando ahora</span></div>
@@ -66,7 +67,7 @@ const validateUserPass = () =>{
                     onChange={handlePassword}
                     value={password} />
 
-                <Button disable={validateUserPass()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1} user={user} password={password}/>
+                <Button disable={validateUserPass()} placeHolder={"Iniciar sesión"} page={'/profile'} type={1} user={user} password={password} setLogoClassName={setLogoClassName}/>
 
                 <Button disable={false} placeHolder={"Crear cuenta"} page={'/register'} type={2}/>
 
