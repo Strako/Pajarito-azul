@@ -12,9 +12,12 @@ import getTweets from '../../API/GetTweets';
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 import './Profile.css'
 import inputWithSize from '../../Components/TextArea/TextArea';
-import modal from 'antd/es/modal';
 import { rowsLength } from '../../Constants/Constants';
 import editUserProfile from '../../API/UpdateUserProfile';
+import { inputOneLine } from '../../Components/InputOneLine/InputOneLine';
+
+
+
 
 interface objectI {
     [key: string]: any
@@ -55,8 +58,9 @@ const Profile = () => {
         if (editTweetID != "") {
             getTweetByID(editTweetID).then((r) => {
                 setTimeout(() => {
-                    setContentEditTweet(r.data.description)
-                    console.log(r.data.description)
+                    setContentEditTweet(r.data.description);
+                    console.log(r.data.description);
+                    console.log({ "content": contentEditTweet });
                 }, 0);
                 setOpen(true);
             })
@@ -89,6 +93,7 @@ const Profile = () => {
 
     const handleEditTweet: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setContentEditTweet(e.target.value);
+        console.log(e.target.value);
     }
 
     const handleProfileUser: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -155,17 +160,17 @@ const Profile = () => {
         setIsLoading(true);
         setTimeout(() => {
             editUserProfile(profleUser, profileName, profileImage, profileDescription).then(() => {
-                profleUser !== ""?
-                setUser({userid:user.userid, user: profleUser, name: profileName, userImage: profileImage, description: profileDescription})
-                :
-                setUser({userid:user.userid, user: user.user, name: profileName, userImage: profileImage, description: profileDescription})
+                profleUser !== "" ?
+                    setUser({ userid: user.userid, user: profleUser, name: profileName, userImage: profileImage, description: profileDescription })
+                    :
+                    setUser({ userid: user.userid, user: user.user, name: profileName, userImage: profileImage, description: profileDescription })
 
-                
+
                 setOpenProfile(false);
                 setIsLoading(false);
                 setConfirmLoadingProfile(false);
                 setEditProfile(false);
-                
+
             })
             setOpenProfile(false);
             setConfirmLoadingProfile(false);
@@ -242,16 +247,15 @@ const Profile = () => {
                     bottomOffset={"-150px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
-
             <Modal
                 title="Edit Tweet"
                 open={open}
                 onOk={handleEditTweetOK}
                 confirmLoading={confirmLoading}
-                onCancel={handleEditTweetCancel}
-            >
-                {inputWithSize(handleEditTweet, rowsLength)}
+                onCancel={handleEditTweetCancel}>
+                {inputWithSize(handleEditTweet, rowsLength, contentEditTweet)}
             </Modal>
+
 
             <Modal
                 title="Edit profile"
@@ -261,14 +265,13 @@ const Profile = () => {
                 onCancel={handleEditProfileCancel}
             >
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Username</Typography.Title>
-                <Input style={{ marginBottom: "20px" }} showCount maxLength={15} onChange={handleProfileUser} defaultValue={profleUser}/>
+                {inputOneLine("20px", 15, handleProfileUser, profleUser)}
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Name</Typography.Title>
-                <Input style={{ marginBottom: "20px" }} showCount maxLength={45} onChange={handleProfileName} defaultValue={profileName}/>
+                {inputOneLine("20px", 45, handleProfileName, profileName)}
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Image link </Typography.Title>
-                <Input style={{ marginBottom: "20px" }} showCount maxLength={100} onChange={handleProfileImage} defaultValue={profileImage}/>
+                {inputOneLine("20px", 100, handleProfileImage, profileImage)}
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Description</Typography.Title>
-                <Input style={{ marginBottom: "20px" }} showCount maxLength={200} onChange={handleProfileDescription} defaultValue={profileDescription} />
-
+                {inputOneLine("20px", 200, handleProfileDescription, profileDescription)}
             </Modal>
 
         </>
