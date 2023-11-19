@@ -10,6 +10,7 @@ import { Modal, Input } from 'antd';
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 import { maxLength } from '../../Constants/Constants';
 import './SingleTweet.css'
+import commentByID from '../../API/CommentByID';
 
 
 
@@ -48,9 +49,7 @@ const SingleTweet = () => {
 
     //functions
     const showModal = () => {
-        setTimeout(() => {
-            setComment("")
-        }, 0);
+        setComment("")
         setOpen(true);
     };
 
@@ -102,9 +101,10 @@ const SingleTweet = () => {
     const handleOk = () => {
         setConfirmLoading(true);
         setTimeout(() => {
-            //  commentTweet(commentContent, tweetID);
+            commentByID(tweetID, comment)
             setOpen(false);
             setConfirmLoading(false);
+            setComment("");
             handleRefresh();
         }, 100);
     };

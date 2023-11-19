@@ -156,14 +156,16 @@ const Profile = () => {
         setTimeout(() => {
             editUserProfile(profleUser, profileName, profileImage, profileDescription).then(() => {
                 profleUser !== ""?
-                setUser({user: profleUser, name: profileName, userImage: profileImage, description: profileDescription})
+                setUser({userid:user.userid, user: profleUser, name: profileName, userImage: profileImage, description: profileDescription})
                 :
-                setUser({name: profileName, userImage: profileImage, description: profileDescription})
+                setUser({userid:user.userid, user: user.user, name: profileName, userImage: profileImage, description: profileDescription})
 
                 
                 setOpenProfile(false);
                 setIsLoading(false);
-                setConfirmLoadingProfile(false);                
+                setConfirmLoadingProfile(false);
+                setEditProfile(false);
+                
             })
             setOpenProfile(false);
             setConfirmLoadingProfile(false);
