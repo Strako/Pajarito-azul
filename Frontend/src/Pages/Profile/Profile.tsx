@@ -2,15 +2,22 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Waypoint } from 'react-waypoint';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { Modal, Input } from 'antd';
+import { Modal, Input, Typography } from 'antd';
 import getUserData from '../../API/GetUserData';
 import getTweetByID from '../../API/GetTweetByID';
 import editTweet from '../../API/EditTweet';
 import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import getTweets from '../../API/GetTweets';
-import './Profile.css'
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
+import './Profile.css'
+import inputWithSize from '../../Components/TextArea/TextArea';
+import { rowsLength } from '../../Constants/Constants';
+import editUserProfile from '../../API/UpdateUserProfile';
+import { inputOneLine } from '../../Components/InputOneLine/InputOneLine';
+
+
+
 
 interface objectI {
     [key: string]: any
@@ -29,24 +36,42 @@ const Profile = () => {
     const [likesNumber, setLikesNumber] = useState<number>(0);
     const [commentsNumber, setCommentNumber] = useState<number>(0);
     const [open, setOpen] = useState(false);
+    const [openProfile, setOpenProfile] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
+    const [confirmLoadingProfile, setConfirmLoadingProfile] = useState(false);
     const [editTweetID, setEditTweetID] = useState<string>("");
     const [contentEditTweet, setContentEditTweet] = useState("");
     const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
+    const [editProfile, setEditProfile] = useState<boolean>(false);
+    const [profleUser, setProfileUser] = useState<string>("");
+    const [profileName, setProfileName] = useState<string>("");
+    const [profileImage, setProfileImage] = useState<string>("");
+    const [profileDescription, setProfileDescription] = useState<string>("");
 
     //constants
     const navigate = useNavigate();
+    const { TextArea } = Input;
+
 
     //functions
-    const showModal = () => {
+    const showEditTweetModal = () => {
         if (editTweetID != "") {
             getTweetByID(editTweetID).then((r) => {
                 setTimeout(() => {
-                    setContentEditTweet(r.data.description)
-                    console.log(r.data.description)
+                    setContentEditTweet(r.data.description);
+                    console.log(r.data.description);
+                    console.log({ "content": contentEditTweet });
                 }, 0);
                 setOpen(true);
             })
+        }
+    };
+
+    const showEditProfileModal = () => {
+        if (editProfile != false) {
+            setOpenProfile(true);
+
+
         }
     };
 
@@ -65,6 +90,25 @@ const Profile = () => {
 
     //Handlers
     //Handler refresh on crate - edit tweet
+
+    const handleEditTweet: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+        setContentEditTweet(e.target.value);
+        console.log(e.target.value);
+    }
+
+    const handleProfileUser: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileUser(e.target.value);
+    }
+    const handleProfileName: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileName(e.target.value);
+    }
+    const handleProfileImage: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileImage(e.target.value);
+    }
+    const handleProfileDescription: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setProfileDescription(e.target.value);
+    }
+
     const handleRefresh = () => {
         setTimeout(() => {
             //    window.location.reload();
@@ -80,39 +124,64 @@ const Profile = () => {
         }, 500);
     }
 
-    const handleEditTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setContentEditTweet(e.target.value);
-    }
+    //Handlers edit tweet modal
+    const handleEditTweetOK = () => {
+        if (contentEditTweet !== "") {
+            setConfirmLoading(true);
+            setTimeout(() => {
+                editTweet(contentEditTweet, editTweetID).then(() => {
+                    const updatedTweets = tweetsArray.map((tweet) => {
+                        if (tweet.tweetID === +editTweetID) {
+                            return { ...tweet, description: contentEditTweet };
+                        } else {
+                            return tweet;
+                        }
+                    });
+                    setTweetsArray(updatedTweets);
+                    setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+                    setEditTweetID('');
+                    setOpen(false);
+                    setConfirmLoading(false);
+                })
+            }, 500);
+        }
+    };
 
-    //Handlers modal
-    const handleOk = () => {
-        setConfirmLoading(true);
+    const handleEditTweetCancel = () => {
+        console.log('Clicked cancel button xxx');
+        setEditTweetID('');
+        console.log(editTweetID)
+        setOpen(false);
+    };
+
+    //Handlers edit profile modal
+    const handleEditProfileOK = () => {
+        setConfirmLoadingProfile(true);
+        setIsLoading(true);
         setTimeout(() => {
-            editTweet(contentEditTweet, editTweetID).then(() => {
-                setOpen(false);
-                setConfirmLoading(false);
+            editUserProfile(profleUser, profileName, profileImage, profileDescription).then(() => {
+                profleUser !== "" ?
+                    setUser({ userid: user.userid, user: profleUser, name: profileName, userImage: profileImage, description: profileDescription })
+                    :
+                    setUser({ userid: user.userid, user: user.user, name: profileName, userImage: profileImage, description: profileDescription })
 
-                const updatedTweets = tweetsArray.map((tweet) => {
-                    if (tweet.tweetID === +editTweetID) {
-                        return { ...tweet, description: contentEditTweet };
-                    } else {
-                        return tweet;
-                    }
-                });
-                setTweetsArray(updatedTweets);
-                console.log({"updated":updatedTweets});
-                console.log({"new":tweetsArray});
-                setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
-                setEditTweetID('');
+
+                setOpenProfile(false);
+                setIsLoading(false);
+                setConfirmLoadingProfile(false);
+                setEditProfile(false);
+
             })
+            setOpenProfile(false);
+            setConfirmLoadingProfile(false);
+
         }, 500);
     };
 
-    const handleCancel = () => {
+    const handleEditProfileCancel = () => {
         console.log('Clicked cancel button');
-        setOpen(false);
-        setEditTweetID('');
-
+        setEditProfile(false);
+        setOpenProfile(false);
     };
 
     //useEffect Hooks
@@ -121,6 +190,9 @@ const Profile = () => {
             getUserData().then((r) => {
                 setUser(r.data);
                 setUserLoaded(true);
+                setProfileName(r.data.name);
+                setProfileImage(r.data.userImage);
+                setProfileDescription(r.data.description);
             }).catch((e) => {
                 console.log(e);
             });
@@ -132,12 +204,18 @@ const Profile = () => {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
         }
         console.log({ "tweets ": tweetsArray });
-
     }, [page, user]);
 
     useEffect(() => {
-        showModal();
+        showEditTweetModal();
     }, [editTweetID]);
+
+    useEffect(() => {
+        if (editProfile === true) {
+            console.log(true);
+            showEditProfileModal();
+        }
+    }, [editProfile])
 
     //Loader
     if (isLoading) {
@@ -151,9 +229,14 @@ const Profile = () => {
                 <div className='main'>
                     <div className='profile-container'>
                         <img className='profile_img' src={user.userImage}></img>
+                        <div className='profile_button' onClick={() => setEditProfile(true)}>Edit profile</div>
                         <div className='profile_user'> {user.user}</div>
                         <div className='profile_name'>{user.name}</div>
                         <div className='profile_description'>{user.description}</div>
+                        <span className='profile_following'> 20 </span>
+                        <span className='profile_following_text'>Following</span>
+                        <span className='profile_followers'> 40 </span>
+                        <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
                         {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate, setTweetsArray })}
@@ -164,16 +247,33 @@ const Profile = () => {
                     bottomOffset={"-150px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
-
             <Modal
                 title="Edit Tweet"
                 open={open}
-                onOk={handleOk}
+                onOk={handleEditTweetOK}
                 confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-            >
-                <Input placeholder="Write Tweet" onChange={handleEditTweet} value={contentEditTweet} />
+                onCancel={handleEditTweetCancel}>
+                {inputWithSize(handleEditTweet, rowsLength, contentEditTweet)}
             </Modal>
+
+
+            <Modal
+                title="Edit profile"
+                open={openProfile}
+                onOk={handleEditProfileOK}
+                confirmLoading={confirmLoadingProfile}
+                onCancel={handleEditProfileCancel}
+            >
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Username</Typography.Title>
+                {inputOneLine("20px", 15, handleProfileUser, profleUser)}
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Name</Typography.Title>
+                {inputOneLine("20px", 45, handleProfileName, profileName)}
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Image link </Typography.Title>
+                {inputOneLine("20px", 100, handleProfileImage, profileImage)}
+                <Typography.Title level={5} style={{ fontSize: "16px" }}>Description</Typography.Title>
+                {inputOneLine("20px", 200, handleProfileDescription, profileDescription)}
+            </Modal>
+
         </>
     );
 }

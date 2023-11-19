@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { HomeOutlined, SearchOutlined, BellOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons'
 import { useNavigate } from "react-router-dom";
-import { notification, Modal, Input } from 'antd'
+import { notification, Modal } from 'antd'
 import createTweet from '../API/CreateTweet';
 import './SidebarTemplate.css'
+import inputWithSize from '../Components/TextArea/TextArea';
+import { rowsLength } from '../Constants/Constants';
 
 interface SidebarTemplateI {
     children: React.ReactNode,
@@ -15,10 +17,11 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [tweet, setTweet] = useState("")
+
     
     const navigate = useNavigate();
 
-    const handleTweet = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleTweet: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setTweet(e.target.value);
         console.log(tweet);
     }
@@ -28,6 +31,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
     };
 
     const handleOk = () => {
+        if(tweet != ""){
         if(handleRefresh){
         setConfirmLoading(true);
         setTimeout(() => {
@@ -48,6 +52,7 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
         },500);
 
     }
+}
     };
 
     const handleCancel = () => {
@@ -125,7 +130,8 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                 onCancel={handleCancel}
                 
             >
-                <Input placeholder="Write Tweet" onChange={handleTweet} />
+                {inputWithSize(handleTweet, rowsLength)}
+
             </Modal>
         </>
     )

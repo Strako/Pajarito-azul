@@ -7,8 +7,11 @@ import SidebarTemplate from '../../Templates/SidebarTemplate';
 import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
 import { HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Modal, Input } from 'antd';
-import './SingleTweet.css'
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
+import { maxLength } from '../../Constants/Constants';
+import './SingleTweet.css'
+import commentByID from '../../API/CommentByID';
+
 
 
 
@@ -40,14 +43,13 @@ const SingleTweet = () => {
     //constants
     const { tweetid } = useParams();
     const navigate = useNavigate();
+    const { TextArea } = Input;
 
 
 
     //functions
     const showModal = () => {
-        setTimeout(() => {
-            setComment("")
-        }, 0);
+        setComment("")
         setOpen(true);
     };
 
@@ -91,7 +93,7 @@ const SingleTweet = () => {
         }, 0);
     }
 
-    const handleEditComment = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleEditComment: React.ChangeEventHandler<HTMLTextAreaElement>  = (e) => {
         setComment(e.target.value);
     }
 
@@ -99,9 +101,10 @@ const SingleTweet = () => {
     const handleOk = () => {
         setConfirmLoading(true);
         setTimeout(() => {
-            //  commentTweet(commentContent, tweetID);
+            commentByID(tweetID, comment)
             setOpen(false);
             setConfirmLoading(false);
+            setComment("");
             handleRefresh();
         }, 100);
     };
@@ -115,17 +118,17 @@ const SingleTweet = () => {
     //useEffect Hooks
     useEffect(() => {
         console.log(tweetid);
-        if(tweetid){
-        setTweetID(tweetid);
+        if (tweetid) {
+            setTweetID(tweetid);
         }
     }, [])
 
-    useEffect(() =>{
-        if(tweetID){
-        saveTweet();
-        setTweetLoaded(false);
+    useEffect(() => {
+        if (tweetID) {
+            saveTweet();
+            setTweetLoaded(false);
         }
-    },[tweetID]);
+    }, [tweetID]);
 
     useEffect(() => {
         if (tweetLoaded && hasmore) {
@@ -150,8 +153,8 @@ const SingleTweet = () => {
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png            <>
         const tweet = <> <div key={tweetContent.tweetID} id={tweetContent.tweetID} className="single_tweet">
-            <img className='single_tweet_img' src={user.userImage} onClick={() => navigate('/user/'+user.user)}></img>
-            <div className="single_tweet_author" onClick={() => navigate('/user/'+user.user)}> {user.user}</div>
+            <img className='single_tweet_img' src={user.userImage} onClick={() => navigate('/user/' + user.user)}></img>
+            <div className="single_tweet_author" onClick={() => navigate('/user/' + user.user)}> {user.user}</div>
             <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
                 <div className="single_like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
@@ -188,8 +191,14 @@ const SingleTweet = () => {
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
             >
-                <Input placeholder="Write commnet" onChange={handleEditComment} value={comment} />
+
+                <TextArea rows={2} placeholder={"maxLength is " + maxLength } maxLength={maxLength} onChange={handleEditComment}/>
             </Modal>
+
+
+
+            export default App;
+
 
         </>
     );

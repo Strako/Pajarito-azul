@@ -15,10 +15,10 @@
 
 
     width: 566px;
-    height: 250px;
+    height: auto;
     padding-top: 20px;
     padding-left: 10px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
     padding-right: 50px;
 
 
@@ -38,6 +38,7 @@
     padding-left: 10px;
     font-family: sans-serif;
     font-weight:bolder;
+    font-size: 22px;
     text-align: left;
 
 }
@@ -48,25 +49,87 @@
     font-family: sans-serif;
     font-weight:lighter;
     text-align: left;
-    color:gray;
+    color:rgb(97, 97, 97);
 }
 
 .profile_description{
     padding-left: 10px;
     font-family: sans-serif;
     font-weight:lighter;
+    padding-bottom: 20px;
+}
+
+.profile_button {
+    cursor: pointer;;
+    width: autos;
+    height: auto;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: sans-serif;
+    color: rgb(255, 255, 255);
+    margin-left: 460px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(0, 0, 0);
+    border-radius: 30px;
+    border: 1px solid white;    
+}
+
+.profile_button:hover {
+    background-color:rgb(17, 17, 17);
+    transition-duration: 0.5s;
+    transition-property: background-color;
+    border-radius: 30px;
+    cursor: pointer;
 
 }
 
+.profile_following{
+    padding-left: 10px;
+    font-family: sans-serif;
+    font-weight:bolder;
+    font-size: 14px;
+}
+
+.profile_following_text{
+    text-align: left;
+    font-family: sans-serif;
+    font-weight:lighter;
+    text-align: left;
+    font-size: 14px;
+    color:rgb(97, 97, 97);
+
+}
+
+.profile_followers{
+    padding-left: 20px;
+    font-family: sans-serif;
+    font-weight:bolder;
+    font-size: 14px;
+}
+
+.profile_followers_text{
+    text-align: left;
+    font-family: sans-serif;
+    font-weight:lighter;
+    text-align: left;
+    font-size: 14px;
+    color:rgb(97, 97, 97);
+
+}
 
 .tweet {
     margin-left: 3px;
     text-align: left;
     box-shadow: 0px 0.1px 0px 0px #ffffff;
-    width: 600px;
+    max-width: 600px;
     height: auto;
     padding-top: 20px;
     padding-left: 20px;
+
     
 }
 
@@ -90,7 +153,7 @@
     font-family: sans-serif;
     font-weight: 900;
     padding-left: 70px;
-    padding-right: 10px;
+    padding-right: 90px;
 
 
 
@@ -101,7 +164,9 @@
     color: white;
     font-family: sans-serif;
     padding-left: 10px;
-    padding-right: 10px;
+    padding-right: 90px;
+    word-wrap: break-word; 
+
 
 }
 
@@ -148,7 +213,7 @@
     border-radius: 30px;
 }
 .delete_icon{
-    margin-left: 100px;
+    text-align: right;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 8px;
@@ -164,7 +229,7 @@
     border-radius: 30px;
 }
 
-.edit_icon{
+.edit_icon{     
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 8px;
