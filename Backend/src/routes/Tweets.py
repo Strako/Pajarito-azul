@@ -52,7 +52,6 @@ def createTweet():
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
-
 @Tweet.route('/get-all-tweets', methods=['GET'])
 @verify_token
 def getAll():
@@ -72,16 +71,14 @@ def getAll():
         queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM tweets where userid=%s;"
         cur.execute(queryNoPages, (per_page, userID))
         totalPages = cur.fetchall()[0][0]
-        # Modificar la consulta SQL para incluir paginación
-        query = """
-            SELECT * FROM tweets
-            WHERE userid = %s
-            ORDER BY datetime DESC
-            LIMIT %s OFFSET %s;
+
+        finalQuery = """
+            SELECT t.*, COUNT(l.likeid) AS cantidad_likes, COUNT(c.commentid) AS cantidad_comentarios FROM tweets t LEFT JOIN likes l ON t.tweetid = l.tweetid LEFT JOIN comments c ON t.tweetid = c.tweetid WHERE t.userid = %s GROUP BY t.tweetid, t.userid, t.description, t.tweetImage, t.datetime ORDER BY t.datetime DESC LIMIT %s OFFSET %s;
         """
-        cur.execute(query, (userID, per_page, offset))
+        cur.execute(finalQuery, (userID, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
+        print(dbres)
         data_json = {}
         for tweet in dbres:
             data_json[
@@ -90,7 +87,9 @@ def getAll():
                 "userID": tweet[1],
                 "description": tweet[2],
                 "tweetImage": tweet[3],
-                "datetime": tweet[4]
+                "datetime": tweet[4],
+                "cantidad_likes": tweet[5],
+                "cantidad_comentarios": tweet[6]
             }
         data = {"totalPages":f'{totalPages}', "tweets":data_json}
         return resfunc(data), 200
@@ -111,8 +110,25 @@ def getTweetsOf(user):
         queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM tweets where userid=(select userid from users where user=%s);"
         cur.execute(queryNoPages, (per_page, user))
         totalPages = cur.fetchall()[0][0]
-        query = "select * from tweets where userid = (select userid from users where user=%s) ORDER BY datetime DESC LIMIT %s OFFSET %s;"
-        cur.execute(query, (user, per_page, offset))
+        finalQuery = """
+            SELECT
+                t.*,
+                COUNT(l.likeid) AS cantidad_likes,
+                COUNT(c.commentid) AS cantidad_comentarios
+            FROM
+                tweets t
+                LEFT JOIN likes l ON t.tweetid = l.tweetid
+                LEFT JOIN comments c ON t.tweetid = c.tweetid
+                LEFT JOIN users u ON t.userid = u.userid
+            WHERE
+                u.user = %s
+            GROUP BY
+                t.tweetid, t.userid, t.description, t.tweetImage, t.datetime
+            ORDER BY
+                t.datetime DESC
+            LIMIT %s OFFSET %s;
+            """
+        cur.execute(finalQuery, (user, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
         data_json = {}
@@ -127,7 +143,9 @@ def getTweetsOf(user):
                     "userID": tweet[1],
                     "description": tweet[2],
                     "tweetImage": tweet[3],
-                    "datetime": tweet[4]
+                    "datetime": tweet[4],
+                    "cantidad_likes": tweet[5],
+                    "cantidad_comentarios": tweet[6]
                 }
             data = {"totalPages":f'{totalPages}', "tweets": data_json}
             return resfunc(data), 200
@@ -141,8 +159,19 @@ def getTweetsOf(user):
 def getOne(tweet_id):
     try:
         cur = conn.cursor()
-        query = "SELECT * FROM tweets WHERE tweetid = %s;"
-        cur.execute(query, (tweet_id,))
+        finalQuery = """
+        SELECT
+            t.*,
+            COUNT(l.likeid) AS cantidad_likes,
+            COUNT(c.commentid) AS cantidad_comentarios
+        FROM
+            tweets t
+            LEFT JOIN likes l ON t.tweetid = l.tweetid
+            LEFT JOIN comments c ON t.tweetid = c.tweetid
+        WHERE
+            t.tweetid = %s
+        """
+        cur.execute(finalQuery, (tweet_id,))
         dbres = cur.fetchall()
         cur.close()
 
@@ -155,10 +184,13 @@ def getOne(tweet_id):
             "userID": dbres[0][1],
             "description": dbres[0][2],
             "tweetImage": dbres[0][3],
-            "datetime": dbres[0][4]
+            "datetime": dbres[0][4],
+            "cantidad_likes": dbres[0][5],
+            "cantidad_comentarios": dbres[0][6]
         }
         return resfunc(data), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
@@ -232,5 +264,55 @@ def deleteTweet(tweet_id):
             return resfunc(data), 200
 
     except Exception as e:
+        data = {"message": "Error al conectarse a la base de datos"}
+        return resfunc(data), 500
+
+
+@Tweet.route('/get-comments/<int:tweet_id>', methods=['GET'])
+@verify_token
+def get_comments_tweet(tweet_id):
+    #get params for pagination
+    page = request.args.get('page', default=1, type=int)
+    per_page = request.args.get('per_page', default=10, type=int)
+    #calculate offset for pagination
+    offset = (page - 1) * per_page
+    try:
+        cur = conn.cursor()
+        queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM comments WHERE tweetid = %s;"
+        cur.execute(queryNoPages, (per_page, tweet_id,))
+        totalPages = cur.fetchall()[0][0]
+        finalQuery = """
+        SELECT
+            c.*
+        FROM
+            comments c
+        WHERE
+            c.tweetid = %s
+        ORDER BY
+            c.datetime DESC
+        LIMIT %s OFFSET %s;
+        """
+        cur.execute(finalQuery, (tweet_id, per_page, totalPages,))
+        dbres = cur.fetchall()
+        cur.close()
+
+        if len(dbres) == 0:
+            data = {"message": "Tweet no encontrado"}
+            return resfunc(data), 200
+
+        data_json = {}
+        for comment in dbres:
+            data_json[
+                comment[0]] = {
+                "commentID": comment[0],
+                "userID": comment[1],
+                "tweetID": comment[2],
+                "comment": comment[3],
+                "datetime": comment[4]
+            }
+        data = {"comments": data_json}
+        return resfunc(data), 200
+    except Exception as e:
+        print(e)
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500

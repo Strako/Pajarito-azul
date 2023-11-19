@@ -314,3 +314,5 @@ def add_comment_to():
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+
+#TODO agregar ruta para eliminar comentario de un tweet
