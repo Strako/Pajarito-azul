@@ -73,8 +73,30 @@ def getAll():
         totalPages = cur.fetchall()[0][0]
 
         finalQuery = """
-            SELECT t.*, COUNT(l.likeid) AS cantidad_likes, COUNT(c.commentid) AS cantidad_comentarios FROM tweets t LEFT JOIN likes l ON t.tweetid = l.tweetid LEFT JOIN comments c ON t.tweetid = c.tweetid WHERE t.userid = %s GROUP BY t.tweetid, t.userid, t.description, t.tweetImage, t.datetime ORDER BY t.datetime DESC LIMIT %s OFFSET %s;
-        """
+            SELECT
+                t.*,
+                COALESCE(l.num_likes, 0) AS cantidad_likes,
+                COALESCE(c.num_comentarios, 0) AS cantidad_comentarios
+            FROM
+                tweets t
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(likeid) AS num_likes
+                    FROM likes
+                    GROUP BY tweetid
+                ) l ON t.tweetid = l.tweetid
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(commentid) AS num_comentarios
+                    FROM comments
+                    GROUP BY tweetid
+                ) c ON t.tweetid = c.tweetid
+            WHERE
+                t.userid = %s
+            GROUP BY
+                t.tweetid, t.userid, t.description, t.tweetImage, t.datetime
+            ORDER BY
+                t.datetime DESC
+            LIMIT %s OFFSET %s;
+            """
         cur.execute(finalQuery, (userID, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
@@ -113,12 +135,20 @@ def getTweetsOf(user):
         finalQuery = """
             SELECT
                 t.*,
-                COUNT(l.likeid) AS cantidad_likes,
-                COUNT(c.commentid) AS cantidad_comentarios
+                COALESCE(l.num_likes, 0) AS cantidad_likes,
+                COALESCE(c.num_comentarios, 0) AS cantidad_comentarios
             FROM
                 tweets t
-                LEFT JOIN likes l ON t.tweetid = l.tweetid
-                LEFT JOIN comments c ON t.tweetid = c.tweetid
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(likeid) AS num_likes
+                    FROM likes
+                    GROUP BY tweetid
+                ) l ON t.tweetid = l.tweetid
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(commentid) AS num_comentarios
+                    FROM comments
+                    GROUP BY tweetid
+                ) c ON t.tweetid = c.tweetid
                 LEFT JOIN users u ON t.userid = u.userid
             WHERE
                 u.user = %s
@@ -160,16 +190,24 @@ def getOne(tweet_id):
     try:
         cur = conn.cursor()
         finalQuery = """
-        SELECT
-            t.*,
-            COUNT(l.likeid) AS cantidad_likes,
-            COUNT(c.commentid) AS cantidad_comentarios
-        FROM
-            tweets t
-            LEFT JOIN likes l ON t.tweetid = l.tweetid
-            LEFT JOIN comments c ON t.tweetid = c.tweetid
-        WHERE
-            t.tweetid = %s
+            SELECT
+                t.*,
+                COALESCE(l.num_likes, 0) AS cantidad_likes,
+                COALESCE(c.num_comentarios, 0) AS cantidad_comentarios
+            FROM
+                tweets t
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(likeid) AS num_likes
+                    FROM likes
+                    GROUP BY tweetid
+                ) l ON t.tweetid = l.tweetid
+                LEFT JOIN (
+                    SELECT tweetid, COUNT(commentid) AS num_comentarios
+                    FROM comments
+                    GROUP BY tweetid
+                ) c ON t.tweetid = c.tweetid
+            WHERE
+                t.tweetid = %s;
         """
         cur.execute(finalQuery, (tweet_id,))
         dbres = cur.fetchall()
