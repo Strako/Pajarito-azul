@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `likes` (
   `likeid` INT NOT NULL AUTO_INCREMENT ,
   `userid` INT NOT NULL ,
   `tweetid` INT NOT NULL ,
-  `date` VARCHAR(15) NULL,
+  `datetime` VARCHAR(30) NULL,
   PRIMARY KEY (`likeid`) ,
   FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ),
   CONSTRAINT `fk_likes_tweet` FOREIGN KEY (`tweetid` ) REFERENCES `tweets` (`tweetid` ));
@@ -66,12 +66,13 @@ CREATE TABLE IF NOT EXISTS `likes` (
   Table structure for comments
   atributte: commentid, userid, tweetid, date, comment
 */
+DROP TABLE IF EXISTS `comments`;
 CREATE TABLE IF NOT EXISTS `comments` (
   `commentid` INT NOT NULL AUTO_INCREMENT,
   `userid` INT NOT NULL ,
   `tweetid` INT NOT NULL ,
   `comment` VARCHAR(255) NOT NULL ,
-  `date` VARCHAR(15) NULL,
+  `datetime` VARCHAR(30) NULL,
   PRIMARY KEY (`commentid`) ,
   FOREIGN KEY (`userid` ) REFERENCES `users` (`userid` ),
   CONSTRAINT `fk_comments_tweet` FOREIGN KEY (`tweetid` ) REFERENCES `tweets` (`tweetid` ));
@@ -85,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `follows`(
   `followid` INT NOT NULL AUTO_INCREMENT ,
   `followerid` INT NOT NULL ,
   `followingid` INT NOT NULL,
-  `followdate` VARCHAR(15) NULL,
+  `followdate` VARCHAR(30) NULL,
   PRIMARY KEY (`followid`) ,
   FOREIGN KEY (`followerid` ) REFERENCES `users` (`userid` ),
   FOREIGN KEY (`followingid` ) REFERENCES `users` (`userid` ));
@@ -99,52 +100,91 @@ CREATE TABLE IF NOT EXISTS `notifications`(
   `notificationid` INT NOT NULL AUTO_INCREMENT ,
   `emitterid` INT NOT NULL ,
   `receiverid` INT NOT NULL,
-  `date` VARCHAR(15) NOT NULL,
-  `action` VARCHAR(15) NOT NULL,
+  `datetime` VARCHAR(30) NOT NULL,
+  `interaction` VARCHAR(15) NOT NULL,
+  `commentid` INT NULL DEFAULT NULL,
+  `likeid` INT NULL DEFAULT NULL,
   `status` TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`notificationid`) ,
   FOREIGN KEY (`emitterid` ) REFERENCES `users` (`userid` ),
   FOREIGN KEY (`receiverid` ) REFERENCES `users` (`userid` ));
 
 /*
-  Trigger for the table tweets
+  Triggers for the table tweets
 */
-
+DROP TRIGGER IF EXISTS after_insert_like;
 DELIMITER //
 CREATE TRIGGER after_insert_like
 AFTER INSERT ON likes
 FOR EACH ROW
 BEGIN
-  INSERT INTO notifications (emitterid, receiverid, date, action, status)
-  VALUES (NEW.userid, (SELECT userid FROM tweets WHERE tweetid = NEW.tweetid), NOW(), 'like', 0);
+  INSERT INTO notifications (emitterid, receiverid, datetime, interaction,likeid, status)
+  VALUES (NEW.userid, (SELECT userid FROM tweets WHERE tweetid = NEW.tweetid), NOW(), 'like',NEW.likeid, 0);
 END;
 //
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS after_delete_like;
+DELIMITER //
+CREATE TRIGGER after_delete_like
+AFTER DELETE ON likes
+FOR EACH ROW
+BEGIN
+  DELETE FROM notifications WHERE emitterid = OLD.userid AND interaction = 'like' AND receiverid = (SELECT userid FROM tweets WHERE tweetid = OLD.tweetid);
+END;
+//
+DELIMITER ;
+
+
 /*
-  -- Trigger for the table follows
+  -- Triggers for the table follows
 */
+DROP TRIGGER IF EXISTS after_insert_follow;
 DELIMITER //
 CREATE TRIGGER after_insert_follow
 AFTER INSERT ON follows
 FOR EACH ROW
 BEGIN
-  INSERT INTO notifications (emitterid, receiverid, date, action, status)
+  INSERT INTO notifications (emitterid, receiverid, datetime, interaction, status)
   VALUES (NEW.followerid, NEW.followingid, NOW(), 'follow', 0);
 END;
 //
 DELIMITER ;
 
+DROP TRIGGER IF EXISTS after_delete_follow;
+DELIMITER //
+CREATE TRIGGER after_delete_follow
+AFTER DELETE ON follows
+FOR EACH ROW
+BEGIN
+  DELETE FROM notifications WHERE emitterid = OLD.followerid AND interaction = 'follow' AND receiverid = OLD.followingid;
+END;
+//
+DELIMITER ;
+
 /*
-  -- Trigger for the table comments
+  -- Triggers for the table comments
 */
+DROP TRIGGER IF EXISTS after_insert_comment;
 DELIMITER //
 CREATE TRIGGER after_insert_comment
 AFTER INSERT ON comments
 FOR EACH ROW
 BEGIN
-  INSERT INTO notifications (emitterid, receiverid, date, action, status)
-  VALUES (NEW.userid, (SELECT userid FROM tweets WHERE tweetid = NEW.tweetid), NOW(), 'comment', 0);
+  INSERT INTO notifications (emitterid, receiverid, datetime, interaction,commentid, status)
+  VALUES (NEW.userid, (SELECT userid FROM tweets WHERE tweetid = NEW.tweetid), NOW(), 'comment',NEW.commentid, 0);
 END;
 //
 DELIMITER ;
+
+DROP TRIGGER IF EXISTS after_delete_comment;
+DELIMITER //
+CREATE TRIGGER after_delete_comment
+AFTER DELETE ON comments
+FOR EACH ROW
+BEGIN
+  DELETE FROM notifications WHERE emitterid = OLD.userid AND interaction = 'comment' AND receiverid = (SELECT userid FROM tweets WHERE tweetid = OLD.tweetid);
+END;
+//
+DELIMITER ;
+
