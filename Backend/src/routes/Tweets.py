@@ -110,8 +110,8 @@ def getAll():
                 "description": tweet[2],
                 "tweetImage": tweet[3],
                 "datetime": tweet[4],
-                "cantidad_likes": tweet[5],
-                "cantidad_comentarios": tweet[6]
+                "likes": tweet[5],
+                "comments": tweet[6]
             }
         data = {"totalPages":f'{totalPages}', "tweets":data_json}
         return resfunc(data), 200
@@ -174,8 +174,8 @@ def getTweetsOf(user):
                     "description": tweet[2],
                     "tweetImage": tweet[3],
                     "datetime": tweet[4],
-                    "cantidad_likes": tweet[5],
-                    "cantidad_comentarios": tweet[6]
+                    "likes": tweet[5],
+                    "comments": tweet[6]
                 }
             data = {"totalPages":f'{totalPages}', "tweets": data_json}
             return resfunc(data), 200
@@ -223,8 +223,8 @@ def getOne(tweet_id):
             "description": dbres[0][2],
             "tweetImage": dbres[0][3],
             "datetime": dbres[0][4],
-            "cantidad_likes": dbres[0][5],
-            "cantidad_comentarios": dbres[0][6]
+            "likes": dbres[0][5],
+            "comments": dbres[0][6]
         }
         return resfunc(data), 200
     except Exception as e:

@@ -33,12 +33,12 @@ const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate,s
                     <div className="tweet_content">
                         <article >{tweet.description} </article>
                         <div className="like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
-                        <div className="likes_number" >{2}</div>
+                        <div className="likes_number" >{tweet.likes}</div>
                         <div className="comment_icon" onClick={(event) => {
                             navigate("/single-tweet/" + getTweetId(event));
                             console.log(getTweetId(event))
                         }}><CommentOutlined /> </div>
-                        <div className="comments_number">{2}</div>
+                        <div className="comments_number">{tweet.comments}</div>
                         <div className="delete_icon" onClick={(e) => {
                             deleteTweetById({e, tweetsArray, setTweetsArray});
                            // window.location.reload();
