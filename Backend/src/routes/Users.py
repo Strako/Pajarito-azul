@@ -431,7 +431,12 @@ def get_tweets_home():
                         os.getenv("SECRET_KEY"))['userID']
     try:
         cur = conn.cursor()
-        query = "SELECT * FROM tweets WHERE userid IN (SELECT followingid FROM follows WHERE followerid = %s) ORDER BY datetime DESC;"
+        query = """
+        SELECT tweets.*
+        FROM tweets
+        JOIN follows ON tweets.userid = follows.followingid
+        WHERE follows.followerid = 1;
+        """
         cur.execute(query, (user_id,))
         tweets = cur.fetchall()
         cur.close()
