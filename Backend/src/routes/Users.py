@@ -257,7 +257,6 @@ def update_user():
 @User.route("/like-tweet", methods=["POST"])
 @verify_token
 def like_tweet():
-    #TODO agregar documentacion al endpoint
     """_summary_
 
     Returns:
@@ -315,4 +314,85 @@ def add_comment_to():
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
-#TODO agregar ruta para eliminar comentario de un tweet
+@User.route("/delete-comment", methods=["POST"])
+@verify_token
+def delete_comment():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.get_json()
+    user_id = decode_token(request.headers.get("Authorization")[7:],
+                        os.getenv("SECRET_KEY"))['userID']
+    comment_id = data["commentId"]
+    try:
+        cur = conn.cursor()
+        #verifica que el comentario sea del usuario
+        query = "SELECT * FROM comments WHERE userid = %s AND commentid = %s;"
+        cur.execute(query, (user_id, comment_id))
+        res  = cur.fetchone()
+        if res:
+            query = "DELETE FROM comments WHERE commentid = %s;"
+            cur.execute(query, (comment_id,))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Comentario eliminado"}), 200
+        #si el comentario no es del usuario, verifica que el usuario sea el dueño del tweet
+        elif not res:
+            query = "SELECT * FROM tweets WHERE userid = %s AND tweetid = (SELECT tweetid FROM comments WHERE commentid = %s);"
+            cur.execute(query, (user_id, comment_id))
+            res = cur.fetchone()
+            if res:
+                query = "DELETE FROM comments WHERE commentid = %s;"
+                cur.execute(query, (comment_id,))
+                conn.commit()
+                cur.close()
+                return jsonify({"message":"Comentario eliminado"}), 200
+            else:
+                return jsonify({"message":"No se puede eliminar el comentario"}), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+@User.route("/follow-user", methods=["POST"])
+@verify_token
+def follow_user():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
+    data = request.get_json()
+    user_id = decode_token(request.headers.get("Authorization")[7:],
+                        os.getenv("SECRET_KEY"))['userID']
+    user_to_follow = data["userToFollow"]
+    try:
+        cur = conn.cursor()
+        query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
+        cur.execute(query, (user_id, user_to_follow))
+        follow = cur.fetchone()
+        if follow:
+            query = "DELETE FROM follows WHERE followerid = %s AND followingid = %s;"
+            cur.execute(query, (user_id, user_to_follow))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Dejaste de seguir al usuario"}), 200
+        else:
+            query = "INSERT INTO follows(followerid, followingid, followdate) VALUES (%s, %s, %s);"
+            cur.execute(query, (user_id, user_to_follow,
+                        datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            conn.commit()
+            cur.close()
+            return jsonify({"message":"Ahora sigues al usuario"}), 200
+    except Exception as e:
+        print(e)
+        data = {"message": "Error en la consulta a la base de datos"}
+        return resfunc(data), 500
+
+#TODO agregar ruta par obtener los seguidores de un usuario
+
+#TODO agregar ruta para obtener los usuarios que sigue un usuario
+
+#TODO agregar ruta para obtener los tweets de los usuarios que sigue un usuario ordenandolos por fecha de creacion descendente
