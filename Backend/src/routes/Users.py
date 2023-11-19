@@ -419,28 +419,33 @@ def follow_user():
 
 #TODO agregar ruta para obtener una lista de los usuarios que sigue un usuario
 
+
 @User.route("/get-tweets-home", methods=["GET"])
 @verify_token
 def get_tweets_home():
-    """_summary_
-
-    Returns:
-        _type_: _description_
-    """
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                        os.getenv("SECRET_KEY"))['userID']
+                           os.getenv("SECRET_KEY"))['userID']
     try:
         cur = conn.cursor()
+
+        # Parámetros para la paginación
+        page = request.args.get('page', default=1, type=int)
+        per_page = request.args.get('per_page', default=10, type=int)
+        offset = (page - 1) * per_page
+
         query = """
         SELECT tweets.*
         FROM tweets
         JOIN follows ON tweets.userid = follows.followingid
-        WHERE follows.followerid = 1;
+        WHERE follows.followerid = %s
+        ORDER BY tweets.datetime DESC
+        LIMIT %s OFFSET %s;
         """
-        cur.execute(query, (user_id,))
+        cur.execute(query, (user_id, per_page, offset))
         tweets = cur.fetchall()
         cur.close()
-        return jsonify({"tweets":tweets}), 200
+
+        return jsonify({"tweets": tweets}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
