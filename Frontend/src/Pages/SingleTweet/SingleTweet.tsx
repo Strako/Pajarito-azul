@@ -164,13 +164,8 @@ const SingleTweet = () => {
                 getUserByID(comment.userID).then((r) => {
                     setMapcomments(mapComments.set(comment.userID, { "user": r.data.user, "image": r.data.userImage }))
                 })
-
-
             }
-
-            console.log("Que vergaaaaaa");
             setTimeout(() => {
-
                 setIsLoading(false);
             }, 0);
 
