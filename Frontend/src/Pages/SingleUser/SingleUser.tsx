@@ -72,6 +72,7 @@ const SingleUser = () => {
     useEffect(() => {
         if (userLoaded && hasmore) {
             saveTweets({ user, page, setTotalPages, setTweetsArray, setIsLoading, hasmore });
+
         }
     }, [page, user]);
 
@@ -79,6 +80,8 @@ const SingleUser = () => {
     if (isLoading) {
         return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
     }
+    console.log({"singleUser": tweetsArray});
+
 
     //Main JSX
     return (

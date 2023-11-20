@@ -4,14 +4,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import getTweetByID from '../../API/GetTweetByID';
 import getUserByID from '../../API/GetUserByID';
 import SidebarTemplate from '../../Templates/SidebarTemplate';
-import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
 import { HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Modal, Input } from 'antd';
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 import { maxLength } from '../../Constants/Constants';
 import commentByID from '../../API/CommentByID';
 import { likeSingleTweetId } from '../../Components/LikeSingleTweet/LikeSingleTweet';
+import saveComments from '../../Components/SaveComments/SaveComments';
 import './SingleTweet.css'
+import getCommentsByID from '../../API/GetCommentsByID';
+import listComments from '../../Components/ListComments/ListComments';
 
 
 
@@ -33,18 +35,22 @@ const SingleTweet = () => {
     const [hasmore, setHasMore] = useState<boolean>(true);
     const [likesNumber, setLikesNumber] = useState<number>(0);
     const [commentsNumber, setCommentNumber] = useState<number>(0);
-    const [offset, setOffset] = useState<string>("0");
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [tweetID, setTweetID] = useState<string>("");
     const [tweetContent, setTweetContent] = useState<objectI>({});
     const [comment, setComment] = useState<string>("");
+    const [listCommentKey, setListCommentKey] = useState<string>('initialKey');
+    const [mapComments, setMapcomments] = useState<Map<any, any>>(new Map());
+
+
 
 
     //constants
     const { tweetid } = useParams();
     const navigate = useNavigate();
     const { TextArea } = Input;
+
 
 
 
@@ -73,15 +79,11 @@ const SingleTweet = () => {
             setTweetContent(r.data);
             setTimeout(() => {
                 setTweetLoaded(true);
-                setIsLoading(false);
-                setOffset("-10px")
-            }, 0);
+
+            }, 200);
         }).catch((e) => {
             console.log("error " + e);
             setHasMore(false);
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 0);
         });
     }
 
@@ -91,11 +93,12 @@ const SingleTweet = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
-            window.location.reload();
         }, 0);
+        //window.location.reload();
+
     }
 
-    const handleEditComment: React.ChangeEventHandler<HTMLTextAreaElement>  = (e) => {
+    const handleEditComment: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
         setComment(e.target.value);
     }
 
@@ -128,23 +131,52 @@ const SingleTweet = () => {
     useEffect(() => {
         if (tweetID) {
             saveTweet();
-            setTweetLoaded(false);
         }
     }, [tweetID]);
 
     useEffect(() => {
-        if (tweetLoaded && hasmore) {
-            //getComments
+        if (tweetLoaded) {
+            setTimeout(() => {
+                getUserByID(tweetContent.userID).then((r) => {
+                    console.log({ "useeffect getusebyid": r.data.userid })
+                    setUser(r.data);
+                });
+            }, 500);
         }
     }, [tweetLoaded]);
 
     useEffect(() => {
-        if (tweetLoaded) {
-            getUserByID(tweetContent.userID).then((r) => {
-                setUser(r.data);
-            });
+        if (isLoading && hasmore) {
+            //getComments
+            getCommentsByID(tweetID, 1).then((r) => {
+                const commentsIDs = Object.keys(r.data.comments);
+                setCommentNumber(commentsIDs.length)
+                for (let i = commentsIDs.length - 1; i >= 0; i--) {
+                    setCommentsArray(oldArray => [...oldArray, r.data.comments[commentsIDs[i]]]);
+                }
+            })
         }
-    }, [tweetLoaded]);
+    }, [tweetLoaded, page]);
+
+    useEffect(() => {
+        commentsArray.map((comment: objectI) => {
+            if (!mapComments.has(comment.userID)) {
+                getUserByID(comment.userID).then((r) => {
+                    setMapcomments(mapComments.set(comment.userID, { "user": r.data.user, "image": r.data.userImage }))
+                })
+
+
+            }
+
+            console.log("Que vergaaaaaa");
+            setTimeout(() => {
+
+                setIsLoading(false);
+            }, 0);
+
+        })
+
+    }, [commentsArray])
 
     //Loader
     if (isLoading) {
@@ -160,7 +192,7 @@ const SingleTweet = () => {
             <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
                 <div className="single_like_icon" onClick={(e) => {
-                     likeSingleTweetId({e, setLikesNumber})
+                    likeSingleTweetId({ e, setLikesNumber })
                 }}><HeartOutlined />  </div>
                 <div className="single_likes_number" >{likesNumber}</div>
                 <div className="single_comment_icon" onClick={showModal}><CommentOutlined /> </div>
@@ -179,12 +211,12 @@ const SingleTweet = () => {
                         {listTweet()}
                     </div>
                     <div className="single_comments_container">
-
+                        {listComments({ commentsArray, setCommentsArray, navigate, mapComments })}
                     </div>
                 </div >
                 <Waypoint
                     onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                    bottomOffset={offset}   // Adjust the offset if needed
+                    bottomOffset={"-150px"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
 
@@ -196,14 +228,8 @@ const SingleTweet = () => {
                 onCancel={handleCancel}
             >
 
-                <TextArea rows={2} placeholder={"maxLength is " + maxLength } maxLength={maxLength} onChange={handleEditComment}/>
+                <TextArea rows={2} placeholder={"maxLength is " + maxLength} maxLength={maxLength} onChange={handleEditComment} />
             </Modal>
-
-
-
-            export default App;
-
-
         </>
     );
 }

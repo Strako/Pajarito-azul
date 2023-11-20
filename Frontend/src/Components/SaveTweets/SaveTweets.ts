@@ -20,7 +20,7 @@ const saveTweets = ({ user, page, setTotalPages, setTweetsArray, setIsLoading, h
             }
             setTimeout(() => {
                 setIsLoading(false);
-            }, 0);
+            }, 200);
         }).catch((e) => {
             console.log(page);
             console.log("error " + e);

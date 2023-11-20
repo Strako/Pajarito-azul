@@ -335,7 +335,7 @@ def get_comments_tweet(tweet_id):
         cur.close()
 
         if len(dbres) == 0:
-            data = {"message": "Tweet no encontrado"}
+            data = {"message": "No comments"}
             return resfunc(data), 200
 
         data_json = {}

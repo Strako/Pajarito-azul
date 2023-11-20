@@ -75,7 +75,7 @@ const listTweets = ({ keyToUpdate, tweetsArray, setEditTweetID, user, navigate,s
                     navigate("/single-tweet/" + getTweetId(event));
                     console.log(getTweetId(event))
                 }}><CommentOutlined /> </div>
-                        <div className="comments_number">{2}</div>
+                        <div className="comments_number">{tweet.comments}</div>
                     </div>
                 </div>
             </>
