@@ -241,6 +241,8 @@ def search_user(user):
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
+
+#TODO agregar upload de imagen a cloudinary
 @User.route("/update-user", methods=["POST"])
 @verify_token
 def update_user():
