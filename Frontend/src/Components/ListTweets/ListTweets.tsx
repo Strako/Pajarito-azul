@@ -1,7 +1,5 @@
-
 import { likeTweetId } from '../../Components/LikeTweet/LikeTweet';
 import { HeartOutlined, CommentOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import likeTweet from "../../API/LikeTweet";
 import deleteTweetById from '../../API/DeleteTweetByID';
 import { getTweetId } from '../../Components/GetTweetID/GetTweetId';
 

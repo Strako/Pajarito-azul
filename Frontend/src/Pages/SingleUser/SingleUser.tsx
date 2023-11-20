@@ -9,6 +9,7 @@ import saveTweets from '../../Components/SaveTweets/SaveTweets';
 import listTweets from '../../Components/ListTweets/ListTweets';
 import searchUser from '../../API/SearchUser';
 import getUserData from '../../API/GetUserData';
+import followUser from '../../Components/FollowUser/FollowUser';
 
 import '../Profile/Profile.css'
 
@@ -26,9 +27,9 @@ const SingleUser = () => {
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
     const [hasmore, setHasMore] = useState<boolean>(true);
-    const [likesNumber, setLikesNumber] = useState<number>(0);
-    const [commentsNumber, setCommentNumber] = useState<number>(0);
     const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
+    const [follow, setFollow] = useState<string>("Follow");
+    const [followersNumber, setFollowersNumber] = useState<number>(0);
 
     //constants
     const navigate = useNavigate();
@@ -57,6 +58,7 @@ const SingleUser = () => {
             if (r.data.user != username && username) {
                 searchUser(username, 1).then((r) => {
                     setUser(r.data.users[0]);
+                    setFollowersNumber(r.data.users[0].followers)
                     setUserLoaded(true);
                 })
             } else {
@@ -85,17 +87,19 @@ const SingleUser = () => {
                 <div className='main'>
                     <div className='profile-container'>
                         <img className='profile_img' src={user.userImage}></img>
-                        <div className='profile_button'>Follow</div>
+                        <div className='profile_button' onClick={() => {
+                            followUser(user.userid, setFollow, setFollowersNumber);
+                        }}>{follow}</div>
                         <div className='profile_user'> {user.user}</div>
                         <div className='profile_name'>{user.name}</div>
                         <div className='profile_description'>{user.description}</div>
-                        <span className='profile_following'> 20 </span>
+                        <span className='profile_following'> {user.following} </span>
                         <span className='profile_following_text'>Following</span>
-                        <span className='profile_followers'> 40 </span>
+                        <span className='profile_followers'> {followersNumber} </span>
                         <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({  keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray, setListTweetsKey })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray, setListTweetsKey })}
                     </div>
                 </div >
                 <Waypoint

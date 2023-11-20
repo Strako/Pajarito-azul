@@ -9,8 +9,9 @@ import { HeartOutlined, CommentOutlined } from '@ant-design/icons';
 import { Modal, Input } from 'antd';
 import loaderPlaceholder from '../../Components/LoaderPlaceholder/Loader';
 import { maxLength } from '../../Constants/Constants';
-import './SingleTweet.css'
 import commentByID from '../../API/CommentByID';
+import { likeSingleTweetId } from '../../Components/LikeSingleTweet/LikeSingleTweet';
+import './SingleTweet.css'
 
 
 
@@ -68,6 +69,7 @@ const SingleTweet = () => {
 
     const saveTweet = () => {
         getTweetByID(tweetID).then((r) => {
+            setLikesNumber(r.data.likes)
             setTweetContent(r.data);
             setTimeout(() => {
                 setTweetLoaded(true);
@@ -157,7 +159,9 @@ const SingleTweet = () => {
             <div className="single_tweet_author" onClick={() => navigate('/user/' + user.user)}> {user.user}</div>
             <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
-                <div className="single_like_icon" onClick={likeTweetId}><HeartOutlined />  </div>
+                <div className="single_like_icon" onClick={(e) => {
+                     likeSingleTweetId({e, setLikesNumber})
+                }}><HeartOutlined />  </div>
                 <div className="single_likes_number" >{likesNumber}</div>
                 <div className="single_comment_icon" onClick={showModal}><CommentOutlined /> </div>
                 <div className="single_comments_number">{commentsNumber}</div>

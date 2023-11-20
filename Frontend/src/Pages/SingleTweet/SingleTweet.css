@@ -101,3 +101,54 @@
     padding-left: 10px;
     display: inline-block;
 }
+
+
+
+
+
+single_tweet {
+    margin-top: 20px;
+    margin-left: 3px;
+    text-align: left;
+    box-shadow: 0px 0.1px 0px 0px #ffffff;
+    width: 600px;
+    height: auto;
+    padding-top: 20px;
+    padding-left: 20px;
+    word-wrap: break-word; 
+
+    
+}
+
+
+.single_tweet_comment:hover{
+    cursor:pointer;
+}
+
+.single_tweet_comment_img {
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    margin-left: 0px;
+}
+
+.single_tweet_comment_author {
+    color: white;
+    margin-top: -45px;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    font-weight: 900;
+    padding-left: 70px;
+    padding-right: 90px;
+
+}
+
+.single_tweet_comment_content {
+    margin-left: 60px;
+    color: white;
+    font-family: sans-serif;
+    padding-left: 10px;
+    padding-right: 90px;
+
+
+}

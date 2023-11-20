@@ -231,9 +231,9 @@ const Profile = () => {
                         <div className='profile_user'> {user.user}</div>
                         <div className='profile_name'>{user.name}</div>
                         <div className='profile_description'>{user.description}</div>
-                        <span className='profile_following'> 20 </span>
+                        <span className='profile_following'> {user.following} </span>
                         <span className='profile_following_text'>Following</span>
-                        <span className='profile_followers'> 40 </span>
+                        <span className='profile_followers'> {user.followers}  </span>
                         <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
