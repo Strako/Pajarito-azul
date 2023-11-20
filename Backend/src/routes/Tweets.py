@@ -309,17 +309,25 @@ def deleteTweet(tweet_id):
 @Tweet.route('/get-comments/<int:tweet_id>', methods=['GET'])
 @verify_token
 def get_comments_tweet(tweet_id):
-    #get params for pagination
+    """Get comments for a specific tweet.
+
+    Args:
+        tweet_id (int): The ID of the tweet.
+
+    Returns:
+        JSON: List of comments and the total number of comments.
+    """
+    # Get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
-    #calculate offset for pagination
+    # Calculate offset for pagination
     offset = (page - 1) * per_page
     try:
         cur = conn.cursor()
-        queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM comments WHERE tweetid = %s;"
-        cur.execute(queryNoPages, (per_page, tweet_id,))
-        totalPages = cur.fetchall()[0][0]
-        finalQuery = """
+        query_no_pages = "SELECT CEIL(COUNT(*) / %s) AS total_pages FROM comments WHERE tweetid = %s;"
+        cur.execute(query_no_pages, (per_page, tweet_id,))
+        total_pages = int(cur.fetchall()[0][0])
+        final_query = """
         SELECT
             c.*
         FROM
@@ -330,27 +338,28 @@ def get_comments_tweet(tweet_id):
             c.datetime DESC
         LIMIT %s OFFSET %s;
         """
-        cur.execute(finalQuery, (tweet_id, per_page, totalPages,))
+        cur.execute(final_query, (tweet_id, per_page, offset))
         dbres = cur.fetchall()
-        cur.close()
 
         if len(dbres) == 0:
-            data = {"message": "No comments"}
+            data = {"message": "Tweet no encontrado", "total_comments": 0}
             return resfunc(data), 200
 
-        data_json = {}
+        comments = []
         for comment in dbres:
-            data_json[
-                comment[0]] = {
+            comments.append({
                 "commentID": comment[0],
                 "userID": comment[1],
                 "tweetID": comment[2],
                 "comment": comment[3],
                 "datetime": comment[4]
-            }
-        data = {"comments": data_json}
+            })
+
+        data = {"total_pages": total_pages, "comments": comments}
         return resfunc(data), 200
     except Exception as e:
         print(e)
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
+    finally:
+        cur.close()

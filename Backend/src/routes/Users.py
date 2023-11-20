@@ -4,7 +4,6 @@
 
 """--------------imports from route Users---------------------"""
 
-# load dotenv to get env vars
 from flask import Blueprint, jsonify, request
 from werkzeug.security import  generate_password_hash, check_password_hash
 from utils.jwt_functions import *
@@ -15,14 +14,14 @@ from utils.middleware import verify_token
 import re
 from utils.resfunctions import resfunc
 from datetime import datetime
+# load dotenv to get env vars
 load_dotenv()
 
 magicWord = os.getenv("SECRET_KEY")
-# register blueprint for users
+#register blueprint for users
 User = Blueprint('User', __name__, url_prefix='/users')
 
-# -----------------------------------Routes------------------------------------------
-
+#-----------------------------------Routes------------------------------------------
 
 @User.route('/sign-up', methods=['POST'])
 def signUp():
@@ -52,8 +51,7 @@ def signUp():
                 if re.match(r'^.{1,15}$', usr):
                     if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
                         name = data['name']
-                        password = generate_password_hash(
-                            data['password'], method='sha256')
+                        password = generate_password_hash(data['password'], method='sha256')
                         cur = conn.cursor()
                         query = "INSERT INTO users (user, name, password) VALUES (%s,%s,%s);"
                         cur.execute(query, (usr, name, password))
@@ -62,19 +60,19 @@ def signUp():
                         data = {"message": "Usuario creado exitosamente"}
                         return resfunc(data), 200
                     else:
-                        data = {
-                            "message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
+                        data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
                         return resfunc(data), 200
                 else:
-                    data = {
-                        "message": "El usuario debe tener entre 1 y 15 caracteres"}
+                    data = {"message": "El usuario debe tener entre 1 y 15 caracteres"}
                     return resfunc(data), 200
             else:
                 data = {"message": "El usuario ya existe en la base de datos"}
                 return resfunc(data), 200
         except Exception as e:
+            print(e)
             data = {"message": "Error en la consulta a la base de datos"}
             return resfunc(data), 500
+
 
 
 @User.route('/sign-in', methods=['POST'])
@@ -110,30 +108,28 @@ def singIn():
                         if check_password_hash(user[3], data['password']):
                             payload = {"userID": user[0], "user": user[1]}
                             authtoken = encode_data(
-                                payload, os.getenv("SECRET_KEY"))
-                            data = {
-                                "message": "Logged in", "auth_token": f"{authtoken}", "userID": f"{user[0]}"}
+                             payload, os.getenv("SECRET_KEY"))
+                            data = {"message": "Logged in", "auth_token": f"{authtoken}", "userID": f"{user[0]}"}
                             return resfunc(data), 200
                         else:
                             data = {"message": "la contraseña es incorrecta"}
                             return resfunc(data), 401
             except Exception as e:
+                print(e)
                 data = {"message": "Error en la consulta a la base de datos"}
                 return resfunc(data), 500
         else:
             data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
             return resfunc(data), 401
 
-
 @User.route('/get-data-user', methods=['GET'])
 @verify_token
 def getDataUser():
     try:
         data = request.headers
-        userID = decode_token(data['Authorization']
-                              [7:], os.getenv("SECRET_KEY"))['userID']
+        userID = decode_token(data['Authorization'][7:], os.getenv("SECRET_KEY"))['userID']
         cur = conn.cursor()
-        # obtener seguidores y seguidos
+        #obtener seguidores y seguidos
         query = """
             SELECT u.userid, u.user, u.name, u.userImage, u.description,
             (SELECT COUNT(*) FROM follows WHERE followerid = u.userid) AS followed,
@@ -145,7 +141,7 @@ def getDataUser():
         user_data = cur.fetchone()
         cur.close()
         if not user_data:
-            data = {"message": "El usuario no existe"}
+            data =  {"message": "El usuario no existe"}
             return resfunc(data), 401
         user_dict = {
             "userid": user_data[0],
@@ -153,11 +149,12 @@ def getDataUser():
             "name": user_data[2],
             "userImage": user_data[3],
             "description": user_data[4],
-            "following": user_data[5],
-            "followers": user_data[6] 
+            "followed": user_data[5],
+            "followers": user_data[6]
         }
         return resfunc(user_dict), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -188,32 +185,31 @@ def getDataUserById():
             "name": user_data[2],
             "userImage": user_data[3],
             "description": user_data[4],
-            "following": user_data[5],
-            "followers": user_data[6] 
+            "followed": user_data[5],
+            "followers": user_data[6]
         }
         return resfunc(user_dict), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-
 
 @User.route("/search-user/<string:user>", methods=["GET"])
 @verify_token
 def search_user(user):
-    # get params for pagination
+    #get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
-    # calculate offset for pagination
+    #calculate offset for pagination
     offset = (page - 1) * per_page
     try:
-        usr = "%" + user + "%"
+        usr = "%"+ user + "%"
         cur = conn.cursor()
         query_num_pages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM users WHERE user LIKE %s;"
         cur.execute(query_num_pages, (per_page, usr))
         num_pages = (cur.fetchone())[0]
         query = """
             SELECT u.userid, u.user, u.name, u.userImage, u.description,
-            (SELECT COUNT(*) FROM follows WHERE followerid = u.userid) AS followed,
             (SELECT COUNT(*) FROM follows WHERE followingid = u.userid) AS followers
             FROM users u
             WHERE u.user LIKE %s
@@ -228,14 +224,12 @@ def search_user(user):
 
         for user in users:
             users_res.append({
-                "userid": user[0],
+                "userId": user[0],
                 "user": user[1],
                 "name": user[2],
                 "userImage": user[3],
                 "description": user[4],
-                "following": user[5],
-                "followers": user[6] 
-
+                "followers": user[5]
             })
         data = {
             "totalPages": f"{num_pages}",
@@ -248,6 +242,7 @@ def search_user(user):
         return resfunc(data), 500
 
 
+#TODO agregar upload de imagen a cloudinary
 @User.route("/update-user", methods=["POST"])
 @verify_token
 def update_user():
@@ -258,7 +253,7 @@ def update_user():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                            os.getenv("SECRET_KEY"))['userID']
     try:
         update_user = data["user"]
         update_name = data["name"]
@@ -278,20 +273,17 @@ def update_user():
             if update_description == "":
                 update_description = user[5]
             query_update = "UPDATE users SET user = %s, name = %s, userImage = %s, description = %s WHERE userid = %s;"
-            cur.execute(query_update, (update_user, update_name,
-                        update_user_image, update_description, user_id))
+            cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
             conn.commit()
             cur.close()
-            return jsonify({"message": "Usuario actualizado"}), 200
-        return jsonify({"message": "El usuario ya existe"}), 200
+            return jsonify({"message":"Usuario actualizado"}), 200
+        return jsonify({"message":"El usuario ya existe"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
-# ep para dar like a un tweet
-
-
+#ep para dar like a un tweet
 @User.route("/like-tweet", methods=["POST"])
 @verify_token
 def like_tweet():
@@ -302,7 +294,7 @@ def like_tweet():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                        os.getenv("SECRET_KEY"))['userID']
     tweet_id = data["tweetId"]
     try:
         cur = conn.cursor()
@@ -315,19 +307,17 @@ def like_tweet():
             cur.execute(query, (user_id, tweet_id))
             conn.commit()
             cur.close()
-            return jsonify({"liked": True}), 200
+            return jsonify({"message":"Like eliminado"}), 200
         else:
             query = "INSERT INTO likes (userid, tweetid, datetime) VALUES (%s, %s, %s);"
-            cur.execute(query, (user_id, tweet_id,
-                        datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            cur.execute(query, (user_id, tweet_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
-            return jsonify({"liked": False}), 200
+            return jsonify({"message":"Like agregado"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-
 
 @User.route("/add-comment-to", methods=["POST"])
 @verify_token
@@ -339,22 +329,20 @@ def add_comment_to():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                        os.getenv("SECRET_KEY"))['userID']
     tweet_id = data["tweetId"]
     comment = data["comment"]
     try:
         cur = conn.cursor()
         query = "INSERT INTO comments (userid, tweetid, comment, datetime) VALUES (%s, %s, %s, %s);"
-        cur.execute(query, (user_id, tweet_id, comment,
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        cur.execute(query, (user_id, tweet_id, comment, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         conn.commit()
         cur.close()
-        return jsonify({"message": "Comentario agregado"}), 200
+        return jsonify({"message":"Comentario agregado"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-
 
 @User.route("/delete-comment", methods=["POST"])
 @verify_token
@@ -366,21 +354,21 @@ def delete_comment():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                        os.getenv("SECRET_KEY"))['userID']
     comment_id = data["commentId"]
     try:
         cur = conn.cursor()
-        # verifica que el comentario sea del usuario
+        #verifica que el comentario sea del usuario
         query = "SELECT * FROM comments WHERE userid = %s AND commentid = %s;"
         cur.execute(query, (user_id, comment_id))
-        res = cur.fetchone()
+        res  = cur.fetchone()
         if res:
             query = "DELETE FROM comments WHERE commentid = %s;"
             cur.execute(query, (comment_id,))
             conn.commit()
             cur.close()
-            return jsonify({"message": "Comentario eliminado"}), 200
-        # si el comentario no es del usuario, verifica que el usuario sea el dueño del tweet
+            return jsonify({"message":"Comentario eliminado"}), 200
+        #si el comentario no es del usuario, verifica que el usuario sea el dueño del tweet
         elif not res:
             query = "SELECT * FROM tweets WHERE userid = %s AND tweetid = (SELECT tweetid FROM comments WHERE commentid = %s);"
             cur.execute(query, (user_id, comment_id))
@@ -390,14 +378,13 @@ def delete_comment():
                 cur.execute(query, (comment_id,))
                 conn.commit()
                 cur.close()
-                return jsonify({"message": "Comentario eliminado"}), 200
+                return jsonify({"message":"Comentario eliminado"}), 200
             else:
-                return jsonify({"message": "No se puede eliminar el comentario"}), 200
+                return jsonify({"message":"No se puede eliminar el comentario"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-
 
 @User.route("/follow-user", methods=["POST"])
 @verify_token
@@ -409,7 +396,7 @@ def follow_user():
     """
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
-                           os.getenv("SECRET_KEY"))['userID']
+                        os.getenv("SECRET_KEY"))['userID']
     user_to_follow = data["userToFollow"]
     try:
         cur = conn.cursor()
@@ -421,22 +408,117 @@ def follow_user():
             cur.execute(query, (user_id, user_to_follow))
             conn.commit()
             cur.close()
-            return jsonify({"following": False}), 200
+            return jsonify({"message":"Dejaste de seguir al usuario"}), 200
         else:
             query = "INSERT INTO follows(followerid, followingid, followdate) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, user_to_follow,
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
-            return jsonify({"following": True}), 200
+            return jsonify({"message":"Ahora sigues al usuario"}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
-# TODO agregar ruta par obtener una lista los seguidores de un usuario
 
-# TODO agregar ruta para obtener una lista de los usuarios que sigue un usuario
+@User.route('/check-follow/<int:user_to_check>', methods=['GET'])
+@verify_token
+def check_follow(user_to_check):
+    """Check if the current user follows the specified user.
+
+    Args:
+        user_to_check (int): The user ID to check if the current user follows.
+
+    Returns:
+        JSON: Result of the check.
+    """
+    try:
+        # Implement this function to get the current user ID from the token
+        current_user_id = decode_token(request.headers.get("Authorization")[7:],
+                                       os.getenv("SECRET_KEY"))['userID']
+
+        if current_user_id:
+            cur = conn.cursor()
+            query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
+            cur.execute(query, (current_user_id, user_to_check))
+            follow = cur.fetchone()
+            cur.close()
+
+            if follow:
+                return jsonify({"message": "Ya sigues a este usuario", "follows": True}), 200
+            else:
+                return jsonify({"message": "No sigues a este usuario", "follows": False}), 200
+        else:
+            return jsonify({"message": "Error al obtener el ID de usuario actual"}), 401
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+
+
+@User.route('/followers/<int:user_id>', methods=['GET'])
+@verify_token
+def get_followers(user_id):
+    """Get the list of followers for a specific user.
+
+    Args:
+        user_id (int): The user ID for which to get the followers.
+
+    Returns:
+        JSON: List of followers.
+    """
+    try:
+        cur = conn.cursor()
+        query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followerid WHERE f.followingid = %s;"
+        cur.execute(query, (user_id,))
+        followers = cur.fetchall()
+        cur.close()
+
+        followers_list = [{
+            "userID": follower[0],
+            "user": follower[1],
+            "name": follower[2],
+            "userImage": follower[3],
+        } for follower in followers]
+
+        return jsonify({"followers": followers_list}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+
+
+@User.route('/following/<int:user_id>', methods=['GET'])
+@verify_token
+def get_following(user_id):
+    """Get the list of users that a specific user is following.
+
+    Args:
+        user_id (int): The user ID for which to get the following users.
+
+    Returns:
+        JSON: List of following users.
+    """
+    try:
+        cur = conn.cursor()
+        query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followingid WHERE f.followerid = %s;"
+        cur.execute(query, (user_id,))
+        following = cur.fetchall()
+        cur.close()
+
+        following_list = [{
+            "userID": followed[0],
+            "user": followed[1],
+            "name": followed[2],
+            "userImage": followed[3],
+        } for followed in following]
+
+        return jsonify({"following": following_list}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
 
 
 @User.route("/get-tweets-home", methods=["GET"])
