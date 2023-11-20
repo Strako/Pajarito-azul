@@ -149,7 +149,7 @@ def getDataUser():
             "name": user_data[2],
             "userImage": user_data[3],
             "description": user_data[4],
-            "followed": user_data[5],
+            "following": user_data[5],
             "followers": user_data[6]
         }
         return resfunc(user_dict), 200
@@ -185,7 +185,7 @@ def getDataUserById():
             "name": user_data[2],
             "userImage": user_data[3],
             "description": user_data[4],
-            "followed": user_data[5],
+            "following": user_data[5],
             "followers": user_data[6]
         }
         return resfunc(user_dict), 200
@@ -210,6 +210,7 @@ def search_user(user):
         num_pages = (cur.fetchone())[0]
         query = """
             SELECT u.userid, u.user, u.name, u.userImage, u.description,
+            (SELECT COUNT(*) FROM follows WHERE followerid = u.userid) AS followed,
             (SELECT COUNT(*) FROM follows WHERE followingid = u.userid) AS followers
             FROM users u
             WHERE u.user LIKE %s
@@ -229,7 +230,8 @@ def search_user(user):
                 "name": user[2],
                 "userImage": user[3],
                 "description": user[4],
-                "followers": user[5]
+                "following": user[5],
+                "followers": user[6]
             })
         data = {
             "totalPages": f"{num_pages}",
@@ -408,14 +410,14 @@ def follow_user():
             cur.execute(query, (user_id, user_to_follow))
             conn.commit()
             cur.close()
-            return jsonify({"message":"Dejaste de seguir al usuario"}), 200
+            return jsonify({"following": False}), 200
         else:
             query = "INSERT INTO follows(followerid, followingid, followdate) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, user_to_follow,
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
-            return jsonify({"message":"Ahora sigues al usuario"}), 200
+            return jsonify({"following":True}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}

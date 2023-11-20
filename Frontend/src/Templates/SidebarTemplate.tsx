@@ -90,15 +90,15 @@ const SidebarTemplate = ({ children, handleRefresh }: SidebarTemplateI) => {
                         <div className="logo_sidebar">
                             <br></br>
                         </div>
-                        <div className="sidebar_item">
+                       { /*<div className="sidebar_item">
                             <HomeOutlined /> Home
-                        </div>
+                        </div>*/}
                         <div className="sidebar_item" onClick={() => navigate("/search")}>
                             <SearchOutlined /> Explore
                         </div>
-                        <div className="sidebar_item">
+                        {/*<div className="sidebar_item">
                             <BellOutlined /> Notifications
-                        </div>
+                        </div>*/}
                         <div className="sidebar_item" onClick={() => navigate("/profile")}>
                             <UserOutlined /> Profle
                         </div>

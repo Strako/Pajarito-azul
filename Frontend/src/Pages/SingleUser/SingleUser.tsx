@@ -80,7 +80,7 @@ const SingleUser = () => {
     if (isLoading) {
         return <div className="spin_loader"><Spin indicator={antIcon} /></div>;
     }
-    console.log({"singleUser": tweetsArray});
+    console.log({"userid": user.userId});
 
 
     //Main JSX
@@ -91,7 +91,7 @@ const SingleUser = () => {
                     <div className='profile-container'>
                         <img className='profile_img' src={user.userImage}></img>
                         <div className='profile_button' onClick={() => {
-                            followUser(user.userid, setFollow, setFollowersNumber);
+                            followUser(user.userId, setFollow, setFollowersNumber);
                         }}>{follow}</div>
                         <div className='profile_user'> {user.user}</div>
                         <div className='profile_name'>{user.name}</div>
