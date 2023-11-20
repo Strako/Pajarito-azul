@@ -69,6 +69,7 @@ def signUp():
                 data = {"message": "El usuario ya existe en la base de datos"}
                 return resfunc(data), 200
         except Exception as e:
+            print(e)
             data = {"message": "Error en la consulta a la base de datos"}
             return resfunc(data), 500
 
@@ -114,6 +115,7 @@ def singIn():
                             data = {"message": "la contraseña es incorrecta"}
                             return resfunc(data), 401
             except Exception as e:
+                print(e)
                 data = {"message": "Error en la consulta a la base de datos"}
                 return resfunc(data), 500
         else:
@@ -152,6 +154,7 @@ def getDataUser():
         }
         return resfunc(user_dict), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -187,6 +190,7 @@ def getDataUserById():
         }
         return resfunc(user_dict), 200
     except Exception as e:
+        print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -415,9 +419,104 @@ def follow_user():
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
-#TODO agregar ruta par obtener una lista los seguidores de un usuario
 
-#TODO agregar ruta para obtener una lista de los usuarios que sigue un usuario
+@User.route('/check-follow/<int:user_to_check>', methods=['GET'])
+@verify_token
+def check_follow(user_to_check):
+    """Check if the current user follows the specified user.
+
+    Args:
+        user_to_check (int): The user ID to check if the current user follows.
+
+    Returns:
+        JSON: Result of the check.
+    """
+    try:
+        # Implement this function to get the current user ID from the token
+        current_user_id = decode_token(request.headers.get("Authorization")[7:],
+                                       os.getenv("SECRET_KEY"))['userID']
+
+        if current_user_id:
+            cur = conn.cursor()
+            query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
+            cur.execute(query, (current_user_id, user_to_check))
+            follow = cur.fetchone()
+            cur.close()
+
+            if follow:
+                return jsonify({"message": "Ya sigues a este usuario", "follows": True}), 200
+            else:
+                return jsonify({"message": "No sigues a este usuario", "follows": False}), 200
+        else:
+            return jsonify({"message": "Error al obtener el ID de usuario actual"}), 401
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+
+
+@User.route('/followers/<int:user_id>', methods=['GET'])
+@verify_token
+def get_followers(user_id):
+    """Get the list of followers for a specific user.
+
+    Args:
+        user_id (int): The user ID for which to get the followers.
+
+    Returns:
+        JSON: List of followers.
+    """
+    try:
+        cur = conn.cursor()
+        query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followerid WHERE f.followingid = %s;"
+        cur.execute(query, (user_id,))
+        followers = cur.fetchall()
+        cur.close()
+
+        followers_list = [{
+            "userID": follower[0],
+            "user": follower[1],
+            "name": follower[2],
+            "userImage": follower[3],
+        } for follower in followers]
+
+        return jsonify({"followers": followers_list}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+
+
+@User.route('/following/<int:user_id>', methods=['GET'])
+@verify_token
+def get_following(user_id):
+    """Get the list of users that a specific user is following.
+
+    Args:
+        user_id (int): The user ID for which to get the following users.
+
+    Returns:
+        JSON: List of following users.
+    """
+    try:
+        cur = conn.cursor()
+        query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followingid WHERE f.followerid = %s;"
+        cur.execute(query, (user_id,))
+        following = cur.fetchall()
+        cur.close()
+
+        following_list = [{
+            "userID": followed[0],
+            "user": followed[1],
+            "name": followed[2],
+            "userImage": followed[3],
+        } for followed in following]
+
+        return jsonify({"following": following_list}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en la consulta a la base de datos"}), 500
 
 
 @User.route("/get-tweets-home", methods=["GET"])
