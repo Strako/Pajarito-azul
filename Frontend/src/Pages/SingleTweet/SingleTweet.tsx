@@ -14,6 +14,7 @@ import saveComments from '../../Components/SaveComments/SaveComments';
 import './SingleTweet.css'
 import getCommentsByID from '../../API/GetCommentsByID';
 import listComments from '../../Components/ListComments/ListComments';
+import getUserData from '../../API/GetUserData';
 
 
 
@@ -42,7 +43,7 @@ const SingleTweet = () => {
     const [comment, setComment] = useState<string>("");
     const [listCommentKey, setListCommentKey] = useState<string>('initialKey');
     const [mapComments, setMapcomments] = useState<Map<any, any>>(new Map());
-
+    const [currentUserID, setCurrentUserID] = useState<string>("");
 
 
 
@@ -56,7 +57,6 @@ const SingleTweet = () => {
 
     //functions
     const showModal = () => {
-        setComment("")
         setOpen(true);
     };
 
@@ -64,11 +64,15 @@ const SingleTweet = () => {
         //add if page < total else setHasMore(false), 
         //send total pages in json (count results in get tweets of a user, divide it by 10 and round up)
         if (page < totalPages) {
+            console.log("infinte scroll" , true)
+            setHasMore(true);
             setTimeout(() => {
                 setPage(page + 1);
             }, 100);
 
         } else {
+            console.log("infinte scroll no more pages" , true)
+
             setHasMore(false)
         }
     };
@@ -93,6 +97,28 @@ const SingleTweet = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
+
+
+
+
+            getCommentsByID(tweetID, 1).then((r) => {
+                const commentsIds = Object.keys(r.data.comments);
+                let auxiliarArray = commentsArray;
+                auxiliarArray.unshift(r.data.comments[commentsIds[0]]);
+                setCommentsArray(auxiliarArray);
+                console.log("Agregar mnuevo",commentsArray);
+                setListCommentKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
+            });
+
+
+
+
+
+
+
+
+
+
         }, 0);
         //window.location.reload();
 
@@ -109,7 +135,6 @@ const SingleTweet = () => {
             commentByID(tweetID, comment)
             setOpen(false);
             setConfirmLoading(false);
-            setComment("");
             handleRefresh();
         }, 100);
     };
@@ -125,6 +150,9 @@ const SingleTweet = () => {
         console.log(tweetid);
         if (tweetid) {
             setTweetID(tweetid);
+            getUserData().then((r) =>{
+                setCurrentUserID(r.data.userid)
+            });
         }
     }, [])
 
@@ -146,19 +174,25 @@ const SingleTweet = () => {
     }, [tweetLoaded]);
 
     useEffect(() => {
-        if (isLoading && hasmore) {
+        if (hasmore) {
             //getComments
-            getCommentsByID(tweetID, 1).then((r) => {
-                const commentsIDs = Object.keys(r.data.comments);
-                setCommentNumber(commentsIDs.length)
-                for (let i = commentsIDs.length - 1; i >= 0; i--) {
-                    setCommentsArray(oldArray => [...oldArray, r.data.comments[commentsIDs[i]]]);
+            getCommentsByID(tweetID, page).then((r) => {
+                if (r.data.empty === true) {
+                    setIsLoading(false);
+                } else {
+                    setTotalPages(r.data.totalPages);
+                    const commentsIDs = Object.keys(r.data.comments);
+                    setCommentNumber(commentsIDs.length)
+                    for (let i = 0; i < commentsIDs.length; i++) {
+                        setCommentsArray(oldArray => [...oldArray, r.data.comments[commentsIDs[i]]]);
+                    }
                 }
             })
         }
     }, [tweetLoaded, page]);
 
     useEffect(() => {
+        //set comments into the hashmap
         commentsArray.map((comment: objectI) => {
             if (!mapComments.has(comment.userID)) {
                 getUserByID(comment.userID).then((r) => {
@@ -167,14 +201,14 @@ const SingleTweet = () => {
             }
             setTimeout(() => {
                 setIsLoading(false);
-            }, 0);
+            }, 100);
 
         })
 
     }, [commentsArray])
 
     //Loader
-    if (isLoading) {
+    if (isLoading && !tweetLoaded) {
         return loaderPlaceholder();
     }
 
@@ -182,7 +216,7 @@ const SingleTweet = () => {
         //tweet example
         //1 Lorem ipsum dolor sit amet, consectetur adipiscing elit.  | https://img.icons8.com/fluency/240w/user-male-circle--v1.png            <>
         const tweet = <> <div key={tweetContent.tweetID} id={tweetContent.tweetID} className="single_tweet">
-            <img className='single_tweet_img' src={user.userImage} onClick={() => navigate('/user/' + user.user)}></img>
+            <img className='single_tweet_img' src={user.userImage} loading="lazy" onClick={() => navigate('/user/' + user.user)}></img>
             <div className="single_tweet_author" onClick={() => navigate('/user/' + user.user)}> {user.user}</div>
             <div className="single_tweet_content">
                 <article >{tweetContent.description} </article>
@@ -206,12 +240,12 @@ const SingleTweet = () => {
                         {listTweet()}
                     </div>
                     <div className="single_comments_container">
-                        {listComments({ commentsArray, setCommentsArray, navigate, mapComments })}
+                        {listComments({keyToUpdate: listCommentKey, commentsArray, setCommentsArray, navigate, mapComments, currentUserID })}
                     </div>
                 </div >
                 <Waypoint
                     onEnter={infiniteScroll} // Call your function when entering the waypoint (user reaches the bottom)
-                    bottomOffset={"-150px"}   // Adjust the offset if needed
+                    bottomOffset={"0"}   // Adjust the offset if needed
                 />
             </SidebarTemplate>
 

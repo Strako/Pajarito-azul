@@ -152,3 +152,24 @@
 
 
 }
+
+.single_tweet_comment_delete_icon{
+    
+    text-align: right;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 8px;
+    padding-bottom:6px;
+    display: inline-block;
+    color: white;
+    margin-left: 400px;
+    margin-bottom: 20px;
+}
+
+.single_tweet_comment_delete_icon:hover{
+    transform: translateY(-3px);
+    cursor:pointer;
+    align-items: center;
+    background-color: rgba(244, 26, 26, 0.2);
+    border-radius: 30px;
+}

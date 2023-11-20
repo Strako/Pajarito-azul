@@ -1,5 +1,5 @@
 import { NewInstance } from "./BaseAPI";
-const deleteCommentByIDEP = "tweets/delete-tweet/"
+const deleteCommentByIDEP = "users/delete-comment"
 
 interface propsI {
     commentsArray: {}[],
@@ -7,19 +7,24 @@ interface propsI {
     e: any
 }
 
-const deleteCommentByID = async ({e, commentsArray, setCommentsArray}: propsI) => {
-    const commentID = e.currentTarget.parentElement.parentElement.id;
+const deleteCommentByID = async ({ e, commentsArray, setCommentsArray }: propsI) => {
+    const commentID = e.currentTarget.parentElement.id;
+
+    const data = {
+        commentId: commentID
+    }
+
     console.log({ "tweetsArray": commentsArray });
 
-    const arrayAux = commentsArray.filter((comment: any) => +comment.commentID !== commentID)
-
+    const arrayAux = commentsArray.filter((comment: any) => comment.commentID.toString() !== commentID)
 
     console.log({ "arrayAux": arrayAux, "set": setCommentsArray })
     setCommentsArray(arrayAux);
 
-
-    const response = await NewInstance.delete(deleteCommentByIDEP + commentID);
+    console.log({"CommentID": commentID});
+    const response = await NewInstance.post(deleteCommentByIDEP, data);
     console.log(response);
     return response;
 }
+
 export default deleteCommentByID;

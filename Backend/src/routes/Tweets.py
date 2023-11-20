@@ -342,7 +342,7 @@ def get_comments_tweet(tweet_id):
         dbres = cur.fetchall()
 
         if len(dbres) == 0:
-            data = {"message": "Tweet no encontrado", "total_comments": 0}
+            data = {"empty": True}
             return resfunc(data), 200
 
         comments = []
@@ -355,7 +355,7 @@ def get_comments_tweet(tweet_id):
                 "datetime": comment[4]
             })
 
-        data = {"total_pages": total_pages, "comments": comments}
+        data = {"totalPages": total_pages, "comments": comments}
         return resfunc(data), 200
     except Exception as e:
         print(e)
