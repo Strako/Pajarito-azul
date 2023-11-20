@@ -17,7 +17,7 @@ const listUsers = ({ keyToUpdate, usersArray, navigate }: propsI) => {
                     <img className='user_image' src={user.userImage} onClick={() => navigate('/user/'+user.user)}></img>
                     <div className="user" onClick={() => navigate('/user/'+user.user)}>{user.user} </div>
                     <div className="name" >{user.name}</div>
-                    <div className="user_followers">200 Followers</div>
+                    <div className="user_followers">{user.followers } Followers</div>
                     <div className="follow_user"></div>
                 </div>
             </>

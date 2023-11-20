@@ -302,7 +302,7 @@ def deleteTweet(tweet_id):
             return resfunc(data), 200
 
     except Exception as e:
-        data = {"message": "Error al conectarse a la base de datos"}
+        data = {e}
         return resfunc(data), 500
 
 

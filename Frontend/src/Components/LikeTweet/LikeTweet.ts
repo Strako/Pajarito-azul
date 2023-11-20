@@ -1,8 +1,34 @@
 import likeTweet from "../../API/LikeTweet";
 
-export const likeTweetId = (event: any) => {
-    console.log("cliked" + event.currentTarget.parentElement.parentElement.id)
-    likeTweet(event.currentTarget.parentElement.parentElement.id);
-    return event.currentTarget.parentElement.parentElement.id;
+interface propsI {
+    tweetsArray: any,
+    setTweetsArray: React.Dispatch<React.SetStateAction<any[]>>,
+    e: any
+}
+
+
+interface objectI {
+    [key: string]: any
+}
+
+export const likeTweetId = ({ e, tweetsArray, setTweetsArray }: propsI) => {
+    const eventID = e.currentTarget.parentElement.parentElement.id;
+    likeTweet(eventID).then((r) => {
+        setTweetsArray(prevTweetsArray => {
+            return prevTweetsArray.map((tweet: objectI) => {
+                if (tweet.tweetID.toString() === eventID) {
+                    return {
+                        ...tweet,
+                        likes: r.data.liked ? tweet.likes - 1 : tweet.likes + 1
+                    };
+                }
+                return tweet;
+            });
+        });
+    })
+  
+
+
+    return eventID;
 }
 
