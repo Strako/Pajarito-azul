@@ -33,8 +33,6 @@ const Profile = () => {
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const [tweetsArray, setTweetsArray] = useState<any[]>([]);
     const [hasmore, setHasMore] = useState<boolean>(true);
-    const [likesNumber, setLikesNumber] = useState<number>(0);
-    const [commentsNumber, setCommentNumber] = useState<number>(0);
     const [open, setOpen] = useState(false);
     const [openProfile, setOpenProfile] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -116,8 +114,8 @@ const Profile = () => {
                 const tweetIds = Object.keys(r.data.tweets);
                 let auxiliarArray = tweetsArray;
                 auxiliarArray.unshift(r.data.tweets[tweetIds[tweetIds.length - 1]]);
-                console.log(auxiliarArray.toString)
                 setTweetsArray(auxiliarArray);
+                console.log(tweetsArray);
                 setListTweetsKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
             });
 
@@ -239,7 +237,7 @@ const Profile = () => {
                         <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate, setTweetsArray })}
+                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, setEditTweetID, user, navigate, setTweetsArray, setListTweetsKey })}
                     </div>
                 </div >
                 <Waypoint

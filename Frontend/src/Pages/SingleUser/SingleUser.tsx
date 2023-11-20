@@ -95,7 +95,7 @@ const SingleUser = () => {
                         <span className='profile_followers_text'>Followers</span>
                     </div>
                     <div className='tweets_container'>
-                        {listTweets({ keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray })}
+                        {listTweets({  keyToUpdate: listTweetsKey, tweetsArray, user, navigate, setTweetsArray, setListTweetsKey })}
                     </div>
                 </div >
                 <Waypoint

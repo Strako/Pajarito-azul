@@ -1,7 +1,7 @@
 import { Input } from 'antd';
 import { maxLength, rowsLength } from '../../Constants/Constants';
 
-const inputWithSize = (handlerInput: React.ChangeEventHandler<HTMLTextAreaElement>, rows:number, value: string) =>{
+const inputWithSize = (handlerInput: React.ChangeEventHandler<HTMLTextAreaElement>, rows:number, value?: string) =>{
 
 const { TextArea } = Input;
 return (<>
