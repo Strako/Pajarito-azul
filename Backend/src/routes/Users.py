@@ -309,13 +309,13 @@ def like_tweet():
             cur.execute(query, (user_id, tweet_id))
             conn.commit()
             cur.close()
-            return jsonify({"message":"Like eliminado"}), 200
+            return jsonify({"liked": True}), 200
         else:
             query = "INSERT INTO likes (userid, tweetid, datetime) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, tweet_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
-            return jsonify({"message":"Like agregado"}), 200
+            return jsonify({"liked": False}), 200
     except Exception as e:
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
