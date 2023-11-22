@@ -41,7 +41,7 @@ const Profile = () => {
     const [contentEditTweet, setContentEditTweet] = useState("");
     const [listTweetsKey, setListTweetsKey] = useState<string>('initialKey');
     const [editProfile, setEditProfile] = useState<boolean>(false);
-    const [profleUser, setProfileUser] = useState<string>("");
+    const [profileUser, setProfileUser] = useState<string>("");
     const [profileName, setProfileName] = useState<string>("");
     const [profileImage, setProfileImage] = useState<string>("");
     const [profileDescription, setProfileDescription] = useState<string>("");
@@ -157,12 +157,21 @@ const Profile = () => {
         setConfirmLoadingProfile(true);
         setIsLoading(true);
         setTimeout(() => {
-            editUserProfile(profleUser, profileName, profileImage, profileDescription).then(() => {
-                profleUser !== "" ?
-                    setUser({ userid: user.userid, user: profleUser, name: profileName, userImage: profileImage, description: profileDescription })
-                    :
-                    setUser({ userid: user.userid, user: user.user, name: profileName, userImage: profileImage, description: profileDescription })
-
+            editUserProfile(profileUser, profileName, profileImage, profileDescription).then(() => {
+                profileUser !== "" ?
+                    setUser(prevUser => ({
+                        ...prevUser,
+                        user: profileUser,
+                        name: profileName,
+                        userImage: profileImage,
+                        description: profileDescription
+                    })) :
+                    setUser(prevUser => ({
+                        ...prevUser,
+                        name: profileName,
+                        userImage: profileImage,
+                        description: profileDescription
+                    }))
 
                 setOpenProfile(false);
                 setIsLoading(false);
@@ -170,8 +179,7 @@ const Profile = () => {
                 setEditProfile(false);
 
             })
-            setOpenProfile(false);
-            setConfirmLoadingProfile(false);
+
 
         }, 500);
     };
@@ -263,7 +271,7 @@ const Profile = () => {
                 onCancel={handleEditProfileCancel}
             >
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Username</Typography.Title>
-                {inputOneLine("20px", 15, handleProfileUser, profleUser)}
+                {inputOneLine("20px", 15, handleProfileUser, profileUser)}
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Name</Typography.Title>
                 {inputOneLine("20px", 45, handleProfileName, profileName)}
                 <Typography.Title level={5} style={{ fontSize: "16px" }}>Image link </Typography.Title>
