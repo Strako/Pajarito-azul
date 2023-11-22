@@ -135,6 +135,7 @@ const SingleTweet = () => {
             commentByID(tweetID, comment)
             setOpen(false);
             setConfirmLoading(false);
+            setCommentNumber(commentsNumber + 1)
             handleRefresh();
         }, 100);
     };
@@ -240,7 +241,7 @@ const SingleTweet = () => {
                         {listTweet()}
                     </div>
                     <div className="single_comments_container">
-                        {listComments({keyToUpdate: listCommentKey, commentsArray, setCommentsArray, navigate, mapComments, currentUserID })}
+                        {listComments({keyToUpdate: listCommentKey, commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber })}
                     </div>
                 </div >
                 <Waypoint
