@@ -398,9 +398,7 @@ def add_comment_to():
         conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-    finally:
-        cur.close()
-        conn.close()
+
 
 @User.route("/delete-comment", methods=["POST"])
 @verify_token

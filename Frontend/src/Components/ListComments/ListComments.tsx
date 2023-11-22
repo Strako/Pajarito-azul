@@ -1,6 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import deleteCommentByID from '../../API/DeleteCommentByID';
-import getUserByID from '../../API/GetUserByID';
+
 
 
 interface propsI {
@@ -18,13 +18,16 @@ interface objectI {
     [key: string]: any
 }
 
-const listComments = ({ commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
+const ListComments = ({keyToUpdate, commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
+    console.log({"sizeeeeeee": mapComments.size})
+
+    
     if (mapComments != undefined) {
 
         let comments = commentsArray.map((comment: objectI) => {
-            console.log("entradas:", mapComments.size);
+            console.log("entradas:", mapComments);
             const userEntry = mapComments.get(comment.userID) || { user: "", image: "" };
-            console.log({"currentuserID": currentUserID, "comment userID": comment.userID});
+            console.log({"userEntry": userEntry,"currentuserID": currentUserID, "comment userID": comment.userID});
             return (
                 <>
                     <div key={comment.commentID} id={comment.commentID} className="single_tweet_comment">
@@ -54,4 +57,4 @@ const listComments = ({ commentsArray, setCommentsArray, navigate, mapComments, 
     }
 }
 
-export default listComments;
+export default ListComments;
