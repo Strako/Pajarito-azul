@@ -97,10 +97,6 @@ const SingleTweet = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
-
-
-
-
             getCommentsByID(tweetID, 1).then((r) => {
                 const commentsIds = Object.keys(r.data.comments);
                 let auxiliarArray = commentsArray;
@@ -109,17 +105,7 @@ const SingleTweet = () => {
                 console.log("Agregar mnuevo",commentsArray);
                 setListCommentKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
             });
-
-
-
-
-
-
-
-
-
-
-        }, 0);
+        }, 500);
         //window.location.reload();
 
     }
