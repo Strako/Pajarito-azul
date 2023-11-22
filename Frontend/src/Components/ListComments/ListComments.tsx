@@ -17,10 +17,7 @@ interface objectI {
     [key: string]: any
 }
 
-const ListComments = ({commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
-    console.log({"sizeeeeeee": mapComments.size})
-
-    
+const ListComments = ({commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {    
     if (mapComments != undefined) {
 
         let comments = commentsArray.map((comment: objectI) => {
