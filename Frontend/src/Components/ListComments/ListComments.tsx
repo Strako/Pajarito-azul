@@ -4,7 +4,6 @@ import deleteCommentByID from '../../API/DeleteCommentByID';
 
 
 interface propsI {
-    keyToUpdate: string,
     commentsArray: {}[];
     setCommentsArray?: React.Dispatch<React.SetStateAction<{}[]>>;
     navigate: any;
@@ -18,7 +17,7 @@ interface objectI {
     [key: string]: any
 }
 
-const ListComments = ({keyToUpdate, commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
+const ListComments = ({commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
     console.log({"sizeeeeeee": mapComments.size})
 
     

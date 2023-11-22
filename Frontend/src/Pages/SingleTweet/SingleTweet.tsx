@@ -41,7 +41,6 @@ const SingleTweet = () => {
     const [tweetID, setTweetID] = useState<string>("");
     const [tweetContent, setTweetContent] = useState<objectI>({});
     const [comment, setComment] = useState<string>("");
-    const [listCommentKey, setListCommentKey] = useState<string>('initialKey');
     const [mapComments, setMapcomments] = useState<Map<any, any>>(new Map());
     const [currentUserID, setCurrentUserID] = useState<string>("");
 
@@ -67,7 +66,7 @@ const SingleTweet = () => {
             console.log("infinte scroll", true)
             setHasMore(true);
             setTimeout(() => {
-                setPage(page + 1);
+                setPage((prevPage) => prevPage + 1);
             }, 100);
 
         } else {
@@ -156,7 +155,7 @@ const SingleTweet = () => {
                     //console.log({ "useeffect getusebyid": r.data.userid })
                     setUser(r.data);
                 });
-            }, 500);
+            }, 200);
         }
     }, [tweetLoaded]);
 
@@ -173,6 +172,7 @@ const SingleTweet = () => {
                     for (let i = 0; i < commentsIDs.length; i++) {
                         setCommentsArray(oldArray => [...oldArray, r.data.comments[commentsIDs[i]]]);
                     }
+                    setIsLoading(false);
                 }
             })
         }
@@ -183,8 +183,7 @@ const SingleTweet = () => {
         commentsArray.map((comment: objectI) => {
             if (mapComments.has(comment.userID) === false) {
                 getUserByID(comment.userID).then((r) => {
-                    setMapcomments(mapComments.set(comment.userID, { "user": r.data.user, "image": r.data.userImage }))
-                })
+                    setMapcomments((prevMapComments) => new Map(prevMapComments).set(comment.userID, { "user": r.data.user, "image": r.data.userImage }));                })
                 console.log({ "mapComments in useEffect": mapComments });
 
             }
@@ -226,7 +225,7 @@ const SingleTweet = () => {
                         {listTweet()}
                     </div>
                     <div className="single_comments_container">
-                    <ListComments keyToUpdate={listCommentKey} commentsArray={commentsArray} setCommentsArray={setCommentsArray} navigate={navigate} mapComments={mapComments} currentUserID={currentUserID} setCommentNumber={setCommentNumber} />
+                    <ListComments commentsArray={commentsArray} setCommentsArray={setCommentsArray} navigate={navigate} mapComments={mapComments} currentUserID={currentUserID} setCommentNumber={setCommentNumber} />
                     </div>
                 </div >
                 <Waypoint
