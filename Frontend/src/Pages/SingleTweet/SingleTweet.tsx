@@ -97,10 +97,6 @@ const SingleTweet = () => {
     //Handler refresh on crate - edit tweet
     const handleRefresh = () => {
         setTimeout(() => {
-
-
-
-
             getCommentsByID(tweetID, 1).then((r) => {
                 const commentsIds = Object.keys(r.data.comments);
                 let auxiliarArray = commentsArray;
@@ -109,17 +105,7 @@ const SingleTweet = () => {
                 console.log("Agregar mnuevo",commentsArray);
                 setListCommentKey((prevKey) => prevKey === 'initialKey' ? 'refreshKey' : 'initialKey');
             });
-
-
-
-
-
-
-
-
-
-
-        }, 0);
+        }, 500);
         //window.location.reload();
 
     }
@@ -135,6 +121,7 @@ const SingleTweet = () => {
             commentByID(tweetID, comment)
             setOpen(false);
             setConfirmLoading(false);
+            setCommentNumber(commentsNumber + 1)
             handleRefresh();
         }, 100);
     };
@@ -240,7 +227,7 @@ const SingleTweet = () => {
                         {listTweet()}
                     </div>
                     <div className="single_comments_container">
-                        {listComments({keyToUpdate: listCommentKey, commentsArray, setCommentsArray, navigate, mapComments, currentUserID })}
+                        {listComments({keyToUpdate: listCommentKey, commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber })}
                     </div>
                 </div >
                 <Waypoint
