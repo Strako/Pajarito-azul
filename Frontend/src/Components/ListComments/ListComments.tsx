@@ -10,6 +10,7 @@ interface propsI {
     navigate: any;
     mapComments: Map<any, any>;
     currentUserID: string;
+    setCommentNumber: React.Dispatch<React.SetStateAction<number>>;
 
 }
 
@@ -17,7 +18,7 @@ interface objectI {
     [key: string]: any
 }
 
-const listComments = ({ commentsArray, setCommentsArray, navigate, mapComments, currentUserID }: propsI) => {
+const listComments = ({ commentsArray, setCommentsArray, navigate, mapComments, currentUserID, setCommentNumber}: propsI) => {
     if (mapComments != undefined) {
 
         let comments = commentsArray.map((comment: objectI) => {
@@ -34,7 +35,7 @@ const listComments = ({ commentsArray, setCommentsArray, navigate, mapComments, 
                         </div>
                         <div className="single_tweet_comment_delete_icon" onClick={(e) => {
                             if (setCommentsArray) {
-                                deleteCommentByID({ e, commentsArray, setCommentsArray });
+                                deleteCommentByID({ e, commentsArray, setCommentsArray, setCommentNumber });
                             }
                             // window.location.reload();
                         }}>

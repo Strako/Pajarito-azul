@@ -7,7 +7,7 @@
 from flask import Blueprint, jsonify, request, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from utils.jwt_functions import *
-from utils.database import conn
+from utils.database import pool
 import os
 from dotenv import load_dotenv
 from utils.middleware import verify_token
@@ -29,6 +29,8 @@ Tweet = Blueprint('Tweet', __name__, url_prefix='/tweets')
 @Tweet.route('/create', methods=['POST'])
 @verify_token
 def createTweet():
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.headers
     userID = decode_token(data['Authorization'][7:], os.getenv("SECRET_KEY"))['userID']
     # Obtener datos del tweet del cuerpo JSON de la solicitud
@@ -38,7 +40,6 @@ def createTweet():
     # Obtener la fecha y hora actual
     current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
-        cur = conn.cursor()
         query = """
                 INSERT INTO tweets (userid, description, tweetImage, datetime)
                 VALUES (%s, %s, %s, %s);
@@ -49,18 +50,20 @@ def createTweet():
         data = {"message": "Tweet creado exitosamente"}
         return resfunc(data), 200
     except Exception as e:
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
 @Tweet.route('/get-all-tweets', methods=['GET'])
 @verify_token
 def getAll():
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.headers
     userID = decode_token(data['Authorization'][7:],
                           os.getenv("SECRET_KEY"))['userID']
     try:
-        cur = conn.cursor()
-
         # Obtener los parámetros de consulta para la paginación
         page = request.args.get('page', default=1, type=int)
         per_page = request.args.get('per_page', default=10, type=int)
@@ -100,7 +103,7 @@ def getAll():
         cur.execute(finalQuery, (userID, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
-        print(dbres)
+        conn.close()
         data_json = {}
         for tweet in dbres:
             data_json[
@@ -116,19 +119,22 @@ def getAll():
         data = {"totalPages":f'{totalPages}', "tweets":data_json}
         return resfunc(data), 200
     except Exception as e:
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
 @Tweet.route('/get-tweets-of/<string:user>', methods=['GET'])
 @verify_token
 def getTweetsOf(user):
+    conn = pool.get_connection()
+    cur = conn.cursor()
     #get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
     #calculate offset for pagination
     offset = (page - 1) * per_page
     try:
-        cur = conn.cursor()
         queryNoPages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM tweets where userid=(select userid from users where user=%s);"
         cur.execute(queryNoPages, (per_page, user))
         totalPages = cur.fetchall()[0][0]
@@ -161,6 +167,7 @@ def getTweetsOf(user):
         cur.execute(finalQuery, (user, per_page, offset))
         dbres = cur.fetchall()
         cur.close()
+        conn.close()
         data_json = {}
         if len(dbres) == 0:
             msg = {"message":"No se encontraron tweets"}
@@ -181,14 +188,17 @@ def getTweetsOf(user):
             return resfunc(data), 200
     except Exception as e:
         print (e)
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos", "err": f"{e}"}
         return resfunc(data), 500
 
 @Tweet.route('/get-tweet/<int:tweet_id>', methods=['GET'])
 @verify_token
 def getOne(tweet_id):
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
-        cur = conn.cursor()
         finalQuery = """
             SELECT
                 t.*,
@@ -212,7 +222,7 @@ def getOne(tweet_id):
         cur.execute(finalQuery, (tweet_id,))
         dbres = cur.fetchall()
         cur.close()
-
+        conn.close()
         if len(dbres) == 0:
             data = {"message": "Tweet no encontrado"}
             return resfunc(data), 200
@@ -229,6 +239,8 @@ def getOne(tweet_id):
         return resfunc(data), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
@@ -238,6 +250,8 @@ def getOne(tweet_id):
 @Tweet.route('/update-tweet/<int:tweet_id>', methods=['PUT'])
 @verify_token
 def updateTweet(tweet_id):
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
         # Obtener el usuario autenticado desde el token
         data = request.headers
@@ -250,7 +264,6 @@ def updateTweet(tweet_id):
         tweet_image = tweet_data.get('tweetImage', '')
 
         # Actualizar el tweet en la base de datos si pertenece al usuario autenticado
-        cur = conn.cursor()
         query = """
             UPDATE tweets
             SET description = %s, tweetImage = %s
@@ -259,7 +272,7 @@ def updateTweet(tweet_id):
         cur.execute(query, (tweet_desc, tweet_image, tweet_id, userID))
         conn.commit()
         cur.close()
-
+        conn.close()
         if cur.rowcount == 1:
             data = {"message": "Tweet actualizado exitosamente"}
             return resfunc(data), 200
@@ -268,6 +281,9 @@ def updateTweet(tweet_id):
                 "message": "No se encontró el tweet o no tienes permiso para actualizarlo"}
             return resfunc(data), 200
     except Exception as e:
+        print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
 
@@ -277,6 +293,8 @@ def updateTweet(tweet_id):
 @Tweet.route('/delete-tweet/<int:tweet_id>', methods=['DELETE'])
 @verify_token
 def deleteTweet(tweet_id):
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
         # Obtener el usuario autenticado desde el token
         data = request.headers
@@ -284,7 +302,6 @@ def deleteTweet(tweet_id):
                               [7:], os.getenv("SECRET_KEY"))['userID']
 
         # Eliminar el tweet de la base de datos si pertenece al usuario autenticado
-        cur = conn.cursor()
         query = """
             DELETE FROM tweets
             WHERE tweetid = %s AND userid = %s;
@@ -292,7 +309,7 @@ def deleteTweet(tweet_id):
         cur.execute(query, (tweet_id, userID))
         conn.commit()
         cur.close()
-
+        conn.close()
         if cur.rowcount == 1:
             data = {"message": "Tweet eliminado exitosamente"}
             return resfunc(data), 200
@@ -303,6 +320,8 @@ def deleteTweet(tweet_id):
 
     except Exception as e:
         data = {e}
+        cur.close()
+        conn.close()
         return resfunc(data), 500
 
 
@@ -317,13 +336,14 @@ def get_comments_tweet(tweet_id):
     Returns:
         JSON: List of comments and the total number of comments.
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     # Get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
     # Calculate offset for pagination
     offset = (page - 1) * per_page
     try:
-        cur = conn.cursor()
         query_no_pages = "SELECT CEIL(COUNT(*) / %s) AS total_pages FROM comments WHERE tweetid = %s;"
         cur.execute(query_no_pages, (per_page, tweet_id,))
         total_pages = int(cur.fetchall()[0][0])
@@ -340,7 +360,8 @@ def get_comments_tweet(tweet_id):
         """
         cur.execute(final_query, (tweet_id, per_page, offset))
         dbres = cur.fetchall()
-
+        cur.close()
+        cur=conn.cursor()
         if len(dbres) == 0:
             data = {"empty": True}
             return resfunc(data), 200
@@ -359,7 +380,7 @@ def get_comments_tweet(tweet_id):
         return resfunc(data), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
-    finally:
-        cur.close()
