@@ -21,4 +21,3 @@ db_config = {
 }
 pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=20, **db_config)
 
-conn = pool.get_connection()

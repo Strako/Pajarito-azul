@@ -7,7 +7,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import  generate_password_hash, check_password_hash
 from utils.jwt_functions import *
-from utils.database import conn
+from utils.database import pool
 import os
 from dotenv import load_dotenv
 from utils.middleware import verify_token
@@ -37,39 +37,49 @@ def signUp():
         error message||success message
     """
     data = request.get_json()
+    conn = pool.get_connection()
+    cur = conn.cursor()
     if data['user'] == "" or data['password'] == "" or data['name'] == "":
+        cur.close()
+        conn.close()
         return jsonify({"message": "Los datos enviados no son validos o existen campos vacios"}), 401
     else:
         try:
             usr = data['user']
-            cur = conn.cursor()
             query = "SELECT * FROM users WHERE user = %s;"
             cur.execute(query, (usr,))
             dbres = cur.fetchall()
-            cur.close()
             if len(dbres) == 0:
                 if re.match(r'^.{1,15}$', usr):
                     if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
                         name = data['name']
                         password = generate_password_hash(data['password'], method='sha256')
-                        cur = conn.cursor()
                         query = "INSERT INTO users (user, name, password) VALUES (%s,%s,%s);"
                         cur.execute(query, (usr, name, password))
                         conn.commit()
                         cur.close()
+                        conn.close()
                         data = {"message": "Usuario creado exitosamente"}
                         return resfunc(data), 200
                     else:
                         data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
+                        cur.close()
+                        conn.close()
                         return resfunc(data), 200
                 else:
                     data = {"message": "El usuario debe tener entre 1 y 15 caracteres"}
+                    cur.close()
+                    conn.close()
                     return resfunc(data), 200
             else:
                 data = {"message": "El usuario ya existe en la base de datos"}
+                cur.close()
+                conn.close()
                 return resfunc(data), 200
         except Exception as e:
             print(e)
+            cur.close()
+            conn.close()
             data = {"message": "Error en la consulta a la base de datos"}
             return resfunc(data), 500
 
@@ -88,22 +98,28 @@ def singIn():
         JSON
             JWT token to get requests data from another Routes.
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     if data['user'] == "" or data['password'] == "":
+        cur.close()
+        conn.close()
         data = {"message": "Los datos enviados no son validos o existen campos vacios"}
         return resfunc(data), 401
     else:
         if re.match(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\W).{7,16}$', data['password']):
             try:
                 usr = data['user']
-                cur = conn.cursor()
                 query = "SELECT * FROM users WHERE user = %s;"
                 cur.execute(query, (usr,))
                 dbres = cur.fetchall()
-                cur.close()
                 if len(dbres) == 0:
+                    cur.close()
+                    conn.close()
                     return jsonify({"message": "El usuario no existe"}), 401
                 else:
+                    cur.close()
+                    conn.close()
                     for user in dbres:
                         if check_password_hash(user[3], data['password']):
                             payload = {"userID": user[0], "user": user[1]}
@@ -116,19 +132,24 @@ def singIn():
                             return resfunc(data), 401
             except Exception as e:
                 print(e)
+                cur.close()
+                conn.close()
                 data = {"message": "Error en la consulta a la base de datos"}
                 return resfunc(data), 500
         else:
+            cur.close()
+            conn.close()
             data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
             return resfunc(data), 401
 
 @User.route('/get-data-user', methods=['GET'])
 @verify_token
 def getDataUser():
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
         data = request.headers
         userID = decode_token(data['Authorization'][7:], os.getenv("SECRET_KEY"))['userID']
-        cur = conn.cursor()
         #obtener seguidores y seguidos
         query = """
             SELECT u.userid, u.user, u.name, u.userImage, u.description,
@@ -139,10 +160,13 @@ def getDataUser():
             """
         cur.execute(query, (userID,))
         user_data = cur.fetchone()
-        cur.close()
         if not user_data:
+            cur.close()
+            conn.close()
             data =  {"message": "El usuario no existe"}
             return resfunc(data), 401
+        cur.close()
+        conn.close()
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],
@@ -155,6 +179,8 @@ def getDataUser():
         return resfunc(user_dict), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -162,10 +188,11 @@ def getDataUser():
 @User.route('/get-data-user-byId', methods=['POST'])
 @verify_token
 def getDataUserById():
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
         data = request.get_json()
         userId = data["userId"]
-        cur = conn.cursor()
         query = """
             SELECT u.userid, u.user, u.name, u.userImage, u.description,
             (SELECT COUNT(*) FROM follows WHERE followerid = u.userid) AS followed,
@@ -175,10 +202,13 @@ def getDataUserById():
             """
         cur.execute(query, (userId,))
         user_data = cur.fetchone()
-        cur.close()
         if not user_data:
+            cur.close()
+            conn.close()
             data = {"message": "El usuario no existe"}
             return resfunc(data), 200
+        cur.close()
+        conn.close()
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],
@@ -191,12 +221,16 @@ def getDataUserById():
         return resfunc(user_dict), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
 @User.route("/search-user/<string:user>", methods=["GET"])
 @verify_token
 def search_user(user):
+    conn = pool.get_connection()
+    cur = conn.cursor()
     #get params for pagination
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=10, type=int)
@@ -204,7 +238,6 @@ def search_user(user):
     offset = (page - 1) * per_page
     try:
         usr = "%"+ user + "%"
-        cur = conn.cursor()
         query_num_pages = "SELECT CEIL(COUNT(*) / %s) AS total_paginas FROM users WHERE user LIKE %s;"
         cur.execute(query_num_pages, (per_page, usr))
         num_pages = (cur.fetchone())[0]
@@ -220,6 +253,8 @@ def search_user(user):
         users = cur.fetchall()
         users_res = []
         if len(users) == 0:
+            cur.close()
+            conn.close()
             data = {"message": "User not founf"}
             return resfunc(data), 200
 
@@ -233,6 +268,8 @@ def search_user(user):
                 "following": user[5],
                 "followers": user[6]
             })
+        cur.close()
+        conn.close()
         data = {
             "totalPages": f"{num_pages}",
             "users": users_res
@@ -240,6 +277,8 @@ def search_user(user):
         return resfunc(data), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -253,6 +292,8 @@ def update_user():
     Returns:
         _type_: _description_
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
                             os.getenv("SECRET_KEY"))['userID']
@@ -261,7 +302,6 @@ def update_user():
         update_name = data["name"]
         update_user_image = data["userImage"]
         update_description = data["description"]
-        cur = conn.cursor()
         query_user = "SELECT * FROM users WHERE userid = %s;"
         cur.execute(query_user, (user_id,))
         user = cur.fetchone()
@@ -278,10 +318,15 @@ def update_user():
             cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
             conn.commit()
             cur.close()
+            conn.close()
             return jsonify({"message":"Usuario actualizado"}), 200
+        cur.close()
+        conn.close()
         return jsonify({"message":"El usuario ya existe"}), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -294,30 +339,34 @@ def like_tweet():
     Returns:
         _type_: _description_
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
                         os.getenv("SECRET_KEY"))['userID']
     tweet_id = data["tweetId"]
     try:
-        cur = conn.cursor()
         query = "SELECT * FROM likes WHERE userid = %s AND tweetid = %s;"
         cur.execute(query, (user_id, tweet_id))
         like = cur.fetchone()
-        print(like)
         if like:
             query = "DELETE FROM likes WHERE userid = %s AND tweetid = %s;"
             cur.execute(query, (user_id, tweet_id))
             conn.commit()
             cur.close()
+            conn.close()
             return jsonify({"liked": True}), 200
         else:
             query = "INSERT INTO likes (userid, tweetid, datetime) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, tweet_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
+            conn.close()
             return jsonify({"liked": False}), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -329,22 +378,29 @@ def add_comment_to():
     Returns:
         _type_: _description_
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
                         os.getenv("SECRET_KEY"))['userID']
     tweet_id = data["tweetId"]
     comment = data["comment"]
     try:
-        cur = conn.cursor()
         query = "INSERT INTO comments (userid, tweetid, comment, datetime) VALUES (%s, %s, %s, %s);"
         cur.execute(query, (user_id, tweet_id, comment, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         conn.commit()
         cur.close()
+        conn.close()
         return jsonify({"message":"Comentario agregado"}), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        cur.close()
+        conn.close()
 
 @User.route("/delete-comment", methods=["POST"])
 @verify_token
@@ -354,12 +410,14 @@ def delete_comment():
     Returns:
         _type_: _description_
     """
+    print(request.get_json())
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
                         os.getenv("SECRET_KEY"))['userID']
     comment_id = data["commentId"]
     try:
-        cur = conn.cursor()
         #verifica que el comentario sea del usuario
         query = "SELECT * FROM comments WHERE userid = %s AND commentid = %s;"
         cur.execute(query, (user_id, comment_id))
@@ -396,12 +454,13 @@ def follow_user():
     Returns:
         _type_: _description_
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     data = request.get_json()
     user_id = decode_token(request.headers.get("Authorization")[7:],
                         os.getenv("SECRET_KEY"))['userID']
     user_to_follow = data["userToFollow"]
     try:
-        cur = conn.cursor()
         query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
         cur.execute(query, (user_id, user_to_follow))
         follow = cur.fetchone()
@@ -410,6 +469,7 @@ def follow_user():
             cur.execute(query, (user_id, user_to_follow))
             conn.commit()
             cur.close()
+            conn.close()
             return jsonify({"following": False}), 200
         else:
             query = "INSERT INTO follows(followerid, followingid, followdate) VALUES (%s, %s, %s);"
@@ -417,9 +477,11 @@ def follow_user():
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             cur.close()
+            conn.close()
             return jsonify({"following":True}), 200
     except Exception as e:
         print(e)
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
 
@@ -435,27 +497,31 @@ def check_follow(user_to_check):
     Returns:
         JSON: Result of the check.
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
         # Implement this function to get the current user ID from the token
         current_user_id = decode_token(request.headers.get("Authorization")[7:],
                                        os.getenv("SECRET_KEY"))['userID']
 
         if current_user_id:
-            cur = conn.cursor()
             query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
             cur.execute(query, (current_user_id, user_to_check))
             follow = cur.fetchone()
             cur.close()
-
+            conn.close()
             if follow:
                 return jsonify({"message": "Ya sigues a este usuario", "follows": True}), 200
             else:
                 return jsonify({"message": "No sigues a este usuario", "follows": False}), 200
         else:
+            cur.close()
+            conn.close()
             return jsonify({"message": "Error al obtener el ID de usuario actual"}), 401
-
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
 
 
@@ -470,24 +536,26 @@ def get_followers(user_id):
     Returns:
         JSON: List of followers.
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
-        cur = conn.cursor()
         query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followerid WHERE f.followingid = %s;"
         cur.execute(query, (user_id,))
         followers = cur.fetchall()
         cur.close()
-
+        conn.close()
         followers_list = [{
             "userID": follower[0],
             "user": follower[1],
             "name": follower[2],
             "userImage": follower[3],
         } for follower in followers]
-
         return jsonify({"followers": followers_list}), 200
 
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
 
 
@@ -502,24 +570,26 @@ def get_following(user_id):
     Returns:
         JSON: List of following users.
     """
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
-        cur = conn.cursor()
         query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followingid WHERE f.followerid = %s;"
         cur.execute(query, (user_id,))
         following = cur.fetchall()
         cur.close()
-
+        conn.close()
         following_list = [{
             "userID": followed[0],
             "user": followed[1],
             "name": followed[2],
             "userImage": followed[3],
         } for followed in following]
-
         return jsonify({"following": following_list}), 200
 
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
 
 
@@ -528,28 +598,64 @@ def get_following(user_id):
 def get_tweets_home():
     user_id = decode_token(request.headers.get("Authorization")[7:],
                            os.getenv("SECRET_KEY"))['userID']
+    conn = pool.get_connection()
+    cur = conn.cursor()
     try:
-        cur = conn.cursor()
 
         # Parámetros para la paginación
         page = request.args.get('page', default=1, type=int)
         per_page = request.args.get('per_page', default=10, type=int)
         offset = (page - 1) * per_page
-
         query = """
-        SELECT tweets.*
-        FROM tweets
-        JOIN follows ON tweets.userid = follows.followingid
-        WHERE follows.followerid = %s
-        ORDER BY tweets.datetime DESC
-        LIMIT %s OFFSET %s;
+            SELECT
+                t.tweetid,
+                t.userid,
+                t.description AS tweet,
+                t.tweetImage,
+                t.datetime,
+                u.user AS username,
+                u.userImage AS userImage,
+                u.name AS fullName,
+                COUNT(l.likeid) AS likeCount,
+                COUNT(c.commentid) AS commentCount
+            FROM
+                tweets t
+            JOIN
+                users u ON t.userid = u.userid
+            LEFT JOIN
+                likes l ON t.tweetid = l.tweetid
+            LEFT JOIN
+                comments c ON t.tweetid = c.tweetid
+            WHERE
+                t.userid IN (SELECT followingid FROM follows WHERE followerid = %s)
+            GROUP BY
+                t.tweetid
+            ORDER BY
+                t.datetime DESC
+            LIMIT %s OFFSET %s;
         """
         cur.execute(query, (user_id, per_page, offset))
         tweets = cur.fetchall()
         cur.close()
-
-        return jsonify({"tweets": tweets}), 200
+        conn.close()
+        tweets_res = []
+        for tweet in tweets:
+            # "tweetid",
+            # "userid",
+            # "description",
+            # "tweetImage",
+            # "datetime"
+            tweets_res.append({
+                "tweetID": tweet[0],
+                "userID": tweet[1],
+                "description": tweet[2],
+                "tweetImage": tweet[3],
+                "datetime": tweet[4]
+            })
+        return jsonify({"tweets": tweets_res}), 200
     except Exception as e:
         print(e)
+        cur.close()
+        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500

@@ -7,7 +7,7 @@ from flask import request, jsonify
 from functools import wraps
 import os
 from dotenv import load_dotenv
-from utils.database import conn
+from utils.database import pool
 from utils.resfunctions import resfunc
 
 load_dotenv()
@@ -42,10 +42,13 @@ def verify_token(f):
                 res = {"message": "invalid token"}
                 return resfunc(res), 401
             else:
+                conn = pool.get_connection()
                 cur = conn.cursor()
                 query = "SELECT * FROM users WHERE user = %s;"
                 cur.execute(query, (data['user'],))
                 resdb = cur.fetchall()
+                cur.close()
+                conn.close()
                 if resdb == []:
                     res == {"message": "invalid token"}
                     return resfunc(res), 401
