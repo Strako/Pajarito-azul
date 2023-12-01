@@ -5,7 +5,7 @@
 
 ***
 
-
+    
    This project has the purpose to create an open source twitter clone that can be deployed by anyone who requires an internal social tool or a community with no internet access.
 
    The first functionalities that will be added are the following:
@@ -50,12 +50,19 @@
       Notifications	
          - Follows
          - Likes
+
+# [Resotre DB] MYSQL
+   ## How to restore the BD:
+      -Inside the project folder "Backend/DB" there is the script to restore the DBm, just copy the content of DB.sql on your GBMS.
 ***
 
 
 # [Frontend] React + TypeScript + Vite
    ## How to start Frontend server:
       
+      -Inside projecto folder "Frontend/" run the following command to install all the dependencies:
+         $ npm install
+
       -Inside projecto folder "Frontend/" run the following command:
          $ npm run dev
       
