@@ -1,4 +1,4 @@
-# [Pajarito Azul] (Twitter Clone)
+# [Pajarito Azul]
 <p align="center">
   <img src="https://i.ibb.co/mBW7r1p/Screen-Shot-2023-09-17-at-16-50-34.png" />
 </p>
