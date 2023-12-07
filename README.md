@@ -40,14 +40,14 @@
          - Edit description
          - Change password
          - Change profile image
-
-      Home	
-         - Show tweets from following profiles
-
-      Explore	
-         - User search by @User
          
-      Notifications	
+      Explore
+         - User search by @User
+
+      Home (Next Iteration)	
+         - Show tweets from following profiles
+         
+      Notifications (Next Iteration)
          - Follows
          - Likes
 
