@@ -53,7 +53,9 @@
 
 # [Resotre DB] MYSQL
    ## How to restore the BD:
-      -Inside the project folder "Backend/DB" there is the script to restore the DBm, just copy the content of DB.sql on your GBMS.
+      -Option 1: Inside the project folder "Backend/DB" there is the script to restore the DBm, just copy the content of DB.sql on your GBMS.
+      -Option 2: Create a new db named "gpsdb" then import the dump file using the follong commands, replace user with your own user
+         $mysql -u user -p gpsdb < ./Backend/DB/DB.sql 
 ***
 
 
