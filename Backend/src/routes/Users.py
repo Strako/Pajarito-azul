@@ -40,8 +40,6 @@ def signUp():
     conn = pool.get_connection()
     cur = conn.cursor()
     if data['user'] == "" or data['password'] == "" or data['name'] == "":
-        cur.close()
-        conn.close()
         return jsonify({"message": "Los datos enviados no son validos o existen campos vacios"}), 401
     else:
         try:
@@ -63,25 +61,24 @@ def signUp():
                         return resfunc(data), 200
                     else:
                         data = {"message": "La contraseña debe tener entre 7 y 16 caracteres, al menos una letra mayuscula, una minuscula, un numero y un caracter especial"}
-                        cur.close()
-                        conn.close()
                         return resfunc(data), 200
                 else:
                     data = {"message": "El usuario debe tener entre 1 y 15 caracteres"}
-                    cur.close()
-                    conn.close()
                     return resfunc(data), 200
             else:
                 data = {"message": "El usuario ya existe en la base de datos"}
-                cur.close()
-                conn.close()
                 return resfunc(data), 200
         except Exception as e:
             print(e)
-            cur.close()
-            conn.close()
             data = {"message": "Error en la consulta a la base de datos"}
             return resfunc(data), 500
+        finally:
+            if cur:
+                print("Closing cursor")
+                cur.close()
+            if conn:
+                print("Closing connection")
+                conn.close()
 
 
 
@@ -102,8 +99,6 @@ def singIn():
     cur = conn.cursor()
     data = request.get_json()
     if data['user'] == "" or data['password'] == "":
-        cur.close()
-        conn.close()
         data = {"message": "Los datos enviados no son validos o existen campos vacios"}
         return resfunc(data), 401
     else:
@@ -118,8 +113,6 @@ def singIn():
                     conn.close()
                     return jsonify({"message": "El usuario no existe"}), 401
                 else:
-                    cur.close()
-                    conn.close()
                     for user in dbres:
                         if check_password_hash(user[3], data['password']):
                             payload = {"userID": user[0], "user": user[1]}
@@ -132,10 +125,15 @@ def singIn():
                             return resfunc(data), 401
             except Exception as e:
                 print(e)
-                cur.close()
-                conn.close()
                 data = {"message": "Error en la consulta a la base de datos"}
                 return resfunc(data), 500
+            finally:
+                if cur:
+                    print("Closing cursor")
+                    cur.close()
+                if conn:
+                    print("Closing connection")
+                    conn.close()
         else:
             cur.close()
             conn.close()
@@ -161,12 +159,8 @@ def getDataUser():
         cur.execute(query, (userID,))
         user_data = cur.fetchone()
         if not user_data:
-            cur.close()
-            conn.close()
             data =  {"message": "El usuario no existe"}
             return resfunc(data), 401
-        cur.close()
-        conn.close()
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],
@@ -179,10 +173,15 @@ def getDataUser():
         return resfunc(user_dict), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @User.route('/get-data-user-byId', methods=['POST'])
@@ -203,12 +202,8 @@ def getDataUserById():
         cur.execute(query, (userId,))
         user_data = cur.fetchone()
         if not user_data:
-            cur.close()
-            conn.close()
             data = {"message": "El usuario no existe"}
             return resfunc(data), 200
-        cur.close()
-        conn.close()
         user_dict = {
             "userid": user_data[0],
             "user": user_data[1],
@@ -221,10 +216,15 @@ def getDataUserById():
         return resfunc(user_dict), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @User.route("/search-user/<string:user>", methods=["GET"])
 @verify_token
@@ -253,8 +253,6 @@ def search_user(user):
         users = cur.fetchall()
         users_res = []
         if len(users) == 0:
-            cur.close()
-            conn.close()
             data = {"message": "User not founf"}
             return resfunc(data), 200
 
@@ -268,8 +266,6 @@ def search_user(user):
                 "following": user[5],
                 "followers": user[6]
             })
-        cur.close()
-        conn.close()
         data = {
             "totalPages": f"{num_pages}",
             "users": users_res
@@ -277,11 +273,15 @@ def search_user(user):
         return resfunc(data), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
-
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 #TODO agregar upload de imagen a cloudinary
 @User.route("/update-user", methods=["POST"])
@@ -317,18 +317,19 @@ def update_user():
             query_update = "UPDATE users SET user = %s, name = %s, userImage = %s, description = %s WHERE userid = %s;"
             cur.execute(query_update, (update_user, update_name, update_user_image, update_description, user_id))
             conn.commit()
-            cur.close()
-            conn.close()
             return jsonify({"message":"Usuario actualizado"}), 200
-        cur.close()
-        conn.close()
         return jsonify({"message":"El usuario ya existe"}), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 #ep para dar like a un tweet
 @User.route("/like-tweet", methods=["POST"])
@@ -353,22 +354,23 @@ def like_tweet():
             query = "DELETE FROM likes WHERE userid = %s AND tweetid = %s;"
             cur.execute(query, (user_id, tweet_id))
             conn.commit()
-            cur.close()
-            conn.close()
             return jsonify({"liked": True}), 200
         else:
             query = "INSERT INTO likes (userid, tweetid, datetime) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, tweet_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
-            cur.close()
-            conn.close()
             return jsonify({"liked": False}), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @User.route("/add-comment-to", methods=["POST"])
 @verify_token
@@ -389,15 +391,18 @@ def add_comment_to():
         query = "INSERT INTO comments (userid, tweetid, comment, datetime) VALUES (%s, %s, %s, %s);"
         cur.execute(query, (user_id, tweet_id, comment, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         conn.commit()
-        cur.close()
-        conn.close()
         return jsonify({"message":"Comentario agregado"}), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @User.route("/delete-comment", methods=["POST"])
@@ -424,7 +429,6 @@ def delete_comment():
             query = "DELETE FROM comments WHERE commentid = %s;"
             cur.execute(query, (comment_id,))
             conn.commit()
-            cur.close()
             return jsonify({"message":"Comentario eliminado"}), 200
         #si el comentario no es del usuario, verifica que el usuario sea el dueño del tweet
         elif not res:
@@ -435,7 +439,6 @@ def delete_comment():
                 query = "DELETE FROM comments WHERE commentid = %s;"
                 cur.execute(query, (comment_id,))
                 conn.commit()
-                cur.close()
                 return jsonify({"message":"Comentario eliminado"}), 200
             else:
                 return jsonify({"message":"No se puede eliminar el comentario"}), 200
@@ -443,6 +446,13 @@ def delete_comment():
         print(e)
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @User.route("/follow-user", methods=["POST"])
 @verify_token
@@ -466,22 +476,25 @@ def follow_user():
             query = "DELETE FROM follows WHERE followerid = %s AND followingid = %s;"
             cur.execute(query, (user_id, user_to_follow))
             conn.commit()
-            cur.close()
-            conn.close()
             return jsonify({"following": False}), 200
         else:
             query = "INSERT INTO follows(followerid, followingid, followdate) VALUES (%s, %s, %s);"
             cur.execute(query, (user_id, user_to_follow,
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
-            cur.close()
-            conn.close()
             return jsonify({"following":True}), 200
     except Exception as e:
         print(e)
         conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @User.route('/check-follow/<int:user_to_check>', methods=['GET'])
@@ -506,21 +519,22 @@ def check_follow(user_to_check):
             query = "SELECT * FROM follows WHERE followerid = %s AND followingid = %s;"
             cur.execute(query, (current_user_id, user_to_check))
             follow = cur.fetchone()
-            cur.close()
-            conn.close()
             if follow:
                 return jsonify({"message": "Ya sigues a este usuario", "follows": True}), 200
             else:
                 return jsonify({"message": "No sigues a este usuario", "follows": False}), 200
         else:
-            cur.close()
-            conn.close()
             return jsonify({"message": "Error al obtener el ID de usuario actual"}), 401
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @User.route('/followers/<int:user_id>', methods=['GET'])
@@ -540,8 +554,6 @@ def get_followers(user_id):
         query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followerid WHERE f.followingid = %s;"
         cur.execute(query, (user_id,))
         followers = cur.fetchall()
-        cur.close()
-        conn.close()
         followers_list = [{
             "userID": follower[0],
             "user": follower[1],
@@ -549,12 +561,16 @@ def get_followers(user_id):
             "userImage": follower[3],
         } for follower in followers]
         return jsonify({"followers": followers_list}), 200
-
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @User.route('/following/<int:user_id>', methods=['GET'])
@@ -574,8 +590,6 @@ def get_following(user_id):
         query = "SELECT u.userid, u.user, u.name, u.userImage FROM users u JOIN follows f ON u.userid = f.followingid WHERE f.followerid = %s;"
         cur.execute(query, (user_id,))
         following = cur.fetchall()
-        cur.close()
-        conn.close()
         following_list = [{
             "userID": followed[0],
             "user": followed[1],
@@ -586,10 +600,14 @@ def get_following(user_id):
 
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         return jsonify({"message": "Error en la consulta a la base de datos"}), 500
-
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @User.route("/get-tweets-home", methods=["GET"])
 @verify_token
@@ -634,8 +652,6 @@ def get_tweets_home():
         """
         cur.execute(query, (user_id, per_page, offset))
         tweets = cur.fetchall()
-        cur.close()
-        conn.close()
         tweets_res = []
         for tweet in tweets:
             # "tweetid",
@@ -653,7 +669,12 @@ def get_tweets_home():
         return jsonify({"tweets": tweets_res}), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error en la consulta a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()

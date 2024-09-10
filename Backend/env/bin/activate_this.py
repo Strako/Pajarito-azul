@@ -1,7 +1,8 @@
 """
 Activate virtualenv for current interpreter:
 
-Use exec(open(this_file).read(), {'__file__': this_file}).
+import runpy
+runpy.run_path(this_file)
 
 This can be used when you must use an existing Python interpreter, not the virtualenv bin/python.
 """  # noqa: D415
@@ -15,7 +16,7 @@ import sys
 try:
     abs_file = os.path.abspath(__file__)
 except NameError as exc:
-    msg = "You must use exec(open(this_file).read(), {'__file__': this_file})"
+    msg = "You must use import runpy; runpy.run_path(this_file)"
     raise AssertionError(msg) from exc
 
 bin_dir = os.path.dirname(abs_file)
@@ -28,7 +29,7 @@ os.environ["VIRTUAL_ENV_PROMPT"] = "" or os.path.basename(base)  # noqa: SIM222
 
 # add the virtual environments libraries to the host python import mechanism
 prev_length = len(sys.path)
-for lib in "../lib/python3.10/site-packages".split(os.pathsep):
+for lib in "../lib/python3.12/site-packages".split(os.pathsep):
     path = os.path.realpath(os.path.join(bin_dir, lib))
     site.addsitedir(path.decode("utf-8") if "" else path)
 sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]

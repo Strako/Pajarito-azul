@@ -46,14 +46,18 @@ def createTweet():
             """
         cur.execute(query, (userID, tweet_desc, tweet_image, current_datetime))
         conn.commit()
-        cur.close()
         data = {"message": "Tweet creado exitosamente"}
         return resfunc(data), 200
     except Exception as e:
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @Tweet.route('/get-all-tweets', methods=['GET'])
 @verify_token
@@ -102,8 +106,6 @@ def getAll():
             """
         cur.execute(finalQuery, (userID, per_page, offset))
         dbres = cur.fetchall()
-        cur.close()
-        conn.close()
         data_json = {}
         for tweet in dbres:
             data_json[
@@ -119,10 +121,15 @@ def getAll():
         data = {"totalPages":f'{totalPages}', "tweets":data_json}
         return resfunc(data), 200
     except Exception as e:
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @Tweet.route('/get-tweets-of/<string:user>', methods=['GET'])
 @verify_token
@@ -166,8 +173,6 @@ def getTweetsOf(user):
             """
         cur.execute(finalQuery, (user, per_page, offset))
         dbres = cur.fetchall()
-        cur.close()
-        conn.close()
         data_json = {}
         if len(dbres) == 0:
             msg = {"message":"No se encontraron tweets"}
@@ -188,10 +193,15 @@ def getTweetsOf(user):
             return resfunc(data), 200
     except Exception as e:
         print (e)
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos", "err": f"{e}"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 @Tweet.route('/get-tweet/<int:tweet_id>', methods=['GET'])
 @verify_token
@@ -221,8 +231,6 @@ def getOne(tweet_id):
         """
         cur.execute(finalQuery, (tweet_id,))
         dbres = cur.fetchall()
-        cur.close()
-        conn.close()
         if len(dbres) == 0:
             data = {"message": "Tweet no encontrado"}
             return resfunc(data), 200
@@ -239,11 +247,15 @@ def getOne(tweet_id):
         return resfunc(data), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
-
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 # Ruta para actualizar un tweet
@@ -271,8 +283,6 @@ def updateTweet(tweet_id):
         """
         cur.execute(query, (tweet_desc, tweet_image, tweet_id, userID))
         conn.commit()
-        cur.close()
-        conn.close()
         if cur.rowcount == 1:
             data = {"message": "Tweet actualizado exitosamente"}
             return resfunc(data), 200
@@ -282,10 +292,15 @@ def updateTweet(tweet_id):
             return resfunc(data), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 # Ruta para eliminar un tweet
 
@@ -308,8 +323,6 @@ def deleteTweet(tweet_id):
         """
         cur.execute(query, (tweet_id, userID))
         conn.commit()
-        cur.close()
-        conn.close()
         if cur.rowcount == 1:
             data = {"message": "Tweet eliminado exitosamente"}
             return resfunc(data), 200
@@ -317,12 +330,16 @@ def deleteTweet(tweet_id):
             data = {
                 "message": "No se encontró el tweet o no tienes permiso para eliminarlo"}
             return resfunc(data), 200
-
     except Exception as e:
         data = {e}
-        cur.close()
-        conn.close()
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()
 
 
 @Tweet.route('/get-comments/<int:tweet_id>', methods=['GET'])
@@ -360,7 +377,6 @@ def get_comments_tweet(tweet_id):
         """
         cur.execute(final_query, (tweet_id, per_page, offset))
         dbres = cur.fetchall()
-        cur.close()
         cur=conn.cursor()
         if len(dbres) == 0:
             data = {"empty": True}
@@ -380,7 +396,12 @@ def get_comments_tweet(tweet_id):
         return resfunc(data), 200
     except Exception as e:
         print(e)
-        cur.close()
-        conn.close()
         data = {"message": "Error al conectarse a la base de datos"}
         return resfunc(data), 500
+    finally:
+        if cur:
+            print("Closing cursor")
+            cur.close()
+        if conn:
+            print("Closing connection")
+            conn.close()

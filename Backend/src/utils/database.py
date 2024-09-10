@@ -19,5 +19,5 @@ db_config = {
     "passwd": passwd,
     "database": dbname
 }
-pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=20, **db_config)
+pool = pooling.MySQLConnectionPool(pool_name="mypool", pool_size=32, **db_config)
 

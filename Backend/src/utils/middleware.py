@@ -50,7 +50,7 @@ def verify_token(f):
                 cur.close()
                 conn.close()
                 if resdb == []:
-                    res == {"message": "invalid token"}
+                    res ={"message": "invalid token"}
                     return resfunc(res), 401
                 else:
                     return f(*args, **kwargs)
