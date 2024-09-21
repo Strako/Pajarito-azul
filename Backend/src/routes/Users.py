@@ -19,7 +19,7 @@ load_dotenv()
 
 magicWord = os.getenv("SECRET_KEY")
 #register blueprint for users
-User = Blueprint('User', __name__, url_prefix='/users')
+User = Blueprint('User', __name__, url_prefix='/api/users')
 
 #-----------------------------------Routes------------------------------------------
 

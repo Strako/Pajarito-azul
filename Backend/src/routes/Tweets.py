@@ -21,7 +21,7 @@ load_dotenv()
 magicWord = os.getenv("SECRET_KEY")
 
 #register blueprint for tweets
-Tweet = Blueprint('Tweet', __name__, url_prefix='/tweets')
+Tweet = Blueprint('Tweet', __name__, url_prefix='/api/tweets')
 
 
 #-----------------------------------Routes------------------------------------------
