@@ -51,7 +51,7 @@
          - Follows
          - Likes
 
-# [Resotre DB] MYSQL
+# [Restore DB] MYSQL
    ## How to restore the BD:
       -Option 1: Inside the project folder "Backend/DB" there is the script to restore the DBm, just copy the content of DB.sql on your DBMS.
       -Option 2: Create a new db named "gpsdb" then import the dump file using the follong commands, replace user with your own user
